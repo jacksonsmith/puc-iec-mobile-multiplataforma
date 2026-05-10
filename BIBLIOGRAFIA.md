@@ -5,7 +5,7 @@
 - EISENMAN, Bonnie. **Learning React Native**, 2nd ed. O'Reilly Media, 2018. ISBN 978-1491989142.
 - LOY, Marc. **React Native Cookbook**, 2nd ed. O'Reilly Media.
 - WINDMILL, Eric. **Flutter in Action**. Manning, 2020. ISBN 978-1617296147.
-- HOUSTON, Pete. **Cross-Platform UIs with Flutter**. Packt, 2023.
+- NAPOLI, Marco L. **Beginning Flutter: A Hands On Guide to App Development**. Wiley, 2020. ISBN 978-1119550822.
 - NEWMAN, Sam. **Building Microservices**, 2nd ed. O'Reilly Media, 2021. ISBN 978-1492034025.
 - BURNS, Brendan. **Designing Distributed Systems**. O'Reilly Media, 2018. ISBN 978-1491983645.
 - ATER, Tal. **Building Progressive Web Apps**. O'Reilly Media, 2017. ISBN 978-1491961650.
