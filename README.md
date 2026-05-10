@@ -85,9 +85,29 @@ npx expo start
 
 Bibliografia completa em [`BIBLIOGRAFIA.md`](./BIBLIOGRAFIA.md).
 
+## Auto-grading via CI 🤖
+
+Atividades 2, 3, 4 e 5 são avaliadas automaticamente em PR. Workflow:
+
+1. **Fork** este repositório
+2. Crie pasta: `exercicios/<NN>-<atividade>/aluno-<seu-github-username>/`
+3. Implemente seguindo o `README.md` de cada exercício
+4. Push + abra PR para `main`
+5. CI dispara: **J.A.R.V.I.S.** (autograder) posta status no PR + sobe artifact privado pro prof
+
+Atividades disponíveis:
+- [A2 — App RN navegação + estado](./exercicios/02-app-rn-navegacao-estado/)
+- [A3 — Native Module + comparativo](./exercicios/03-native-module-comparativo/)
+- [A4 — PWA Offline-First](./exercicios/04-pwa-offline-first/)
+- [A5 — GraphQL + Auth](./exercicios/05-graphql-auth/)
+
+A1 (ADR) é correção manual.
+
+Documentação técnica do autograder: [`grader/README.md`](./grader/README.md).
+
 ## Contato
 
-Dúvidas: via Canvas ou e-mail (informado em sala).
+Dúvidas: **Teams da turma** ou jackson.96@gmail.com.
 
 ---
 
