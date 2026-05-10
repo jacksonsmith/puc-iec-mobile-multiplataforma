@@ -38,7 +38,7 @@ export function readFileSafe(path: string): string | null {
   }
 }
 
-export function findFiles(dir: string, exts: string[], depth = 4): string[] {
+export function findFiles(dir: string, exts: string[], depth = 8): string[] {
   if (!existsSync(dir) || depth <= 0) return [];
   const result: string[] = [];
   for (const entry of readdirSync(dir)) {
