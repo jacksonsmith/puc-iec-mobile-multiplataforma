@@ -3,8 +3,8 @@
 > **Disciplina:** Arquitetura Mobile Multiplataforma — PUC IEC 2026
 > **Aula correspondente:** Aula 1 (20/05/2026)
 > **Prazo:** 26/05/2026 — 23:59 (horário Brasília)
-> **Formato:** markdown ou PDF
-> **Auto-grading:** ❌ (avaliação manual no Canvas)
+> **Formato:** markdown (preferido) ou PDF
+> **Auto-grading:** ✅ feedback rápido no PR (J.A.R.V.I.S.) + revisão manual final no Canvas
 
 ## Objetivo
 
@@ -28,7 +28,7 @@ Você pode propor outro cenário, mas precisa ter **escala e restrições reais*
 2. **Matriz quantitativa** com critérios + pesos justificados + score por alternativa
 3. **Decisão clara** em 1 frase
 4. **Consequências** positivas e negativas (não esconda o negativo)
-5. **Mínimo 3 referências acadêmicas** (paper, livro técnico, post de engenharia revisado por pares — não Medium random)
+5. **≥3 fontes confiáveis**, sendo **≥1 acadêmica** (paper peer-reviewed ou livro técnico publicado). Outras 2 podem ser: doc oficial (RN/Flutter/KMP/Apple/Google), post de engenharia validado (Airbnb Engineering, Netflix Tech Blog, Meta Engineering, Discord, Square), white paper técnico. **Não conta:** Medium pessoal, dev.to random, blog sem revisão.
 6. **1 página** de extensão alvo. ADR de 20 páginas perde pontos.
 
 ## Como entregar
@@ -63,9 +63,31 @@ exercicios/01-adr-arquitetural/aluno-<github-username>/
 
 **Pass threshold:** 60% (9 pts).
 
-## Template
+## Template + Exemplo
 
-Use [`../adr-template.md`](../adr-template.md) como base. Não copie-cole o exemplo do template — adapte pro seu cenário.
+- **Template (estrutura vazia):** [`../adr-template.md`](../adr-template.md)
+- **Exemplo completo do prof:** [`exemplo-banco-investimento/`](./exemplo-banco-investimento/) — leia pra entender formato esperado, **não copie**.
+
+## Auto-grading no PR (J.A.R.V.I.S.)
+
+Quando você abre o PR, um bot roda o validator e comenta o status na hora:
+
+- ✅ se atender critérios mínimos automatizados (60%)
+- ⚠️ se faltar algo — diz exatamente qual critério
+
+**Critérios automatizados** (`grader/lib/validators/adr-arquitetural.ts`):
+
+| # | Critério | Peso |
+|---|----------|------|
+| 1 | Arquivo `ADR-NNNN-*.md` presente | 2 |
+| 2 | Seções obrigatórias (Status, Contexto, Decisão, Alternativas, Consequências) | 3 |
+| 3 | Matriz quantitativa (tabela com notas numéricas) | 3 |
+| 4 | ≥4 alternativas analisadas | 2 |
+| 5 | Seção referências com ≥3 itens | 2 |
+| 6 | ≥1 referência acadêmica detectada (heurística) | 2 |
+| 7 | README na sua pasta | 1 |
+
+**Pontuação final = manual no Canvas.** O autograder valida estrutura; o prof avalia raciocínio.
 
 ## Referências sugeridas pra começar
 
