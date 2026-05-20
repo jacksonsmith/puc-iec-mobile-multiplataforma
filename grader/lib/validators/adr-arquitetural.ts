@@ -85,7 +85,18 @@ interface MatrixAnalysis {
   numericCols: number;
 }
 
+function isNumericCell(cell: string): boolean {
+  const stripped = cell.replace(/\*+/g, '').trim();
+  return /^\d+(\.\d+)?\s*(%|pts?)?$/i.test(stripped);
+}
+
 function analyzeMatrix(content: string): MatrixAnalysis {
+  // Identifica matriz de scoring (não tabela de critérios+pesos):
+  // - 1ª coluna não-numérica (nomes das alternativas)
+  // - Demais colunas majoritariamente numéricas (notas por critério)
+  // - ≥3 linhas de dados (alternativas)
+  // - ≥3 colunas numéricas (critérios avaliados)
+  // - ≥70% das células das colunas 2+ são numéricas
   const lines = content.split('\n');
   let bestRows = 0;
   let bestNumeric = 0;
@@ -96,26 +107,34 @@ function analyzeMatrix(content: string): MatrixAnalysis {
     if (!header.includes('|') || !sep.match(/^\s*\|[\s\-:|]+\|\s*$/)) continue;
 
     let rows = 0;
-    let numericCells = 0;
-    let totalCells = 0;
+    let firstColNumeric = 0;
+    let restNumeric = 0;
+    let restTotal = 0;
+    let cols = 0;
     for (let j = i + 2; j < lines.length; j++) {
       const row = lines[j];
       if (!row.includes('|') || row.trim() === '') break;
-      rows++;
       const cells = row.split('|').slice(1, -1).map((c) => c.trim());
-      for (const cell of cells) {
-        totalCells++;
-        if (/^\d+(\.\d+)?\s*(%|pts?)?$/i.test(cell) || /^\*\*\d+(\.\d+)?/.test(cell)) {
-          numericCells++;
-        }
+      if (cells.length < 4) continue; // exige ≥4 colunas (alternativa + ≥3 critérios)
+      rows++;
+      cols = Math.max(cols, cells.length);
+      if (isNumericCell(cells[0])) firstColNumeric++;
+      for (let k = 1; k < cells.length; k++) {
+        restTotal++;
+        if (isNumericCell(cells[k])) restNumeric++;
       }
     }
 
-    if (rows >= 3 && numericCells > 0 && numericCells / totalCells >= 0.3) {
-      if (rows > bestRows) {
-        bestRows = rows;
-        bestNumeric = numericCells;
-      }
+    if (rows < 3) continue;
+    // 1ª coluna deve ser majoritariamente texto (alternativas, não pesos numéricos)
+    if (firstColNumeric / rows > 0.3) continue;
+    // Demais colunas devem ser majoritariamente numéricas
+    if (restTotal === 0 || restNumeric / restTotal < 0.7) continue;
+    if (cols < 4) continue;
+
+    if (rows > bestRows) {
+      bestRows = rows;
+      bestNumeric = restNumeric;
     }
   }
 
