@@ -1,0 +1,137 @@
+# Atividade 2 — Mini-app RN: Navegação + Estado (15 pts)
+
+**Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
+**Entrega:** até **10/06/2026** (2 semanas)
+**Modalidade:** individual
+**Tempo estimado:** **~2 horas**
+
+---
+
+## Por que essa atividade
+
+Aula 2 cobriu **React Native New Architecture** (JSI, Fabric, TurboModules) + ferramentas modernas (React Navigation, Redux Toolkit, Reanimated, MMKV). Esta atividade exercita **o mínimo viável** pra você ter um app RN navegando + gerenciando estado — base pra todas as próximas.
+
+## Tarefa (3 passos em ~2h)
+
+### 1. Criar app Expo (~10min)
+
+Pré-requisito: Node 20+ instalado (vimos na aula 1).
+
+```bash
+npx create-expo-app@latest meu-app --template blank-typescript
+cd meu-app
+npx expo start --web
+```
+
+Deve abrir browser com app rodando. **Se não rodar, não passe pro próximo passo.**
+
+### 2. Adicionar navegação (~40min)
+
+Instalar React Navigation v7 + dependências:
+
+```bash
+npx expo install @react-navigation/native @react-navigation/native-stack @react-navigation/bottom-tabs react-native-screens react-native-safe-area-context
+```
+
+Implementar:
+- **Stack Navigator** com 2 telas (`Home` → `Detail` via push)
+- **Bottom Tabs** com 2 tabs (`Home` + `Settings`)
+- `Home` deve ter botão que navega pro `Detail` passando 1 parâmetro
+- `Detail` deve mostrar o parâmetro recebido
+
+### 3. Adicionar estado com Redux Toolkit (~40min)
+
+```bash
+npm install @reduxjs/toolkit react-redux
+```
+
+Implementar **1 slice simples** — escolha 1:
+
+| Opção | Slice |
+|---|---|
+| **A** (mais fácil) | `counter` — `increment`/`decrement`/`reset`, exibido na tela `Home` |
+| **B** | `favorites` — adicionar/remover IDs de uma lista (exibida em `Home`) |
+| **C** | `theme` — toggle dark/light, aplicado em `Settings` e afeta cor de fundo de todas as telas |
+
+Slice deve:
+- Estar configurado no `store.ts`
+- `Provider` envolvendo o app
+- 1 botão dispara action via `useDispatch`
+- UI mostra state via `useSelector` e atualiza ao tocar no botão
+
+### 4. README + entrega (~10min)
+
+`README.md` na raiz do projeto com:
+- Nome da atividade + seu nome
+- Stack escolhida (A/B/C)
+- Comando pra rodar (`npm install && npx expo start --web`)
+- 1 screenshot da `Home` mostrando estado
+- 1 referência
+
+---
+
+## Critérios de avaliação
+
+| Critério | Pontos |
+|---|---|
+| App roda sem erro com `expo start --web` | 3 |
+| Stack Navigator: 2 telas + push com parâmetro funcionando | 3 |
+| Bottom Tabs: 2 tabs trocando telas | 2 |
+| Redux Toolkit slice: action → state → UI atualiza | 4 |
+| README + screenshot | 2 |
+| 1 referência citada | 1 |
+
+**Total: 15 pts**
+
+> 🎁 **Bonus** (não conta pra máxima, considerado em arredondamento):
+> - Deep link funcionando (`expo://detail/<id>`)
+> - MMKV persistindo estado entre reloads
+> - 1 animação Reanimated não-trivial (shared element, gesture, spring)
+> - RTK Query integrando com 1 API real (JSONPlaceholder, PokéAPI)
+> - Hermes habilitado (verificar em `app.json`)
+
+---
+
+## Recomendado: use IA pra acelerar
+
+Você pode (e deve!) usar **Cursor / Gemini CLI / Claude Code / ChatGPT** pra acelerar — vimos na aula 1.
+
+Prompts úteis:
+
+> "Configure React Navigation v7 stack + tabs no meu app Expo blank-typescript."
+
+> "Crie um slice Redux Toolkit chamado `counter` com actions increment/decrement/reset. Configure store + Provider em App.tsx."
+
+> "Como passar parâmetro entre telas do Stack Navigator com TypeScript?"
+
+> ⚠️ **IA é ajudante.** Cola código sem entender → perde nota em arguição.
+
+---
+
+## Entrega via GitHub (fork + PR)
+
+1. Fork do repo público: <https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma>
+2. Branch `entrega/atividade-2-<seu-nome>` no seu fork
+3. **Criar pasta** `exercicios/02-app-rn-navegacao-estado/<seu-nome>/` no SEU fork (não no upstream)
+4. Colocar dentro: código do app + README.md + screenshot
+5. Commit + push pro seu fork
+6. Submeter no Canvas com link do commit (ou PR opcional pro upstream)
+
+**Detalhes do workflow:** ver página *"Como entregar atividades pelo GitHub"* no Canvas módulo Início.
+
+> **Dica de tamanho:** não comite `node_modules/`, `.expo/`, `dist/`. Já tem `.gitignore` padrão Expo — só não force.
+
+## O que você NÃO precisa fazer
+
+- Não precisa app **bonito** (foco em fluxo, não design)
+- Não precisa Reanimated, MMKV, RTK Query (bonus)
+- Não precisa testar (próxima disciplina foca em testes)
+- Não precisa rodar em device físico (web é suficiente)
+
+## Material de apoio (todos no GitHub público)
+
+- **[template-relatorio.md](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/02-app-rn-navegacao-estado/template-relatorio.md)** — README modelo
+- **[guia-passo-a-passo.md](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/02-app-rn-navegacao-estado/guia-passo-a-passo.md)** — comandos + troubleshooting
+- **[Material aula 2](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/material-de-apoio/aula-02)** (Meta New Arch, Hermes, Reanimated, Discord Eng)
+- **[Slide aula 2](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/slides/aula-02/aula-02-react-native-new-architecture.pdf)**
+- **[Docs oficiais React Navigation v7](https://reactnavigation.org/docs/getting-started)** + **[Redux Toolkit](https://redux-toolkit.js.org/tutorials/quick-start)**
