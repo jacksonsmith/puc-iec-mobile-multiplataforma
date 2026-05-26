@@ -1,1 +1,0 @@
-[ADR](ADR-0001-stack-mobile-streaming-midia.md) para decisão de stack utilizada para a arquitetura do sistema de streaming de mídia utilizando KMP(Kotlin Multplatforma) + Tecnologias Nativas(Kotlin e Android Native).
