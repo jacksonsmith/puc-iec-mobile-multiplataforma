@@ -7,7 +7,7 @@
 ## Pré-requisitos
 
 - App do hands-on da Aula 2 funcionando: Stack Navigator + Zustand counter + TanStack Query buscando filmes da TMDB.
-- Se faltou tempo na aula, clone o starter: `starters/aula-02` no repo público.
+- Se faltou tempo na aula, clone o starter: `exercicios/02-app-rn-navegacao-estado/starter` no repo público.
 
 ```bash
 node --version    # v20+ ou v22

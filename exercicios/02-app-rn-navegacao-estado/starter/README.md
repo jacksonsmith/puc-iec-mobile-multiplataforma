@@ -60,7 +60,7 @@ __tests__/              ← Jest + RTL
 
 ```bash
 git clone https://github.com/SEU-USUARIO/puc-iec-mobile-multiplataforma.git
-cd puc-iec-mobile-multiplataforma/starters/aula-02
+cd puc-iec-mobile-multiplataforma/exercicios/02-app-rn-navegacao-estado/starter
 npm install
 ```
 
