@@ -16,12 +16,21 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        // Garante header back button visível em web e nativo
+        headerBackVisible: true,
+        headerBackTitle: 'Voltar',
+      }}
+    >
       <Stack.Screen name="Home" component={MovieList} options={{ title: 'Filmes' }} />
       <Stack.Screen
         name="Detail"
         component={MovieDetail}
-        options={({ route }) => ({ title: route.params.title })}
+        options={({ route }) => ({
+          title: route.params.title,
+          headerBackTitle: 'Voltar',
+        })}
       />
     </Stack.Navigator>
   );

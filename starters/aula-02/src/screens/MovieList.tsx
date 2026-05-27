@@ -9,12 +9,19 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { usePopularMovies } from '@/queries/movies/get-popular-movies';
 import { useCounterStore } from '@/store/counterStore';
+import { isTokenError, isTokenMissing } from '@/services/api';
+import TokenMissingScreen from '@/components/TokenMissingScreen';
 // TODO [TASK 3]: descomentar quando renderizar MovieCard
 // import MovieCard from '@/components/MovieCard';
 
 export default function MovieList() {
   const { data, isLoading, error, refetch } = usePopularMovies();
   const count = useCounterStore((s) => s.count);
+
+  // Tela amigável quando token TMDB não foi configurado ou está inválido.
+  if (isTokenMissing || isTokenError(error)) {
+    return <TokenMissingScreen />;
+  }
 
   if (isLoading) {
     return (

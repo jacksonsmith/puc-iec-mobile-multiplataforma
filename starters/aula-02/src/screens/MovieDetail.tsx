@@ -4,17 +4,27 @@
 // Demonstra TanStack Query em outra tela (já implementado).
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View, Image } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Image,
+} from 'react-native';
 import { useMovieById } from '@/queries/movies/get-movie-by-id';
 import { posterUrl } from '@/utils/poster-url';
+import { isTokenError } from '@/services/api';
+import TokenMissingScreen from '@/components/TokenMissingScreen';
 import type { RootStackParamList } from '@/routes/RootStack';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
-export default function MovieDetail({ route }: Props) {
+export default function MovieDetail({ route, navigation }: Props) {
   const { id } = route.params;
   const { data, isLoading, error } = useMovieById(id);
 
+  if (isTokenError(error)) return <TokenMissingScreen />;
   if (isLoading) return <ActivityIndicator style={styles.center} />;
   if (error || !data) return <Text style={styles.center}>Erro ao carregar</Text>;
 
@@ -22,6 +32,11 @@ export default function MovieDetail({ route }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Botão voltar custom (fallback caso header não esteja visível) */}
+      <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Text style={styles.backText}>← Voltar</Text>
+      </Pressable>
+
       {poster && <Image source={{ uri: poster }} style={styles.poster} />}
       <Text style={styles.title}>{data.title}</Text>
       <Text style={styles.meta}>
@@ -37,6 +52,14 @@ export default function MovieDetail({ route }: Props) {
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 12 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  backButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 6,
+  },
+  backText: { fontSize: 15, color: '#0066cc', fontWeight: '500' },
   poster: { width: 200, height: 300, alignSelf: 'center', borderRadius: 8 },
   title: { fontSize: 22, fontWeight: 'bold' },
   meta: { color: '#666' },

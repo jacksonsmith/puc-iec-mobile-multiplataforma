@@ -1,29 +1,42 @@
 // src/storage/mmkv.ts
 //
-// ATIVIDADE 2 — Passo 2 (MMKV storage síncrono)
+// ATIVIDADE 2 — TASK 7 (storage síncrono)
+//
+// MMKV (C++ via JSI) é ~30x mais rápido que AsyncStorage.
+// Funciona em iOS/Android nativo. Em web (testes/dev), polyfill com localStorage.
 //
 // Doc: https://github.com/mrousavy/react-native-mmkv
-//
-// Conceito: MMKV é storage síncrono em C++ (via JSI), ~30x mais rápido
-// que AsyncStorage. Funciona em iOS/Android nativo (NÃO em web).
 
-// TODO [TASK 7]: descomente as 3 linhas abaixo
-// import { MMKV } from 'react-native-mmkv';
+// TODO [TASK 7]: implementar storage com polyfill web
 //
-// const storage = new MMKV({ id: 'favorites-store' });
-
-// TODO [TASK 7]: implementar adapter compatível com Zustand persist
+// Estrutura esperada:
 //
-// Zustand persist espera interface { getItem, setItem, removeItem }.
-// MMKV tem API diferente (getString, set, delete) — precisa adapter.
+// const isWeb = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+//
+// let getString: (k: string) => string | undefined;
+// let setItem: (k: string, v: string) => void;
+// let deleteItem: (k: string) => void;
+//
+// if (isWeb) {
+//   getString = (k) => window.localStorage.getItem(k) ?? undefined;
+//   setItem = (k, v) => window.localStorage.setItem(k, v);
+//   deleteItem = (k) => window.localStorage.removeItem(k);
+// } else {
+//   const { MMKV } = require('react-native-mmkv');
+//   const storage = new MMKV({ id: 'favorites-store' });
+//   getString = (k) => storage.getString(k);
+//   setItem = (k, v) => storage.set(k, v);
+//   deleteItem = (k) => storage.delete(k);
+// }
 //
 // export const mmkvStorage = {
-//   getItem: (name: string) => {
-//     const value = storage.getString(name);
-//     return value ?? null;
-//   },
-//   setItem: (name: string, value: string) => storage.set(name, value),
-//   removeItem: (name: string) => storage.delete(name),
+//   getItem: (name: string) => getString(name) ?? null,
+//   setItem: (name: string, value: string) => setItem(name, value),
+//   removeItem: (name: string) => deleteItem(name),
 // };
 
-export {};
+export const mmkvStorage = {
+  getItem: (_name: string) => null,
+  setItem: (_name: string, _value: string) => {},
+  removeItem: (_name: string) => {},
+};
