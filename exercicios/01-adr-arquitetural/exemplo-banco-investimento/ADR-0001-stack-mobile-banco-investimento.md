@@ -4,7 +4,7 @@
 
 ## Status
 
-`Aceito` (2026-04-15)
+`Draft` (2026-04-15)
 
 **Autor:** Equipe Mobile · Banco Fictício S.A.
 **Stakeholders consultados:** Head de Engenharia, Compliance Officer, Diretor de Produto
