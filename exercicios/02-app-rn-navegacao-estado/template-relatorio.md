@@ -5,7 +5,7 @@
 ## Identificação
 
 - **Aluno:** [seu nome]
-- **Slice escolhido:** [A counter / B favorites / C theme]
+- **Store escolhido:** [A counter / B favorites / C theme]
 - **Repo (seu fork):** [URL]
 
 ## Como rodar
@@ -19,7 +19,7 @@ App abre em `http://localhost:8081` (Expo padrão).
 
 ## O que o app faz
 
-[1-3 frases descrevendo: 2 telas Stack, 2 tabs, slice X com action Y]
+[1-3 frases descrevendo: 2 telas Stack, 2 tabs, store X com action Y]
 
 ## Screenshot
 
@@ -37,13 +37,12 @@ src/
 │   ├── DetailScreen.tsx
 │   └── SettingsScreen.tsx
 └── store/
-    ├── store.ts        ← config Redux store
-    └── <slice>Slice.ts ← seu slice
+    └── <nome>Store.ts  ← Zustand store (1 arquivo, sem Provider)
 ```
 
 ## Referência
 
-[1 referência — Material aula 2, RN docs, Redux Toolkit docs, Reanimated docs]
+[1 referência — Material aula 2, RN docs, Zustand docs, Reanimated docs]
 
 ---
 
@@ -52,7 +51,7 @@ src/
 - [ ] Deep link `expo://detail/<id>`
 - [ ] MMKV persistindo estado
 - [ ] Animação Reanimated
-- [ ] RTK Query com API
+- [ ] TanStack Query com API
 - [ ] Hermes habilitado (verificar `app.json` ou `app.config.ts`)
 
 [Liste o que implementou e cole código relevante OU print de execução]

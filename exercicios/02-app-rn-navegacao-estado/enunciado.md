@@ -9,7 +9,9 @@
 
 ## Por que essa atividade
 
-Aula 2 cobriu **React Native New Architecture** (JSI, Fabric, TurboModules) + ferramentas modernas (React Navigation, Redux Toolkit, Reanimated, MMKV). Esta atividade exercita **o mínimo viável** pra você ter um app RN navegando + gerenciando estado — base pra todas as próximas.
+Aula 2 cobriu **React Native New Architecture** (JSI, Fabric, TurboModules) + ferramentas modernas (React Navigation, Redux Toolkit + RTK Query, Reanimated, MMKV). Esta atividade exercita **o mínimo viável** pra você ter um app RN navegando + gerenciando estado — base pra todas as próximas.
+
+> 💡 **Nota:** Aula 2 mostrou **Redux Toolkit + RTK Query** porque sustenta apps grandes (enterprise, 10+ devs). Nesta atividade você usa **Zustand** porque é o que mercado 2026 puxa pra apps small-medium (~20M downloads/sem, 1KB bundle, 10x menos boilerplate). Lição arquitetural: **match tool to type of state** — não há winner único. Você sai exposto aos dois.
 
 ## Tarefa (3 passos em ~2h)
 
@@ -39,25 +41,25 @@ Implementar:
 - `Home` deve ter botão que navega pro `Detail` passando 1 parâmetro
 - `Detail` deve mostrar o parâmetro recebido
 
-### 3. Adicionar estado com Redux Toolkit (~40min)
+### 3. Adicionar estado com Zustand (~30min)
 
 ```bash
-npm install @reduxjs/toolkit react-redux
+npm install zustand
 ```
 
-Implementar **1 slice simples** — escolha 1:
+Implementar **1 store simples** — escolha 1:
 
-| Opção | Slice |
+| Opção | Store |
 |---|---|
 | **A** (mais fácil) | `counter` — `increment`/`decrement`/`reset`, exibido na tela `Home` |
 | **B** | `favorites` — adicionar/remover IDs de uma lista (exibida em `Home`) |
 | **C** | `theme` — toggle dark/light, aplicado em `Settings` e afeta cor de fundo de todas as telas |
 
-Slice deve:
-- Estar configurado no `store.ts`
-- `Provider` envolvendo o app
-- 1 botão dispara action via `useDispatch`
-- UI mostra state via `useSelector` e atualiza ao tocar no botão
+Store deve:
+- Estar em `src/store/<nome>Store.ts` (1 arquivo, sem Provider, sem configureStore)
+- Hook gerado pelo `create()` consumido direto em qualquer componente
+- 1 botão dispara action do store (ex: `useCounterStore.getState().increment()` ou destructuring)
+- UI lê state via hook e re-renderiza ao tocar no botão
 
 ### 4. README + entrega (~10min)
 
@@ -77,7 +79,7 @@ Slice deve:
 | App roda sem erro com `expo start --web` | 3 |
 | Stack Navigator: 2 telas + push com parâmetro funcionando | 3 |
 | Bottom Tabs: 2 tabs trocando telas | 2 |
-| Redux Toolkit slice: action → state → UI atualiza | 4 |
+| Zustand store: action → state → UI atualiza | 4 |
 | README + screenshot | 2 |
 | 1 referência citada | 1 |
 
@@ -87,7 +89,7 @@ Slice deve:
 > - Deep link funcionando (`expo://detail/<id>`)
 > - MMKV persistindo estado entre reloads
 > - 1 animação Reanimated não-trivial (shared element, gesture, spring)
-> - RTK Query integrando com 1 API real (JSONPlaceholder, PokéAPI)
+> - **TanStack Query** integrando com 1 API real (JSONPlaceholder, PokéAPI)
 > - Hermes habilitado (verificar em `app.json`)
 
 ---
@@ -100,7 +102,7 @@ Prompts úteis:
 
 > "Configure React Navigation v7 stack + tabs no meu app Expo blank-typescript."
 
-> "Crie um slice Redux Toolkit chamado `counter` com actions increment/decrement/reset. Configure store + Provider em App.tsx."
+> "Crie um store Zustand chamado `useCounterStore` com count + increment/decrement/reset. Sem Provider, sem configureStore."
 
 > "Como passar parâmetro entre telas do Stack Navigator com TypeScript?"
 
@@ -124,7 +126,7 @@ Prompts úteis:
 ## O que você NÃO precisa fazer
 
 - Não precisa app **bonito** (foco em fluxo, não design)
-- Não precisa Reanimated, MMKV, RTK Query (bonus)
+- Não precisa Reanimated, MMKV, TanStack Query (bonus)
 - Não precisa testar (próxima disciplina foca em testes)
 - Não precisa rodar em device físico (web é suficiente)
 
@@ -134,4 +136,4 @@ Prompts úteis:
 - **[guia-passo-a-passo.md](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/02-app-rn-navegacao-estado/guia-passo-a-passo.md)** — comandos + troubleshooting
 - **[Material aula 2](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/material-de-apoio/aula-02)** (Meta New Arch, Hermes, Reanimated, Discord Eng)
 - **[Slide aula 2](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/slides/aula-02/aula-02-react-native-new-architecture.pdf)**
-- **[Docs oficiais React Navigation v7](https://reactnavigation.org/docs/getting-started)** + **[Redux Toolkit](https://redux-toolkit.js.org/tutorials/quick-start)**
+- **[Docs oficiais React Navigation v7](https://reactnavigation.org/docs/getting-started)** + **[Zustand](https://github.com/pmndrs/zustand)**

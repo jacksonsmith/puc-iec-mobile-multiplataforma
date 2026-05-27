@@ -171,91 +171,72 @@ export default function SettingsScreen() {
 }
 ```
 
-## Passo 4 — Redux Toolkit slice (40min)
+## Passo 4 — Zustand store (~30min)
 
 ```bash
-npm install @reduxjs/toolkit react-redux
+npm install zustand
 ```
 
 **Opção A — Counter** (mais simples):
 
 ```tsx
-// src/store/counterSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+// src/store/counterStore.ts
+import { create } from 'zustand';
 
-interface CounterState { value: number }
+type CounterState = {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
+};
 
-const initialState: CounterState = { value: 0 };
-
-export const counterSlice = createSlice({
-  name: 'counter',
-  initialState,
-  reducers: {
-    increment: (s) => { s.value += 1 },
-    decrement: (s) => { s.value -= 1 },
-    reset: (s) => { s.value = 0 },
-  },
-});
-
-export const { increment, decrement, reset } = counterSlice.actions;
-export default counterSlice.reducer;
+export const useCounterStore = create<CounterState>((set) => ({
+  count: 0,
+  increment: () => set((s) => ({ count: s.count + 1 })),
+  decrement: () => set((s) => ({ count: s.count - 1 })),
+  reset: () => set({ count: 0 }),
+}));
 ```
 
+**Sem `Provider`, sem `configureStore`.** Hook é o store — usa direto em qualquer componente.
+
+`App.tsx` (mantém igual ao Passo 2 — sem Provider):
 ```tsx
-// src/store/store.ts
-import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './counterSlice';
-
-export const store = configureStore({
-  reducer: { counter: counterReducer },
-});
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-```
-
-`App.tsx`:
-```tsx
-import { Provider } from 'react-redux';
-import { store } from './src/store/store';
 import { NavigationContainer } from '@react-navigation/native';
 import { RootTabs } from './src/navigation/RootTabs';
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <RootTabs />
-      </NavigationContainer>
-    </Provider>
+    <NavigationContainer>
+      <RootTabs />
+    </NavigationContainer>
   );
 }
 ```
 
-`HomeScreen.tsx` — usar slice:
+`HomeScreen.tsx` — consumir store:
 ```tsx
 import { Button, View, Text } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { increment, decrement, reset } from '../store/counterSlice';
-import { RootState } from '../store/store';
+import { useCounterStore } from '../store/counterStore';
 
 export default function HomeScreen({ navigation }) {
-  const count = useSelector((s: RootState) => s.counter.value);
-  const dispatch = useDispatch();
+  const { count, increment, decrement, reset } = useCounterStore();
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 }}>
       <Text style={{ fontSize: 32 }}>{count}</Text>
-      <Button title="+1" onPress={() => dispatch(increment())} />
-      <Button title="-1" onPress={() => dispatch(decrement())} />
-      <Button title="Reset" onPress={() => dispatch(reset())} />
+      <Button title="+1" onPress={increment} />
+      <Button title="-1" onPress={decrement} />
+      <Button title="Reset" onPress={reset} />
       <Button title="Detail" onPress={() => navigation.navigate('Detail', { id: String(count) })} />
     </View>
   );
 }
 ```
 
-Refresh — counter funcionando + passa pro Detail.
+Refresh — counter funciona + passa pro Detail.
+
+> 💡 **Por que sem Provider?** Zustand cria o store fora da árvore React (módulo singleton). Hook usa `useSyncExternalStore` por baixo dos panos pra inscrever só os componentes que leem. Re-render automático sem boilerplate.
 
 ## Passo 5 — README + screenshot (10min)
 
@@ -271,10 +252,12 @@ Ver guia "Como entregar atividades pelo GitHub" no Canvas (módulo Início).
 
 | Problema | Solução |
 |---|---|
-| `Cannot find module 'react-redux'` | Salvou `package.json`? Rode `npm install` de novo |
+| `Cannot find module 'zustand'` | Salvou `package.json`? Rode `npm install` de novo |
 | `Module not found: react-native-screens` | `npx expo install react-native-screens` |
 | Web não abre | Tentou `--web`? Algumas vezes precisa Ctrl+C e rodar de novo |
 | TypeScript erro nas props | Confere que importou `NativeStackScreenProps` e tipo `RootStackParamList` |
+| Store atualiza mas UI não re-renderiza | Você está chamando `useCounterStore.getState()` em vez do hook. Use `useCounterStore()` dentro do componente. |
+| Multiple re-renders desnecessários | Use seletor: `const count = useCounterStore((s) => s.count)` em vez de destructuring completo |
 
 ## Dica: IA pra acelerar
 
@@ -282,7 +265,7 @@ Prompts úteis:
 
 > "Configure React Navigation v7 bottom tabs + stack navigator no meu app Expo blank-typescript"
 
-> "Crie slice Redux Toolkit chamado counter com increment/decrement/reset. Configure Provider em App.tsx."
+> "Crie store Zustand chamado useCounterStore com count + increment/decrement/reset. Sem Provider, sem configureStore. TypeScript tipado."
 
 > "Como tipar params do Stack Navigator no TypeScript?"
 
