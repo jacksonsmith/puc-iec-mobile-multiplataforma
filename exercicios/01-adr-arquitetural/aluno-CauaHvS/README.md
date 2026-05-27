@@ -1,16 +1,15 @@
 # ADR Arquitetural — Cauã Henrique Viana Salgado
 
 > Entrega da Atividade 1 — Arquitetura de Aplicações Móveis e Multiplataforma — PUC IEC 1º/2026.
-> Diretório padrão `aluno-CauaHvS` para acionamento do autograder J.A.R.V.I.S.
 
 Cenário escolhido: **D — Saúde / Telemedicina**
 
-Caso: plataforma de telemedicina B2C com consultas por videochamada, prontuário eletrônico e integração RNDS/SUS. Restrições reais: LGPD (dados sensíveis de saúde), CFM (autenticação de médico), WebRTC sem SDK proprietário, time enxuto de 6 engenheiros sem iOS nativo, janela de 10 meses.
+Caso real: **Conexa Saúde** — ecossistema digital de saúde líder na América Latina. Fundada em 2016 no Rio de Janeiro, atende 30 milhões de beneficiários, 1,5 milhão de pacientes ativos, 7,2 milhões de consultas/ano, em parceria com 192 operadoras (Bradesco, Amil, Unimeds) e 1.300+ empresas. Faturamento projetado de R$ 300M+ em 2025.
 
 ## Arquivo principal
 
-→ [`ADR-0001-stack-mobile-telemedicina.md`](./ADR-0001-stack-mobile-telemedicina.md)
+→ [`ADR-0001-stack-mobile-conexa-saude.md`](./ADR-0001-stack-mobile-conexa-saude.md)
 
 ## Decisão resumida
 
-**Flutter + Platform Channels** (score 8.30) sobre React Native (7.70), Nativo puro (7.20), KMP (7.10) e PWA (5.50). Escolha sustentada por performance em hardware de médio porte (perfil SUS), acesso direto ao Keystore/Secure Enclave para compliance LGPD, e viabilidade de entrega com time sem iOS nativo em 10 meses.
+**React Native (New Architecture) + Native Modules** (score 8.65) sobre Flutter (7.10), Nativo puro (6.55), KMP (6.35) e PWA (6.35). Escolha sustentada pelo reaproveitamento total do time React/TypeScript existente numa janela de 12 meses com SLA ativo para 192 operadoras, sem abrir mão de compliance LGPD via Native Modules isolados para WebRTC, biometria e criptografia.
