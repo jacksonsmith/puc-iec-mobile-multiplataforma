@@ -6,11 +6,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  Image,
+  View,
 } from 'react-native';
 import { useMovieById } from '@/queries/movies/get-movie-by-id';
 import { posterUrl } from '@/utils/poster-url';
@@ -38,13 +39,17 @@ export default function MovieDetail({ route, navigation }: Props) {
       </Pressable>
 
       {poster && <Image source={{ uri: poster }} style={styles.poster} />}
-      <Text style={styles.title}>{data.title}</Text>
+
+      {/* Linha com título + slot pro HeartButton (TASK 8) */}
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>{data.title}</Text>
+        {/* TODO [TASK 8]: <HeartButton active={isFav} onPress={() => toggle(id)} /> */}
+      </View>
+
       <Text style={styles.meta}>
         ⭐ {data.vote_average.toFixed(1)} · {data.release_date}
       </Text>
       <Text style={styles.overview}>{data.overview}</Text>
-
-      {/* TODO [TASK 8]: adicionar HeartButton aqui (Reanimated worklet) */}
     </ScrollView>
   );
 }
@@ -61,7 +66,8 @@ const styles = StyleSheet.create({
   },
   backText: { fontSize: 15, color: '#0066cc', fontWeight: '500' },
   poster: { width: 200, height: 300, alignSelf: 'center', borderRadius: 8 },
-  title: { fontSize: 22, fontWeight: 'bold' },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  title: { fontSize: 22, fontWeight: 'bold', flex: 1 },
   meta: { color: '#666' },
   overview: { fontSize: 14, lineHeight: 20 },
 });
