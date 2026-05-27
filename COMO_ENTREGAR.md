@@ -62,8 +62,6 @@ git checkout -b entrega/atividade-1-joao-silva
 
 ### 4. Trabalhar dentro de `exercicios/<atividade>/` no SEU fork
 
-> ⚠️ **Você só altera o SEU fork.** O repo do professor (upstream) **nunca recebe commit direto** — só recebe seu trabalho via Pull Request.
-
 Cada atividade tem uma pasta no repo público. **No seu fork**, crie seu arquivo dentro da pasta da atividade, no nível dela. Não precisa criar subpastas — só seu arquivo.
 
 **Exemplo Testes Mobile (Atividade 1 — Casos de Teste Funcionais):**
