@@ -21,13 +21,26 @@ Hands-on da Aula 2 te deixou com app rodando: Stack Navigator + Zustand counter 
 
 ## Pré-requisito
 
-App do hands-on da Aula 2 funcionando (Stack + Zustand counter + TanStack Query). Se faltou tempo na aula, **comece pelo starter**: <https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/starters/aula-02>.
+Starter `aula-02` rodando localmente:
+
+```bash
+git clone https://github.com/SEU-USER/puc-iec-mobile-multiplataforma.git
+cd puc-iec-mobile-multiplataforma/starters/aula-02
+npm install
+cp .env.example .env  # editar com TMDB token
+npx expo start
+```
+
+Arquitetura: `services/` (HTTP) + `queries/` (TanStack) + `store/` (Zustand) + `screens/` + `components/` + `routes/` + `contexts/` + `__tests__/`. Veja `README.md` do starter.
+
+> Se você fez o hands-on da aula, sua versão do `counterStore` + `usePopularMovies` + `MovieList` já está preenchida. Senão, primeiro complete os Passos 3-5 do hands-on.
 
 ---
 
-## Tarefa (4 passos em ~2h-2h30)
+## Tarefa (5 passos em ~2h-2h30)
 
 ### 1. Zustand `useFavoritesStore` (~30min)
+📁 `src/store/favoritesStore.ts`
 
 Criar `src/store/favoritesStore.ts`:
 
@@ -49,11 +62,9 @@ type FavoritesState = {
 Na `MovieList`, cada item tem botão ❤️ que chama `toggle(movie.id)`. Cor do ❤️ muda se `isFavorite(movie.id)`.
 
 ### 2. Persistência com MMKV (~30min)
+📁 `src/storage/mmkv.ts` + atualizar `src/store/favoritesStore.ts`
 
-Instalar:
-```bash
-npx expo install react-native-mmkv
-```
+MMKV já vem instalado no starter (`package.json`).
 
 Criar `src/storage/mmkv.ts`:
 ```typescript
@@ -66,6 +77,7 @@ Integrar com Zustand store via `persist` middleware OU manualmente em `subscribe
 > 💡 MMKV é **síncrono** (diferente de AsyncStorage). Por isso ~30x mais rápido. Funciona no JSI = sem bridge.
 
 ### 3. Animação Reanimated não-trivial (~45min)
+📁 criar `src/components/HeartButton.tsx` + integrar em `src/components/MovieCard.tsx`
 
 Escolha **1** (não precisa fazer as 3):
 
@@ -77,7 +89,21 @@ Escolha **1** (não precisa fazer as 3):
 
 Deve usar `useSharedValue` + `useAnimatedStyle` + worklets. **Não vale `Animated` API legado**.
 
-### 4. README + screencast + entrega (~15min)
+### 4. Testes com IA (~20min)
+📁 `__tests__/counterStore.test.ts` + `__tests__/favoritesStore.test.ts`
+
+Use IA pra gerar testes Jest. **Mínimo 6 testes verdes** (3 counter + 3 favorites) — CI GitHub Actions valida automático.
+
+Prompts sugeridos:
+```
+Cole o conteúdo de counterStore.ts e peça:
+"Adicione testes Jest pra cada action (decrement, reset) + edge cases.
+Mantenha estilo dos testes existentes."
+```
+
+CI workflow já vem em `.github/workflows/test.yml`. Push pro seu fork dispara teste automático. Verde no Actions = pontos.
+
+### 5. README + screencast + entrega (~15min)
 
 `README.md` com:
 - Nome + opção Reanimated escolhida (A/B/C)
@@ -92,10 +118,11 @@ Deve usar `useSharedValue` + `useAnimatedStyle` + worklets. **Não vale `Animate
 
 | Critério | Pontos |
 |---|---|
-| App roda sem erro (`npm install && npx expo start --web` ou device) | 2 |
-| `useFavoritesStore` Zustand funcional (toggle, isFavorite) | 3 |
-| MMKV persistindo favoritos entre reloads | 3 |
-| Reanimated não-trivial rodando na UI thread (com worklets) | 4 |
+| App roda sem erro (`npm install && npx expo start`) | 2 |
+| `useFavoritesStore` Zustand funcional (toggle, isFavorite, add, remove, clear) | 3 |
+| MMKV persistindo favoritos entre reloads | 2 |
+| Reanimated não-trivial rodando na UI thread (worklets) | 3 |
+| **CI GitHub Actions verde** (≥ 6 testes Jest verdes, gerados com auxílio de IA) | 2 |
 | README + screenshot + screencast/GIF da animação | 2 |
 | 1 referência citada | 1 |
 
@@ -152,9 +179,9 @@ Resumo:
 
 ## Material de apoio (todos no GitHub público)
 
+- **[Starter `aula-02`](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/starters/aula-02)** — base obrigatória (com TODOs guiados, CI configurado, testes prontos pra preencher)
 - **[guia-passo-a-passo.md](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/02-app-rn-navegacao-estado/guia-passo-a-passo.md)** — comandos + código exemplo
 - **[template-relatorio.md](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/02-app-rn-navegacao-estado/template-relatorio.md)** — README modelo
-- **[Starter Aula 2](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/starters/aula-02)** — ponto de partida (caso não tenha feito hands-on)
 - **[Material aula 2](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/material-de-apoio/aula-02)** (Meta New Arch, Hermes, Reanimated)
 - **[Slide aula 2](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/slides/aula-02/aula-02-react-native-new-architecture.pdf)**
 - **[Zustand docs](https://github.com/pmndrs/zustand)** + **[TanStack Query](https://tanstack.com/query/latest)** + **[Reanimated](https://docs.swmansion.com/react-native-reanimated/)** + **[MMKV](https://github.com/mrousavy/react-native-mmkv)**
