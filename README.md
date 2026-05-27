@@ -85,6 +85,12 @@ npx expo start
 
 Bibliografia completa em [`BIBLIOGRAFIA.md`](./BIBLIOGRAFIA.md).
 
+## Como entregar atividades
+
+Guia completo passo-a-passo: [`COMO_ENTREGAR.md`](./COMO_ENTREGAR.md) (fork → clone → branch → commit → push → PR → link Canvas).
+
+Slides da abertura da Aula 2 com tutorial Fork+PR: [`slides/intro-fluxo-pr-github.pdf`](./slides/intro-fluxo-pr-github.pdf).
+
 ## Auto-grading via CI 🤖
 
 Atividades 2, 3, 4 e 5 são avaliadas automaticamente em PR. Workflow:
