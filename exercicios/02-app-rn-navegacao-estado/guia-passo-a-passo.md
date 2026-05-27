@@ -1,6 +1,6 @@
 # Guia passo a passo — Atividade 2 (Mini-app RN)
 
-> Manual prático. ~2h se seguir o roteiro.
+> Manual prático. ~1h-1h30 se seguir o roteiro. Alvo iniciante em React Native.
 
 ---
 
@@ -104,80 +104,11 @@ export default function App() {
 
 Refresh — agora deve navegar Home → Detail.
 
-## Passo 3 — Bottom Tabs (20min)
-
-```bash
-npx expo install @react-navigation/bottom-tabs
-```
-
-Reorganizar — tabs no topo, stack dentro de tab:
-
-```tsx
-// src/navigation/RootTabs.tsx
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeStack } from './HomeStack';
-import SettingsScreen from '../screens/SettingsScreen';
-
-const Tabs = createBottomTabNavigator();
-
-export function RootTabs() {
-  return (
-    <Tabs.Navigator>
-      <Tabs.Screen name="HomeTab" component={HomeStack} />
-      <Tabs.Screen name="Settings" component={SettingsScreen} />
-    </Tabs.Navigator>
-  );
-}
-```
-
-```tsx
-// src/navigation/HomeStack.tsx
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/HomeScreen';
-import DetailScreen from '../screens/DetailScreen';
-
-const Stack = createNativeStackNavigator();
-
-export function HomeStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Detail" component={DetailScreen} />
-    </Stack.Navigator>
-  );
-}
-```
-
-```tsx
-// App.tsx
-import { NavigationContainer } from '@react-navigation/native';
-import { RootTabs } from './src/navigation/RootTabs';
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <RootTabs />
-    </NavigationContainer>
-  );
-}
-```
-
-`SettingsScreen.tsx` simples:
-```tsx
-import { Text, View } from 'react-native';
-
-export default function SettingsScreen() {
-  return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Settings</Text></View>;
-}
-```
-
-## Passo 4 — Zustand store (~30min)
+## Passo 3 — Zustand store (~25min)
 
 ```bash
 npm install zustand
 ```
-
-**Opção A — Counter** (mais simples):
 
 ```tsx
 // src/store/counterStore.ts
@@ -203,12 +134,12 @@ export const useCounterStore = create<CounterState>((set) => ({
 `App.tsx` (mantém igual ao Passo 2 — sem Provider):
 ```tsx
 import { NavigationContainer } from '@react-navigation/native';
-import { RootTabs } from './src/navigation/RootTabs';
+import RootStack from './src/navigation/RootStack';
 
 export default function App() {
   return (
     <NavigationContainer>
-      <RootTabs />
+      <RootStack />
     </NavigationContainer>
   );
 }
@@ -238,15 +169,15 @@ Refresh — counter funciona + passa pro Detail.
 
 > 💡 **Por que sem Provider?** Zustand cria o store fora da árvore React (módulo singleton). Hook usa `useSyncExternalStore` por baixo dos panos pra inscrever só os componentes que leem. Re-render automático sem boilerplate.
 
-## Passo 5 — README + screenshot (10min)
+## Passo 4 — README + screenshot (~10min)
 
 Copia `template-relatorio.md` desta pasta pra `README.md` no seu repo. Preenche.
 
 Tirar screenshot da `HomeScreen` mostrando contador. Salvar como `screenshot-home.png` na raiz.
 
-## Passo 6 — Entrega
+## Passo 5 — Entrega
 
-Ver guia "Como entregar atividades pelo GitHub" no Canvas (módulo Início).
+Ver guia "Como entregar atividades pelo GitHub" no Canvas (módulo Início) ou `COMO_ENTREGAR.md` na raiz do repo público.
 
 ## Troubleshooting
 
@@ -263,10 +194,49 @@ Ver guia "Como entregar atividades pelo GitHub" no Canvas (módulo Início).
 
 Prompts úteis:
 
-> "Configure React Navigation v7 bottom tabs + stack navigator no meu app Expo blank-typescript"
+> "Configure React Navigation v7 stack navigator com 2 telas Home e Detail no meu app Expo blank-typescript"
 
 > "Crie store Zustand chamado useCounterStore com count + increment/decrement/reset. Sem Provider, sem configureStore. TypeScript tipado."
 
 > "Como tipar params do Stack Navigator no TypeScript?"
 
 ⚠️ Valide cada bloco de código antes de colar — IA às vezes mistura versões antigas/novas.
+
+---
+
+## Apêndice — Bottom Tabs (bonus +2pt)
+
+Se quiser pegar bonus, adicione Bottom Tabs encapsulando o Stack:
+
+```bash
+npx expo install @react-navigation/bottom-tabs
+```
+
+```tsx
+// src/navigation/RootTabs.tsx
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import RootStack from './RootStack';
+import SettingsScreen from '../screens/SettingsScreen';
+
+const Tabs = createBottomTabNavigator();
+
+export default function RootTabs() {
+  return (
+    <Tabs.Navigator>
+      <Tabs.Screen name="HomeTab" component={RootStack} />
+      <Tabs.Screen name="Settings" component={SettingsScreen} />
+    </Tabs.Navigator>
+  );
+}
+```
+
+`App.tsx` agora aponta pra `RootTabs` em vez de `RootStack`.
+
+`SettingsScreen.tsx` simples:
+```tsx
+import { Text, View } from 'react-native';
+
+export default function SettingsScreen() {
+  return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Settings</Text></View>;
+}
+```

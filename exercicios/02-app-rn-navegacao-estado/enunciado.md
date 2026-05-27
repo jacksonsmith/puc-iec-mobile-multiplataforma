@@ -3,7 +3,7 @@
 **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
 **Entrega:** até **10/06/2026** (2 semanas)
 **Modalidade:** individual
-**Tempo estimado:** **~2 horas**
+**Tempo estimado:** **~1h-1h30** (alvo iniciante em RN)
 
 ---
 
@@ -13,7 +13,7 @@ Aula 2 cobriu **React Native New Architecture** (JSI, Fabric, TurboModules) + fe
 
 > 💡 **Nota:** Aula 2 mostrou **Redux Toolkit + RTK Query** porque sustenta apps grandes (enterprise, 10+ devs). Nesta atividade você usa **Zustand** porque é o que mercado 2026 puxa pra apps small-medium (~20M downloads/sem, 1KB bundle, 10x menos boilerplate). Lição arquitetural: **match tool to type of state** — não há winner único. Você sai exposto aos dois.
 
-## Tarefa (3 passos em ~2h)
+## Tarefa (3 passos em ~1h30)
 
 ### 1. Criar app Expo (~10min)
 
@@ -27,47 +27,42 @@ npx expo start --web
 
 Deve abrir browser com app rodando. **Se não rodar, não passe pro próximo passo.**
 
-### 2. Adicionar navegação (~40min)
+### 2. Adicionar navegação (~30min)
 
 Instalar React Navigation v7 + dependências:
 
 ```bash
-npx expo install @react-navigation/native @react-navigation/native-stack @react-navigation/bottom-tabs react-native-screens react-native-safe-area-context
+npx expo install @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context
 ```
 
-Implementar:
-- **Stack Navigator** com 2 telas (`Home` → `Detail` via push)
-- **Bottom Tabs** com 2 tabs (`Home` + `Settings`)
-- `Home` deve ter botão que navega pro `Detail` passando 1 parâmetro
-- `Detail` deve mostrar o parâmetro recebido
+Implementar **Stack Navigator** com 2 telas:
+- `Home` com botão que navega pro `Detail` passando 1 parâmetro
+- `Detail` exibe o parâmetro recebido
 
-### 3. Adicionar estado com Zustand (~30min)
+> Bottom Tabs vai pra seção de bonus — não obrigatório aqui.
+
+### 3. Adicionar estado com Zustand (~25min)
 
 ```bash
 npm install zustand
 ```
 
-Implementar **1 store simples** — escolha 1:
-
-| Opção | Store |
-|---|---|
-| **A** (mais fácil) | `counter` — `increment`/`decrement`/`reset`, exibido na tela `Home` |
-| **B** | `favorites` — adicionar/remover IDs de uma lista (exibida em `Home`) |
-| **C** | `theme` — toggle dark/light, aplicado em `Settings` e afeta cor de fundo de todas as telas |
+Implementar **store counter** em `src/store/counterStore.ts` com:
+- State: `count: number` (começa em 0)
+- Actions: `increment`, `decrement`, `reset`
+- Exibido na tela `Home` com 3 botões disparando as actions
 
 Store deve:
-- Estar em `src/store/<nome>Store.ts` (1 arquivo, sem Provider, sem configureStore)
+- **1 arquivo** (sem Provider, sem configureStore)
 - Hook gerado pelo `create()` consumido direto em qualquer componente
-- 1 botão dispara action do store (ex: `useCounterStore.getState().increment()` ou destructuring)
 - UI lê state via hook e re-renderiza ao tocar no botão
 
 ### 4. README + entrega (~10min)
 
 `README.md` na raiz do projeto com:
 - Nome da atividade + seu nome
-- Stack escolhida (A/B/C)
 - Comando pra rodar (`npm install && npx expo start --web`)
-- 1 screenshot da `Home` mostrando estado
+- 1 screenshot da `Home` mostrando counter funcionando
 - 1 referência
 
 ---
@@ -76,21 +71,22 @@ Store deve:
 
 | Critério | Pontos |
 |---|---|
-| App roda sem erro com `expo start --web` | 3 |
+| App roda sem erro com `expo start --web` | 4 |
 | Stack Navigator: 2 telas + push com parâmetro funcionando | 3 |
-| Bottom Tabs: 2 tabs trocando telas | 2 |
-| Zustand store: action → state → UI atualiza | 4 |
+| Zustand store counter: action → state → UI atualiza | 5 |
 | README + screenshot | 2 |
 | 1 referência citada | 1 |
 
 **Total: 15 pts**
 
 > 🎁 **Bonus** (não conta pra máxima, considerado em arredondamento):
+> - **Bottom Tabs** com 2 tabs (Home + Settings) = +2pt
 > - Deep link funcionando (`expo://detail/<id>`)
 > - MMKV persistindo estado entre reloads
 > - 1 animação Reanimated não-trivial (shared element, gesture, spring)
 > - **TanStack Query** integrando com 1 API real (JSONPlaceholder, PokéAPI)
 > - Hermes habilitado (verificar em `app.json`)
+> - Store `favorites` ou `theme` em vez de counter (mais complexo)
 
 ---
 
@@ -126,6 +122,7 @@ Prompts úteis:
 ## O que você NÃO precisa fazer
 
 - Não precisa app **bonito** (foco em fluxo, não design)
+- **Não precisa Bottom Tabs** (bonus opcional)
 - Não precisa Reanimated, MMKV, TanStack Query (bonus)
 - Não precisa testar (próxima disciplina foca em testes)
 - Não precisa rodar em device físico (web é suficiente)

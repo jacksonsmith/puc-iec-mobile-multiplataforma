@@ -5,7 +5,7 @@
 ## Identificação
 
 - **Aluno:** [seu nome]
-- **Store escolhido:** [A counter / B favorites / C theme]
+- **Bonus implementado:** [se houver — Bottom Tabs, MMKV, etc]
 - **Repo (seu fork):** [URL]
 
 ## Como rodar
@@ -19,7 +19,7 @@ App abre em `http://localhost:8081` (Expo padrão).
 
 ## O que o app faz
 
-[1-3 frases descrevendo: 2 telas Stack, 2 tabs, store X com action Y]
+[1-3 frases descrevendo: 2 telas Stack (Home + Detail), Zustand counter com increment/decrement/reset]
 
 ## Screenshot
 
@@ -31,13 +31,13 @@ App abre em `http://localhost:8081` (Expo padrão).
 
 ```
 src/
-├── navigation/         ← Stack + Tabs config
+├── navigation/
+│   └── RootStack.tsx
 ├── screens/
 │   ├── HomeScreen.tsx
-│   ├── DetailScreen.tsx
-│   └── SettingsScreen.tsx
+│   └── DetailScreen.tsx
 └── store/
-    └── <nome>Store.ts  ← Zustand store (1 arquivo, sem Provider)
+    └── counterStore.ts  ← Zustand store (1 arquivo, sem Provider)
 ```
 
 ## Referência
@@ -48,10 +48,12 @@ src/
 
 ## 🎁 Bonus implementado (opcional)
 
+- [ ] **Bottom Tabs com 2 tabs (Home + Settings) — +2pt**
 - [ ] Deep link `expo://detail/<id>`
 - [ ] MMKV persistindo estado
 - [ ] Animação Reanimated
 - [ ] TanStack Query com API
 - [ ] Hermes habilitado (verificar `app.json` ou `app.config.ts`)
+- [ ] Store `favorites` ou `theme` (em vez de counter)
 
 [Liste o que implementou e cole código relevante OU print de execução]
