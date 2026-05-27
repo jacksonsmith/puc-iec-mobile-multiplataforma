@@ -9,9 +9,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { Movie } from '@/types/movie';
 import { posterUrl } from '@/utils/poster-url';
 import type { RootStackParamList } from '@/routes/RootStack';
-// TODO [Atv2 — Passo 1]: import store de favoritos
+// TODO [TASK 6]: import store de favoritos
 // import { useFavoritesStore } from '@/store/favoritesStore';
-// TODO [Atv2 — Passo 3]: import HeartButton (criar componente Reanimated)
+// TODO [TASK 8]: import HeartButton (criar componente Reanimated)
 // import HeartButton from './HeartButton';
 
 type Props = { movie: Movie };
@@ -20,7 +20,7 @@ export default function MovieCard({ movie }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const poster = posterUrl(movie.poster_path, 'w185');
 
-  // TODO [Atv2 — Passo 1.3]: ler isFavorite + toggle do store
+  // TODO [TASK 6]: ler isFavorite + toggle do store
   // const isFav = useFavoritesStore((s) => s.isFavorite(movie.id));
   // const toggle = useFavoritesStore((s) => s.toggle);
 
@@ -37,11 +37,11 @@ export default function MovieCard({ movie }: Props) {
         <Text style={styles.meta}>⭐ {movie.vote_average.toFixed(1)}</Text>
       </View>
 
-      {/* TODO [Atv2 — Passo 3]: substituir por <HeartButton active={isFav} onPress={() => toggle(movie.id)} /> */}
+      {/* TODO [TASK 8]: substituir por <HeartButton active={isFav} onPress={() => toggle(movie.id)} /> */}
       <Pressable
         onPress={(e) => {
           e.stopPropagation();
-          // TODO [Atv2]: toggle(movie.id)
+          // TODO [TASK 6]: toggle(movie.id)
         }}
         style={styles.heart}
       >

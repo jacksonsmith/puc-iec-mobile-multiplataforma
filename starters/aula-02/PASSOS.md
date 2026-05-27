@@ -1,92 +1,95 @@
-# Passos — Hands-on Aula 2 + Atividade 2
+# Roteiro de Tasks — Hands-on Aula 2 + Atividade 2
 
-Roteiro sequencial. Cada passo tem TODOs no código com a tag correspondente.
+10 tasks sequenciais. Cada task tem TODOs no código com a tag `[TASK N]`.
 
 ```bash
-# Liste todos os TODOs:
-grep -rn "TODO \[" src/ __tests__/
+# Listar todas tasks pendentes:
+grep -rn "TODO \[TASK" src/ __tests__/
+
+# Quantas faltam por task:
+grep -rn "TODO \[TASK" src/ __tests__/ | sed 's/.*TASK /TASK /' | cut -d']' -f1 | sort | uniq -c
 ```
 
 ---
 
-## 🎓 Hands-on da Aula (em sala, ~45min)
+## 🎓 Hands-on da aula (em sala, ~45min) — TASKs 1 a 4
 
-### ✅ Passo 1 — Setup (pronto, não precisa fazer)
-Starter já vem com:
-- App Expo + TypeScript
-- React Navigation v7 configurado em `src/routes/RootStack.tsx`
-- QueryClientProvider + ThemeProvider no `App.tsx`
-- Service TMDB pronto em `src/services/api.ts`
-- Queries de detalhe e busca prontas em `src/queries/movies/`
+### ✅ Setup (pronto, sem TODO)
+- App Expo + TS + React Navigation v7 + QueryClientProvider configurados
+- Service TMDB (`src/services/api.ts`) + 3 queries (`src/queries/movies/`)
+- `npm install` + criar `.env` com TMDB token (ver README)
 
-**Você só precisa:** `npm install` + criar `.env` com TMDB token.
-
-### ✅ Passo 2 — Stack Navigator (pronto)
-`src/routes/RootStack.tsx` já tem Home → Detail configurado.
-
-### 📝 Passo 3 — Zustand counter store
+### 📝 TASK 1 — Zustand counter store
 📁 `src/store/counterStore.ts`
-- **3.1** declarar tipos das actions (increment/decrement/reset)
-- **3.2** implementar store com `create<CounterState>((set) => ...)`
+- Declarar tipos `increment`, `decrement`, `reset` em `CounterState`
+- Implementar actions com `create<CounterState>((set) => ({...}))`
 
-### 📝 Passo 4 — TanStack Query
+### 📝 TASK 2 — TanStack Query `usePopularMovies`
 📁 `src/queries/movies/get-popular-movies.ts`
-- **4** substituir stub `usePopularMovies` por `useQuery` real
+- Substituir stub por `useQuery` real (queryKey, queryFn, staleTime 5min)
 
-### 📝 Passo 5 — FlatList + MovieCard
+### 📝 TASK 3 — FlatList + MovieCard
 📁 `src/screens/MovieList.tsx`
-- **5** trocar placeholder por `<FlatList data={data?.results}>`
+- Trocar placeholder por `<FlatList data={data?.results} renderItem={...} />`
+- Descomentar import de `MovieCard`
 
-### 📝 Bonus aula — Testes com IA
+### 📝 TASK 4 — Testes com IA (counter)
 📁 `__tests__/counterStore.test.ts`
-- Use IA pra gerar testes de `decrement`, `reset`, edge cases
+- Usar IA pra gerar testes `decrement`, `reset`, edge cases
+- Mínimo 3 testes verdes pra counter
 
 ---
 
-## 📦 Atividade 2 (entrega 10/06, 15 pts, ~2h-2h30)
+## 📦 Atividade 2 — assíncrona (entrega 10/06, 15 pts, ~2h-2h30) — TASKs 5 a 10
 
-Estende o app construído no hands-on.
-
-### 📝 Passo 1 — Zustand favorites store (~30min)
+### 📝 TASK 5 — Zustand favorites store
 📁 `src/store/favoritesStore.ts`
-- **1.1** declarar tipos `add`, `remove`, `clear`
-- **1.2** implementar actions (toggle: add se não existe, remove se existe)
-- **1.3** consumir em `src/components/MovieCard.tsx` (ler `isFavorite` + `toggle`)
+- Declarar tipos `add`, `remove`, `clear`
+- Implementar `toggle` (add se não existe, remove se existe)
 
-### 📝 Passo 2 — Persistência MMKV (~30min)
+### 📝 TASK 6 — Integrar favorites em MovieCard
+📁 `src/components/MovieCard.tsx`
+- Importar `useFavoritesStore`
+- Ler `isFavorite(movie.id)` + chamar `toggle(movie.id)` no Pressable do ❤️
+
+### 📝 TASK 7 — Persistência MMKV
 📁 `src/storage/mmkv.ts` + atualizar `src/store/favoritesStore.ts`
-- **2.1** criar instância MMKV + adapter `mmkvStorage` (getItem/setItem/removeItem)
-- **2.2** envolver `create()` do favoritesStore com `persist({ name, storage })`
+- Criar instância MMKV + adapter `mmkvStorage`
+- Envolver `create()` do favoritesStore com `persist({ name, storage })`
 
-### 📝 Passo 3 — Reanimated não-trivial (~45min)
+### 📝 TASK 8 — HeartButton Reanimated (escolha A/B/C)
 📁 criar `src/components/HeartButton.tsx` + integrar em `MovieCard.tsx` e `MovieDetail.tsx`
-- **3** escolher **1**:
-  - **A — Heart pop:** scale spring (1 → 1.4 → 1.0) com `withSequence + withSpring`
-  - **B — Card swipe:** `useAnimatedGestureHandler` com threshold
-  - **C — Shared element:** poster cresce com `withSpring` ao navegar pro detail
+- **A — Heart pop:** `withSequence(withTiming(1.4), withSpring(1))`
+- **B — Card swipe:** `useAnimatedGestureHandler` com threshold
+- **C — Shared element:** poster cresce com `withSpring` ao navegar
 
-### 📝 Passo 4 — Testes com IA (~20min)
-📁 `__tests__/favoritesStore.test.ts` + expandir `__tests__/counterStore.test.ts`
-- **Mínimo 6 testes verdes** (3 counter + 3 favorites)
-- CI GitHub Actions valida automático no push do fork (`.github/workflows/test.yml`)
+### 📝 TASK 9 — Testes com IA (favorites)
+📁 `__tests__/favoritesStore.test.ts`
+- 3+ testes verdes pra `toggle`, `isFavorite`, `clear`
+- Total CI: **≥ 6 testes verdes** (3 counter TASK 4 + 3 favorites TASK 9)
 
-### 📝 Passo 5 — README + screencast + entrega
+### 📝 TASK 10 — README + screencast + entrega
 - `README.md` com nome, opção Reanimated (A/B/C), screenshot, screencast.gif
-- Push pro fork → CI verde → link no Canvas
+- Push pro fork → CI verde → cole link no Canvas
 
 ---
 
-## Verificação rápida do progresso
+## Verificação rápida
 
 ```bash
-# Quantos TODOs ainda faltam:
-grep -c "TODO \[" src/**/*.ts src/**/*.tsx __tests__/*.ts
-
 # App rodando:
 npx expo start
 
 # Testes verdes:
 npm test
+
+# Quantas tasks faltam:
+grep -c "TODO \[TASK" src/**/*.ts src/**/*.tsx __tests__/*.ts
+
+# Lista detalhada:
+grep -rn "TODO \[TASK" src/ __tests__/
 ```
 
-CI verde no Actions = pelo menos 6 testes passando.
+CI workflow (`.github/workflows/test.yml`) valida no push do fork:
+- `numPassedTests >= 6` → CI verde
+- Senão → CI vermelho, perde pontos

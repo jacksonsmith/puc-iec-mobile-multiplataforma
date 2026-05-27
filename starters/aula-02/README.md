@@ -102,21 +102,26 @@ CI roda automático em todo push pro `main` do seu fork. Mínimo: **6 testes ver
 
 ---
 
-## TODOs guiados
+## Tasks guiadas
 
-Procura por `TODO [` no código:
+10 tasks sequenciais. Lista completa em [`PASSOS.md`](./PASSOS.md).
 
 ```bash
-grep -rn "TODO \[" src/ __tests__/
+grep -rn "TODO \[TASK" src/ __tests__/
 ```
 
-- `[Passo 3]` → hands-on aula (Zustand counter)
-- `[Passo 4]` → hands-on aula (TanStack Query)
-- `[Passo 5]` → hands-on aula (FlatList)
-- `[Atv2 — Passo 1]` → Atividade 2 (favorites store)
-- `[Atv2 — Passo 2]` → Atividade 2 (MMKV persist)
-- `[Atv2 — Passo 3]` → Atividade 2 (Reanimated HeartButton)
-- `[aluno + IA]` → testes a gerar com IA
+| Tag | Hands-on aula | Atividade 2 |
+|---|---|---|
+| TASK 1 | Zustand counter store | — |
+| TASK 2 | TanStack Query | — |
+| TASK 3 | FlatList + MovieCard | — |
+| TASK 4 | Testes counter (IA) | — |
+| TASK 5 | — | Zustand favorites |
+| TASK 6 | — | Integrar favorites em MovieCard |
+| TASK 7 | — | MMKV persist |
+| TASK 8 | — | HeartButton Reanimated |
+| TASK 9 | — | Testes favorites (IA) |
+| TASK 10 | — | README + screencast + entrega |
 
 ---
 

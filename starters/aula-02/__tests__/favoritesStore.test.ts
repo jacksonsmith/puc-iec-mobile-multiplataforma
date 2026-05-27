@@ -2,7 +2,7 @@
 //
 // ATIVIDADE 2 — testar useFavoritesStore.
 //
-// TODO [Atv2 + IA]: gerar testes pra favoritesStore.
+// TODO [TASK 9]: gerar testes pra favoritesStore usando IA.
 //
 // Prompt sugerido:
 //   "Gere testes Jest pra useFavoritesStore (Zustand) cobrindo:
@@ -21,7 +21,7 @@ describe('favoritesStore', () => {
     useFavoritesStore.setState({ ids: [] });
   });
 
-  // TODO [Atv2 + IA]: adicione 3+ testes aqui.
+  // TODO [TASK 9]: adicione 3+ testes aqui (use IA).
   test.skip('placeholder — remova quando implementar', () => {
     expect(true).toBe(true);
   });

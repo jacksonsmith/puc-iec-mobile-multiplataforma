@@ -9,7 +9,7 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { usePopularMovies } from '@/queries/movies/get-popular-movies';
 import { useCounterStore } from '@/store/counterStore';
-// TODO [Atividade 2]: descomentar quando criar MovieCard com favoritos
+// TODO [TASK 3]: descomentar quando renderizar MovieCard
 // import MovieCard from '@/components/MovieCard';
 
 export default function MovieList() {
@@ -32,7 +32,7 @@ export default function MovieList() {
     );
   }
 
-  // TODO [Passo 5]: substituir o stub abaixo por FlatList
+  // TODO [TASK 3]: substituir o stub abaixo por FlatList
   //
   //   <FlatList
   //     data={data?.results ?? []}
@@ -44,7 +44,7 @@ export default function MovieList() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Counter: {count}</Text>
-      <Text>TODO [Passo 5]: renderizar FlatList aqui</Text>
+      <Text>TODO [TASK 3]: renderizar FlatList aqui</Text>
       <Text style={styles.hint}>{data?.results?.length ?? 0} filmes carregados</Text>
     </View>
   );

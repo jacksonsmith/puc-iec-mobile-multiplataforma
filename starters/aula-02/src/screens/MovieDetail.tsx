@@ -29,7 +29,7 @@ export default function MovieDetail({ route }: Props) {
       </Text>
       <Text style={styles.overview}>{data.overview}</Text>
 
-      {/* TODO [Atv2 — Passo 3 Reanimated]: adicionar HeartButton aqui usando useFavoritesStore */}
+      {/* TODO [TASK 8]: adicionar HeartButton aqui (Reanimated worklet) */}
     </ScrollView>
   );
 }

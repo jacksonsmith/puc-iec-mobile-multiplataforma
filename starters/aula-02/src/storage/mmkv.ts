@@ -7,12 +7,12 @@
 // Conceito: MMKV é storage síncrono em C++ (via JSI), ~30x mais rápido
 // que AsyncStorage. Funciona em iOS/Android nativo (NÃO em web).
 
-// TODO [Atv2 — Passo 2.1]: descomente as 3 linhas abaixo
+// TODO [TASK 7]: descomente as 3 linhas abaixo
 // import { MMKV } from 'react-native-mmkv';
 //
 // const storage = new MMKV({ id: 'favorites-store' });
 
-// TODO [Atv2 — Passo 2.2]: implementar adapter compatível com Zustand persist
+// TODO [TASK 7]: implementar adapter compatível com Zustand persist
 //
 // Zustand persist espera interface { getItem, setItem, removeItem }.
 // MMKV tem API diferente (getString, set, delete) — precisa adapter.

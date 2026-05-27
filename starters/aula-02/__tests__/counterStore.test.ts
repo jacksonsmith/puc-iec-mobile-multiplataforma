@@ -2,7 +2,7 @@
 //
 // Exemplo de teste pra Zustand store.
 //
-// TODO [aluno + IA]: expandir com mais 2 testes (decrement, reset, edge cases).
+// TODO [TASK 4]: expandir com mais 2 testes (decrement, reset, edge cases) usando IA.
 //
 // Prompt sugerido pra IA:
 //   "Adicione testes Jest pra useCounterStore cobrindo:
@@ -23,6 +23,6 @@ describe('counterStore', () => {
     expect(useCounterStore.getState().count).toBe(1);
   });
 
-  // TODO [aluno + IA]: adicione testes pra decrement, reset, edge cases.
+  // TODO [TASK 4]: adicione testes pra decrement, reset, edge cases (use IA).
   // Mínimo 3 testes verdes pra CI passar.
 });
