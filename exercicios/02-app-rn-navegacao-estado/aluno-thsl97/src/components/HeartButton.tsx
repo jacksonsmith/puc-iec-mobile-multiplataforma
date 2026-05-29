@@ -1,4 +1,4 @@
-import { Pressable } from "react-native";
+import { GestureResponderEvent, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -20,7 +20,8 @@ export function HeartButton({
     transform: [{ scale: scale.value }],
   }));
 
-  const handlePress = () => {
+  const handlePress = (e: GestureResponderEvent) => {
+    e.stopPropagation();
     scale.value = withSequence(
       withTiming(1.4, { duration: 120 }),
       withSpring(1, { damping: 4 }),
