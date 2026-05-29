@@ -23,6 +23,29 @@ describe('counterStore', () => {
     expect(useCounterStore.getState().count).toBe(1);
   });
 
-  // TODO [TASK 4]: adicione testes pra decrement, reset, edge cases (use IA).
-  // Mínimo 3 testes verdes pra CI passar.
+  test('decrement diminui count em 1', () => {
+    useCounterStore.setState({ count: 1 });
+
+    useCounterStore.getState().decrement?.();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
+
+  test('reset volta count pra 0 apos mutacoes', () => {
+    useCounterStore.getState().increment?.();
+    useCounterStore.getState().increment?.();
+    useCounterStore.getState().decrement?.();
+
+    useCounterStore.getState().reset?.();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
+
+  test('100 increments seguidos resultam em count igual a 100', () => {
+    for (let index = 0; index < 100; index += 1) {
+      useCounterStore.getState().increment?.();
+    }
+
+    expect(useCounterStore.getState().count).toBe(100);
+  });
 });
