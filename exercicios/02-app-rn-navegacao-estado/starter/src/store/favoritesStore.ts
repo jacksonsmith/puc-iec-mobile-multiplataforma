@@ -6,7 +6,7 @@
 
 import { create } from "zustand";
 // TODO [TASK 7]: descomentar quando implementar persist (depois de mmkv.ts pronto)
-// import { mmkvStorage } from '@/storage/mmkv';
+import { mmkvStorage } from "@/storage/mmkv";
 
 type FavoritesState = {
   ids: number[];
@@ -18,17 +18,19 @@ type FavoritesState = {
 };
 
 // TODO [TASK 7]: ler estado inicial do storage (persist load)
-// const STORAGE_KEY = 'favorites-ids';
-// const loadInitial = (): number[] => {
-//   try {
-//     const raw = mmkvStorage.getItem(STORAGE_KEY);
-//     return raw ? JSON.parse(raw) : [];
-//   } catch { return []; }
-// };
+const STORAGE_KEY = "favorites-ids";
+const loadInitial = (): number[] => {
+  try {
+    const raw = mmkvStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
 
 // TODO [TASK 5]: implementar actions abaixo
 export const useFavoritesStore = create<FavoritesState>((set, get) => ({
-  ids: [], // TODO [TASK 7]: trocar por loadInitial() pra carregar do storage
+  ids: loadInitial(),
   toggle: (id) => {
     const { ids, remove, add } = get();
     const exists = ids.includes(id);
@@ -58,11 +60,11 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
 }));
 
 // TODO [TASK 7]: persist manual — salva no storage sempre que ids mudar
-// useFavoritesStore.subscribe((state) => {
-//   try {
-//     mmkvStorage.setItem('favorites-ids', JSON.stringify(state.ids));
-//   } catch {}
-// });
+useFavoritesStore.subscribe((state) => {
+  try {
+    mmkvStorage.setItem("favorites-ids", JSON.stringify(state.ids));
+  } catch {}
+});
 //
 // Por que persist manual em vez de middleware?
 // Zustand devtools middleware usa import.meta.env (Vite-style) que quebra
