@@ -3,7 +3,7 @@
 // ATIVIDADE 2 — tela de detalhe do filme.
 // Demonstra TanStack Query em outra tela (já implementado).
 
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   ActivityIndicator,
   Image,
@@ -12,24 +12,29 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import { useMovieById } from '@/queries/movies/get-movie-by-id';
-import { posterUrl } from '@/utils/poster-url';
-import { isTokenError } from '@/services/api';
-import TokenMissingScreen from '@/components/TokenMissingScreen';
-import type { RootStackParamList } from '@/routes/RootStack';
+} from "react-native";
+import { useMovieById } from "@/queries/movies/get-movie-by-id";
+import { posterUrl } from "@/utils/poster-url";
+import { isTokenError } from "@/services/api";
+import TokenMissingScreen from "@/components/TokenMissingScreen";
+import type { RootStackParamList } from "@/routes/RootStack";
+import { HeartButton } from "../components/HeartButton";
+import { useFavoritesStore } from "../store/favoritesStore";
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
+type Props = NativeStackScreenProps<RootStackParamList, "Detail">;
 
 export default function MovieDetail({ route, navigation }: Props) {
   const { id } = route.params;
   const { data, isLoading, error } = useMovieById(id);
+  const isFav = useFavoritesStore((s) => s.isFavorite(id));
+  const toggle = useFavoritesStore((s) => s.toggle);
 
   if (isTokenError(error)) return <TokenMissingScreen />;
   if (isLoading) return <ActivityIndicator style={styles.center} />;
-  if (error || !data) return <Text style={styles.center}>Erro ao carregar</Text>;
+  if (error || !data)
+    return <Text style={styles.center}>Erro ao carregar</Text>;
 
-  const poster = posterUrl(data.poster_path, 'w500');
+  const poster = posterUrl(data.poster_path, "w500");
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -44,6 +49,7 @@ export default function MovieDetail({ route, navigation }: Props) {
       <View style={styles.headerRow}>
         <Text style={styles.title}>{data.title}</Text>
         {/* TODO [TASK 8]: <HeartButton active={isFav} onPress={() => toggle(id)} /> */}
+        <HeartButton active={isFav} onPress={() => toggle(id)} />
       </View>
 
       <Text style={styles.meta}>
@@ -56,18 +62,22 @@ export default function MovieDetail({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 12 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
   backButton: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderRadius: 6,
   },
-  backText: { fontSize: 15, color: '#0066cc', fontWeight: '500' },
-  poster: { width: 200, height: 300, alignSelf: 'center', borderRadius: 8 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: 'bold', flex: 1 },
-  meta: { color: '#666' },
+  backText: { fontSize: 15, color: "#0066cc", fontWeight: "500" },
+  poster: { width: 200, height: 300, alignSelf: "center", borderRadius: 8 },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  title: { fontSize: 22, fontWeight: "bold", flex: 1 },
+  meta: { color: "#666" },
   overview: { fontSize: 14, lineHeight: 20 },
 });
