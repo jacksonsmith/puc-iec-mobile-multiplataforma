@@ -13,13 +13,13 @@ import { create } from 'zustand';
 
 type CounterState = {
   count: number;
-  // TODO [TASK 1]: declarar tipos das actions abaixo
+  // DONE [TASK 1]: declarar tipos das actions abaixo
   increment: () => void;
   decrement: () => void;
   reset: () => void;
 };
 
-// TODO [TASK 1]: implementar store com create<CounterState>((set) => ({...}))
+// DONE [TASK 1]: implementar store com create<CounterState>((set) => ({...}))
 // - count inicial = 0
 // - increment: set((s) => ({ count: s.count + 1 }))
 // - decrement: set((s) => ({ count: s.count - 1 }))

@@ -11,7 +11,7 @@ import { usePopularMovies } from '@/queries/movies/get-popular-movies';
 import { useCounterStore } from '@/store/counterStore';
 import { isTokenError, isTokenMissing } from '@/services/api';
 import TokenMissingScreen from '@/components/TokenMissingScreen';
-// TODO [TASK 3]: descomentar quando renderizar MovieCard
+// DONE [TASK 3]: descomentar quando renderizar MovieCard
 import MovieCard from '@/components/MovieCard';
 
 export default function MovieList() {
@@ -39,7 +39,7 @@ export default function MovieList() {
     );
   }
 
-  // TODO [TASK 3]: substituir o stub abaixo por FlatList
+  // DONE [TASK 3]: substituir o stub abaixo por FlatList
 
   return (
     <FlatList

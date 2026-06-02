@@ -21,7 +21,7 @@ const fetchPopularMovies = async (page = 1) => {
   return res.data;
 };
 
-// TODO [TASK 2]: substituir o stub abaixo pelo useQuery real
+// DONE [TASK 2]: substituir o stub abaixo pelo useQuery real
 export const usePopularMovies = (page = 1) =>
   useQuery({
     queryKey: ['movies', 'popular', page],
