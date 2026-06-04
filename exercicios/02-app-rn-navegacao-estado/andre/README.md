@@ -27,8 +27,6 @@ O App tem como objetivo listar os filmes mais populares e do TMDB, visualizar su
 
 ![Animação Reanimated](./gif-funcionalidades.gif)
 
-> Substitua pelas mídias reais. GIF deve ter 15-30s mostrando a animação acontecendo.
-
 ## Arquitetura
 
 ```
