@@ -54,6 +54,7 @@ Será utilizada a Stack Nativa para cada Smartphone(Switft + Android Nativo) com
 - **Reuso do código**: ~70% compartilhado entre iOS e Android com a utilização de KMP
 - **Performance**: Utilização de ferramentas nativas para performance
 - **Time-to-market:** Lógica unificada acessivel via KMP ainda oferece um ótimo Time-to-market
+- **Eficiência Energética:**: Utilizando tecnologias nátivas conseguimos também ter uma performance melhor e com isso uma melhor eficiência energética
 
 ### Negativas
 
@@ -61,6 +62,7 @@ Será utilizada a Stack Nativa para cada Smartphone(Switft + Android Nativo) com
 - **Adequação do time**: Ainda na questão da tecnologia, é necessário que o time se capacite antes para utilizar essa nova tecnologia
 - **Time híbrido**: Ainda é necessário times especificos por plataforma, visto que ainda é necessário funcionalidades
 nativas para IOS e Android, além do visual
+- **Tooling complexo**: Necessita de mais configuração, principalmente do Gradle + Xcode em dispositivos Apple, gerando mais complexidade no desenvolvimento.
 
 ### Mitigações
 
