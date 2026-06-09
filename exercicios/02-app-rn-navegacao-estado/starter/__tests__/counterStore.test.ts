@@ -2,8 +2,6 @@
 //
 // Exemplo de teste pra Zustand store.
 //
-// TODO [TASK 4]: expandir com mais 2 testes (decrement, reset, edge cases) usando IA.
-//
 // Prompt sugerido pra IA:
 //   "Adicione testes Jest pra useCounterStore cobrindo:
 //    - decrement diminui count em 1
@@ -13,16 +11,45 @@
 
 import { useCounterStore } from '../src/store/counterStore';
 
+type CounterStoreForTest = {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
+};
+
+const counterStore = () => useCounterStore.getState() as CounterStoreForTest;
+
 describe('counterStore', () => {
   beforeEach(() => {
     useCounterStore.setState({ count: 0 });
   });
 
   test('increment aumenta count em 1', () => {
-    useCounterStore.getState().increment?.();
+    counterStore().increment();
     expect(useCounterStore.getState().count).toBe(1);
   });
 
-  // TODO [TASK 4]: adicione testes pra decrement, reset, edge cases (use IA).
-  // Mínimo 3 testes verdes pra CI passar.
+  test('decrement diminui count em 1', () => {
+    counterStore().decrement();
+    expect(useCounterStore.getState().count).toBe(-1);
+  });
+
+  test('reset volta count para 0 apos mutacoes', () => {
+    counterStore().increment();
+    counterStore().increment();
+    counterStore().decrement();
+
+    counterStore().reset();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
+
+  test('100 increments seguidos resultam em count 100', () => {
+    for (let i = 0; i < 100; i += 1) {
+      counterStore().increment();
+    }
+
+    expect(useCounterStore.getState().count).toBe(100);
+  });
 });
