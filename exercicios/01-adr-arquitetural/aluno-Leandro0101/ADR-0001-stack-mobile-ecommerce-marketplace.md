@@ -6,7 +6,7 @@
 
 `Aceito` (2026-05-22)
 
-**Autor:** Leandro Vieira
+**Autor:** Leandro Lima
 
 Decisão alinhada numa reunião com o Tech Lead de Mobile e revisada depois com o Head de Growth (que puxou bastante o ponto do OTA e das campanhas semanais) e com o líder da plataforma de pagamentos, que botou o pé no freio sobre manter o caminho de pagamento em código nativo auditável.
 
@@ -102,4 +102,4 @@ Como pretendemos lidar com isso:
 
 | Data | Autor | Mudança |
 |------|-------|---------|
-| 2026-05-22 | Leandro Vieira | Versão inicial |
+| 2026-05-22 | Leandro Lima | Versão inicial |

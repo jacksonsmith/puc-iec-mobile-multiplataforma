@@ -1,4 +1,4 @@
-# Atividade 1 — ADR Arquitetural · Leandro Vieira (@Leandro0101)
+# Atividade 1 — ADR Arquitetural · Leandro Lima (@Leandro0101)
 
 → ADR principal: [`ADR-0001-stack-mobile-ecommerce-marketplace.md`](./ADR-0001-stack-mobile-ecommerce-marketplace.md)
 
