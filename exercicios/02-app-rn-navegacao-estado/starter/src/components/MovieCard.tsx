@@ -6,27 +6,35 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Movie } from '@/types/movie';
 import { posterUrl } from '@/utils/poster-url';
 import type { RootStackParamList } from '@/routes/RootStack';
-// TODO [TASK 6]: import store de favoritos
-// import { useFavoritesStore } from '@/store/favoritesStore';
-// TODO [TASK 8]: import HeartButton (criar componente Reanimated)
-// import HeartButton from './HeartButton';
+import { fetchMovieById } from '@/queries/movies/get-movie-by-id';
+import { useFavoritesStore } from '@/store/favoritesStore';
+import HeartButton from './HeartButton';
 
 type Props = { movie: Movie };
 
 export default function MovieCard({ movie }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const queryClient = useQueryClient();
   const poster = posterUrl(movie.poster_path, 'w185');
 
-  // TODO [TASK 6]: ler isFavorite + toggle do store
-  // const isFav = useFavoritesStore((s) => s.isFavorite(movie.id));
-  // const toggle = useFavoritesStore((s) => s.toggle);
+  const isFav = useFavoritesStore((s) => s.isFavorite(movie.id));
+  const toggle = useFavoritesStore((s) => s.toggle);
+
+  const handlePress = () => {
+    queryClient.prefetchQuery({
+      queryKey: ['movie', movie.id],
+      queryFn: () => fetchMovieById(movie.id),
+    });
+    navigation.navigate('Detail', { id: movie.id, title: movie.title });
+  };
 
   return (
     <Pressable
-      onPress={() => navigation.navigate('Detail', { id: movie.id, title: movie.title })}
+      onPress={handlePress}
       style={styles.card}
     >
       {poster && <Image source={{ uri: poster }} style={styles.poster} />}
@@ -36,17 +44,8 @@ export default function MovieCard({ movie }: Props) {
         </Text>
         <Text style={styles.meta}>⭐ {movie.vote_average.toFixed(1)}</Text>
       </View>
-
-      {/* TODO [TASK 8]: substituir por <HeartButton active={isFav} onPress={() => toggle(movie.id)} /> */}
-      <Pressable
-        onPress={(e) => {
-          e.stopPropagation();
-          // TODO [TASK 6]: toggle(movie.id)
-        }}
-        style={styles.heart}
-      >
-        <Text style={styles.heartIcon}>🤍</Text>
-      </Pressable>
+      
+      {<HeartButton active={isFav} onPress={() => toggle(movie.id)} />}
     </Pressable>
   );
 }

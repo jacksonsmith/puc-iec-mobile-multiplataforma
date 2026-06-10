@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import type { Movie } from '@/types/movie';
 
-const fetchMovieById = async (id: number) => {
+export const fetchMovieById = async (id: number) => {
   const res = await api.get<Movie>(`/movie/${id}`);
   return res.data;
 };
