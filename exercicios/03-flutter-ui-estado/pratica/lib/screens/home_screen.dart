@@ -1,9 +1,3 @@
-// lib/screens/home_screen.dart
-//
-// A lista já está pronta (usa o MovieCard).
-// Ex2 (TASK 4): contador de favoritos no header.
-// Ex2 (TASK 5): botão "limpar" favoritos.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../state/favorites.dart';
@@ -19,12 +13,13 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Filmes'),
         actions: [
-          // ── Ex2 · TASK 5 — botão "limpar" favoritos · 🧑‍💻 EM CASA (sozinho) ──
-          // adicione um IconButton(icon: Icon(Icons.delete_outline)) que chama
-          //   ref.read(favoritesProvider.notifier).clear()
+          IconButton(
+              onPressed: () => {ref.read(favoritesProvider.notifier).clear()},
+              icon: Icon(Icons.delete_outline)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Center(child: Text('♥ ${ref.watch(favoritesProvider).length}')),
+            child:
+                Center(child: Text('♥ ${ref.watch(favoritesProvider).length}')),
           ),
         ],
       ),
