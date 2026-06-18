@@ -34,8 +34,20 @@ class MovieCard extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Text(movie.title),
-      ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(movie.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                Icon(Icons.star, color: Colors.amber, size: 18), Text(' ${movie.rating}')
+              ]
+            ),
+            Text(movie.year, style: TextStyle(color: Colors.grey)),
+          ]
+        )
+      )
     );
   }
 }
