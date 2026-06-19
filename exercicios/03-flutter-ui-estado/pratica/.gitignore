@@ -8,3 +8,5 @@ pubspec.lock
 *.iml
 .idea/
 .vscode/
+web/
+.metadata

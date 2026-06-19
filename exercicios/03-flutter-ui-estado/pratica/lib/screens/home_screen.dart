@@ -5,30 +5,47 @@
 // Ex2 (TASK 5): botão "limpar" favoritos.
 
 import 'package:flutter/material.dart';
-// TASK 4/5 — vire `ConsumerWidget` (build(context, ref)) e descomente:
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../state/favorites.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../state/favorites.dart';
 import '../data/movies.dart';
 import '../widgets/movie_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final favoriteCount = ref.watch(favoritesProvider).length;
+
+    bool hasFavs() {
+      return favoriteCount > 0;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Filmes'),
-        actions: const [
-          // ── Ex2 · TASK 5 — botão "limpar" favoritos · 🧑‍💻 EM CASA (sozinho) ──
-          // adicione um IconButton(icon: Icon(Icons.delete_outline)) que chama
-          //   ref.read(favoritesProvider.notifier).clear()
-          //
-          // ── Ex2 · TASK 4 — contador de favoritos · 🧑‍💻 EM CASA (sozinho) ─────
-          // troque o '0' por ref.watch(favoritesProvider).length
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            onPressed: () => ref.read(favoritesProvider.notifier).clear(),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Center(child: Text('♥ 0')),
+            child: Center(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "♥", style: TextStyle(color: hasFavs() ? Colors.red : Colors.grey)
+                    ),
+                    TextSpan(
+                      text: ' $favoriteCount'
+                    )
+                  ]
+                )
+              ),
+            ),
           ),
         ],
       ),
