@@ -26,7 +26,7 @@ npm test
 ![Tela de filmes](exercicios/02-app-rn-navegacao-estado/starter/screenshot.png)
 
 ## Screencast
-![Demo do app](exercicios/02-app-rn-navegacao-estado/starter/video-app-cinema.gif)
+![Demo do app](exercicios/02-app-rn-navegacao-estado/starter/screencast.gif)
 
 ## Referência
 - [Documentação do Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
