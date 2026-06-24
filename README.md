@@ -22,9 +22,11 @@ npm test
 \`\`\`
 
 ## Demonstração
-![Demo do app](./video-app-cinema.gif)
+## Screenshot
+![Tela de filmes](exercicios/02-app-rn-navegacao-estado/starter/screenshot.png)
 
-> Vídeo completo: [video-app-cinema.mp4](./video-app-cinema.mp4)
+## Screencast
+![Demo do app](exercicios/02-app-rn-navegacao-estado/starter/video-app-cinema.gif)
 
 ## Referência
 - [Documentação do Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
