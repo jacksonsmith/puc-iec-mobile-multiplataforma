@@ -19,6 +19,8 @@ export function NetworkToggle() {
 
   const clearCache = async () => {
     await clearMovies();
+    setSimulateOffline(false);
+    setOffline(false);
     window.location.reload();
   };
 
