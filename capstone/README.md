@@ -46,3 +46,4 @@ npm run dev      # Apollo em http://localhost:4000/  (GraphQL Sandbox)
 ```
 
 Usuários de seed: `ada@cinehub.dev` / `senha1234` e `alan@cinehub.dev` / `senha1234`.
+
