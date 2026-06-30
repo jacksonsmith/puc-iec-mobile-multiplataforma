@@ -54,7 +54,7 @@ export const resolvers = {
       return {
         page,
         results: rows.map(toMovie),
-        totalPages: Math.floor(total / pageSize),
+        totalPages: Math.ceil(total / pageSize),
         totalResults: total,
       };
     },
