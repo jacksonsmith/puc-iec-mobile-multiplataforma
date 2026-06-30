@@ -4,7 +4,7 @@ import { styles } from './MovieCardSkeleton.styles';
 
 export function MovieCardSkeleton() {
   return (
-    <article style={styles.card}>
+    <div style={styles.card} aria-hidden="true">
       <div style={{ ...styles.shimmer, width: 80, height: 120, borderRadius: 4, flexShrink: 0 }} />
       <div style={styles.info}>
         <div style={{ ...styles.shimmer, height: 16, width: '60%', marginBottom: 8 }} />
@@ -12,7 +12,7 @@ export function MovieCardSkeleton() {
         <div style={{ ...styles.shimmer, height: 13, width: '100%', marginBottom: 4 }} />
         <div style={{ ...styles.shimmer, height: 13, width: '80%' }} />
       </div>
-    </article>
+    </div>
   );
 }
 
