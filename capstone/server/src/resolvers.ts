@@ -182,3 +182,5 @@ export const resolvers = {
     },
   },
 };
+
+// smoketest (sem corrigir a vuln)
