@@ -1,0 +1,28 @@
+# Gate genérico do CineHub — roda em TODO push e PR.
+# Não dá nota: só garante que o projeto está saudável (build/type/test verdes)
+# antes de qualquer grader específico de task rodar.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Testes
+        run: npm test
