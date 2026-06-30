@@ -19,14 +19,14 @@ describe('fetchPopularMovies', () => {
       data: { results: fakeMovies, page: 1, total_pages: 5, total_results: 100 },
     });
 
-    const movies = await fetchPopularMovies();
+    const response = await fetchPopularMovies();
 
     expect(tmdbClient.get).toHaveBeenCalledWith(
       '/movie/popular',
       expect.objectContaining({ params: expect.objectContaining({ language: 'pt-BR' }) }),
     );
-    expect(movies).toHaveLength(2);
-    expect(movies[0].title).toBe('Matrix');
+    expect(response.results).toHaveLength(2);
+    expect(response.results[0].title).toBe('Matrix');
   });
 
   it('2. propaga erro quando tmdbClient lança (ex.: token inválido)', async () => {

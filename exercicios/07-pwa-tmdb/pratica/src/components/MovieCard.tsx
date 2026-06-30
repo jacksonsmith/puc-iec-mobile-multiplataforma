@@ -46,7 +46,7 @@ export function MovieCard({ movie, isFavorite, onToggleFavorite }: Props) {
           >
             {isFavorite ? '★ Favorito' : '☆ Favoritar'}
           </button>
-          {navigator.share && (
+          {typeof navigator.share === 'function' && (
             <button onClick={handleShare} style={{ ...styles.btn, border: '1px solid #2a3f55' }} aria-label="Compartilhar">
               ↗ Compartilhar
             </button>

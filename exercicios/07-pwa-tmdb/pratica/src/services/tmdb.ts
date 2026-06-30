@@ -20,13 +20,16 @@ export const tmdbClient = axios.create({
 // Implemente fetchPopularMovies usando tmdbClient.
 //
 // Endpoint: GET /movie/popular
-// Params  : { language: 'pt-BR', page: 1 }
+// Params  : { language: 'pt-BR', page }
 //
 // Dica: const { data } = await tmdbClient.get<MoviesResponse>(...)
-//       retorne data.results
+//       retorne data (MoviesResponse completo — o hook precisa de total_pages)
 // ───────────────────────────────────────────────────────────────────────────
 
-export async function fetchPopularMovies(): Promise<Movie[]> {
+export async function fetchPopularMovies(page = 1): Promise<MoviesResponse> {
   // TODO 1: substitua o stub abaixo pela chamada real
-  return [];
+  const { data } = await tmdbClient.get<MoviesResponse>('/movie/popular', {
+    params: { language: 'pt-BR', page },
+  });
+  return data;
 }

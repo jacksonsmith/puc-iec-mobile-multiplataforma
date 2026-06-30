@@ -1,15 +1,20 @@
 // src/screens/HomeScreen.tsx
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { usePopularMovies, isTokenMissing } from '../hooks/useTmdb';
 import { useFavorites } from '../hooks/useFavorites';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { MovieCard } from '../components/MovieCard';
 import { InstallButton } from '../components/InstallButton';
+import { ErrorScreen } from './ErrorScreen';
 
 export function HomeScreen() {
-  const { movies, loading, error } = usePopularMovies();
+  const { movies, loading, error, hasMore, loadMore } = usePopularMovies();
   const { isFavorite, toggle, count } = useFavorites();
   const [search, setSearch] = useState('');
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useInfiniteScroll(sentinelRef, loadMore);
 
   if (isTokenMissing) {
     return (
@@ -29,8 +34,7 @@ export function HomeScreen() {
     );
   }
 
-  if (loading) return <main style={styles.center}><p>Carregando…</p></main>;
-  if (error)   return <main style={styles.center}><p style={{ color: '#e57373' }}>Erro: {error}</p></main>;
+  if (error) return <ErrorScreen error={error} />;
 
   const visible = search.trim()
     ? movies.filter((m) => m.title.toLowerCase().includes(search.toLowerCase()))
@@ -72,6 +76,10 @@ export function HomeScreen() {
           />
         ))}
       </section>
+
+      {/* Sentinel — IntersectionObserver dispara loadMore quando chegar aqui */}
+      {hasMore && <div ref={sentinelRef} style={{ height: 1 }} />}
+      {loading && <p style={styles.loadingMore}>Carregando mais…</p>}
     </main>
   );
 }
@@ -99,4 +107,5 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: 16,
     outline: 'none',
   },
+  loadingMore: { textAlign: 'center', color: '#90a4ae', padding: '16px 0' },
 };
