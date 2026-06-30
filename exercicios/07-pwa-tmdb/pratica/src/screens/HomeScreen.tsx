@@ -5,6 +5,7 @@ import { usePopularMovies, isTokenMissing } from '../hooks/useTmdb';
 import { useFavorites } from '../hooks/useFavorites';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { MovieCard } from '../components/MovieCard';
+import { MovieCardSkeleton } from '../components/MovieCardSkeleton';
 import { InstallButton } from '../components/InstallButton';
 import { ErrorScreen } from './ErrorScreen';
 
@@ -77,9 +78,16 @@ export function HomeScreen() {
         ))}
       </section>
 
+      {loading && (
+        <section aria-label="Carregando mais filmes">
+          <MovieCardSkeleton />
+          <MovieCardSkeleton />
+          <MovieCardSkeleton />
+        </section>
+      )}
+
       {/* Sentinel — IntersectionObserver dispara loadMore quando chegar aqui */}
-      {hasMore && <div ref={sentinelRef} style={{ height: 1 }} />}
-      {loading && <p style={styles.loadingMore}>Carregando mais…</p>}
+      {hasMore && !loading && <div ref={sentinelRef} style={{ height: 1 }} />}
     </main>
   );
 }
