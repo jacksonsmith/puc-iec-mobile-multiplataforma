@@ -15,7 +15,7 @@ const getDB = () =>
   });
 
 export async function saveMovies(page: number, movies: Movie[]): Promise<void> {
-  (await getDB()).put(STORE, movies, `page-${page}`);
+  await (await getDB()).put(STORE, movies, `page-${page}`);
 }
 
 export async function loadMovies(page: number): Promise<Movie[] | undefined> {
@@ -23,5 +23,5 @@ export async function loadMovies(page: number): Promise<Movie[] | undefined> {
 }
 
 export async function clearMovies(): Promise<void> {
-  (await getDB()).clear(STORE);
+  await (await getDB()).clear(STORE);
 }
