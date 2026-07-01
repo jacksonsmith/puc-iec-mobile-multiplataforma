@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.log
+
+# banco gerado pelo seed
+server/data/*.db
+server/data/*.db-shm
+server/data/*.db-wal
+
+# env local
+.env
+
+# artefatos de grader
+grader/grade.json

@@ -1,0 +1,8 @@
+# Copie este arquivo para local.properties (sem .example) e preencha.
+# local.properties está no .gitignore — NUNCA comite tokens reais.
+#
+# Gere seu token em: https://www.themoviedb.org/settings/api
+# Use o "API Read Access Token" (JWT longo, começa com eyJhbGc...)
+
+sdk.dir=/Users/<usuario>/Library/Android/sdk
+tmdb.token=cole_seu_token_aqui
