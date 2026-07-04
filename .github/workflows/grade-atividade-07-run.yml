@@ -1,0 +1,124 @@
+name: Grade A7 run — roda os testes do fork (sem token)
+
+# Etapa 1/2 do autograder seguro: roda os testes do aluno (código NÃO-confiável)
+# num job `pull_request` SEM token de escrita e SEM segredos. O resultado vira
+# artifact (vitest-results.json + meta), lido depois pelo workflow de comentário.
+#
+# SEGURANÇA: `pull_request` (não pull_request_target) → GITHUB_TOKEN SÓ tem
+# permissão de leitura. Código do aluno em tmdb.ts pode executar qualquer coisa,
+# mas sem token de escrita não consegue comentar nem alterar o repo.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'exercicios/07-pwa-tmdb/pratica/**'
+
+permissions:
+  contents: read # nada de pull-requests:write — aqui roda código não-confiável
+
+env:
+  EX: exercicios/07-pwa-tmdb/pratica
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # 1️⃣ Checkout base/main — harness CONFIÁVEL do prof (test files 01 e 02)
+      - name: Checkout base (harness confiável)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: harness
+          persist-credentials: false
+
+      # 2️⃣ Checkout HEAD do PR — entrega do aluno (não-confiável)
+      - name: Checkout entrega do aluno
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: entrega
+          persist-credentials: false
+
+      # 3️⃣ Discover: verifica se o PR tem arquivos do exercício
+      - id: discover
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const EX = process.env.EX;
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number, per_page: 100,
+            });
+            const changed = files.map(f => f.filename)
+              .filter(f => f.startsWith(EX + '/') && !f.includes('/node_modules/'));
+            const login = (context.payload.pull_request.user.login || '').toLowerCase();
+            const skip = changed.length === 0;
+            core.setOutput('skip', String(skip));
+            core.setOutput('login', login);
+            core.setOutput('pr', String(context.payload.pull_request.number));
+            core.info(`changed=${changed.length} login=${login} skip=${skip}`);
+
+      # 4️⃣ Substituir test files 01 e 02 pelos do harness confiável
+      #    (aluno não deve ter alterado, mas garantimos aqui)
+      - name: Substituir test files confiáveis no entrega
+        if: steps.discover.outputs.skip != 'true'
+        run: |
+          set -e
+          PRATICA="entrega/${EX}"
+          HARNESS="${EX}"
+          # Criar diretório de testes caso o aluno tenha reorganizado
+          mkdir -p "${PRATICA}/src/__tests__/unit"
+          # Sobrescrever com versões confiáveis
+          cp "harness/${HARNESS}/src/__tests__/unit/01-MovieCard.test.tsx"   "${PRATICA}/src/__tests__/unit/01-MovieCard.test.tsx"
+          cp "harness/${HARNESS}/src/__tests__/unit/02-tmdb-service.test.ts" "${PRATICA}/src/__tests__/unit/02-tmdb-service.test.ts"
+          cp "harness/${HARNESS}/src/__tests__/setup.ts"                     "${PRATICA}/src/__tests__/setup.ts"
+          # Hook useFavorites confiável (para os testes 3/4/5 do aluno rodarem corretamente)
+          cp "harness/${HARNESS}/src/hooks/useFavorites.ts"                  "${PRATICA}/src/hooks/useFavorites.ts"
+          # Configuração de testes confiável (vite.config)
+          cp "harness/${HARNESS}/vite.config.ts"                             "${PRATICA}/vite.config.ts"
+          echo "✓ Test files substituídos"
+
+      # 5️⃣ Instalar deps da entrega (sandbox sem token)
+      - if: steps.discover.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: entrega/${{ env.EX }}/package-lock.json
+
+      - name: npm ci na entrega
+        if: steps.discover.outputs.skip != 'true'
+        working-directory: entrega/${{ env.EX }}
+        run: npm ci || npm install
+
+      # 6️⃣ Rodar Vitest — reporter JSON; || true pra capturar falhas sem abortar
+      - name: Rodar Vitest (--reporter=json)
+        if: steps.discover.outputs.skip != 'true'
+        working-directory: entrega/${{ env.EX }}
+        env:
+          VITE_TMDB_TOKEN: placeholder
+        run: |
+          npm test -- --reporter=json --outputFile="$RUNNER_TEMP/vitest-results.json" || true
+
+      # 7️⃣ Montar artifact (results + meta)
+      - name: Montar artifact
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          cp "$RUNNER_TEMP/vitest-results.json" "$RUNNER_TEMP/out/vitest-results.json" 2>/dev/null || true
+          cat > "$RUNNER_TEMP/out/meta.json" <<EOF
+          { "pr": ${{ github.event.pull_request.number }},
+            "login": "${{ steps.discover.outputs.login }}",
+            "sha": "${{ github.event.pull_request.head.sha }}",
+            "skip": "${{ steps.discover.outputs.skip }}" }
+          EOF
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a7-run
+          path: ${{ runner.temp }}/out
+          retention-days: 7
+          if-no-files-found: warn
