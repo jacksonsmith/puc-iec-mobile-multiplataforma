@@ -24,9 +24,38 @@ describe('useFavorites', () => {
     expect(result.current.count).toBe(1);
   });
 
-  it.todo('3. toggle duas vezes remove o favorito — renderize o hook, toggle(42) × 2, isFavorite(42) === false');
+  it('3. toggle duas vezes remove o favorito — renderize o hook, toggle(42) × 2, isFavorite(42) === false', () => {
+    const { result } = renderHook(() => useFavorites())
 
-  it.todo('4. persiste favoritos no localStorage — adicione id=7, desmonte, remonte, isFavorite(7) === true');
+    act(() => result.current.toggle(42));
+    act(() => result.current.toggle(42));
 
-  it.todo('5. chama navigator.setAppBadge com a contagem — mock vi.fn(), toggle(1), setAppBadge chamado com 1');
+    expect(result.current.isFavorite(42)).toBe(false);
+  });
+
+  it('4. persiste favoritos no localStorage — adicione id=7, desmonte, remonte, isFavorite(7) === true', () => {
+    const { result: firstMount, unmount } = renderHook(() => useFavorites())
+
+    act(() => firstMount.current.toggle(7));
+    
+    unmount()
+
+    const { result: secondMount } = renderHook(() => useFavorites());
+
+    expect(secondMount.current.isFavorite(7)).toBe(true);
+  });
+
+  it('5. chama navigator.setAppBadge com a contagem — mock vi.fn(), toggle(1), setAppBadge chamado com 1', () => {
+    const setAppBadge = vi.fn();
+
+    navigator.setAppBadge = setAppBadge
+
+    const { result } = renderHook(() => useFavorites());
+
+    act(() => {
+      result.current.toggle(1);
+    });
+
+    expect(setAppBadge).toHaveBeenCalledWith(1);
+  });
 });
