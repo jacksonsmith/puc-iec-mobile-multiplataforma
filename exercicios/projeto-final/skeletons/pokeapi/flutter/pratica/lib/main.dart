@@ -56,3 +56,4 @@ class _HomeShellState extends State<HomeShell> {
     );
   }
 }
+// smoke-test negativo — TODOs propositalmente não implementados
