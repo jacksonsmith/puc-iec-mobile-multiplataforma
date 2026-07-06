@@ -28,9 +28,11 @@ export default function ListScreen({ navigation }: Props) {
   const [categoryNames, setCategoryNames] = useState<Set<string> | null>(null);
 
   useEffect(() => {
-    // TODO 1 (feature 1 — lista): chamar fetchList(), setAll() com o
-    // resultado, setError() em caso de falha, setLoading(false) no final.
-    setLoading(false);
+    // smoke-test: feature 1 implementada (lista), features 2-5 seguem TODO
+    fetchList()
+      .then((list) => setAll(list))
+      .catch(() => setError('Não foi possível carregar a lista de pokémons.'))
+      .finally(() => setLoading(false));
   }, []);
 
   const onSelectCategory = async (category: string | null) => {
