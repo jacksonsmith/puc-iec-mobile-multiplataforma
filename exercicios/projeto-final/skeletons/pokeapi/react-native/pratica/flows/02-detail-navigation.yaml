@@ -2,6 +2,10 @@
 appId: com.puciec.pokedexfinal
 ---
 - launchApp
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
 - scrollUntilVisible:
     element:
       id: "item-card-25"

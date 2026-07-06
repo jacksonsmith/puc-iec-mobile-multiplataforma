@@ -32,7 +32,7 @@ export default function DetailScreen({ route, navigation }: Props) {
   };
 
   return (
-    <View testID="detail-screen" style={{ flex: 1, padding: 16 }}>
+    <View testID="detail-screen" collapsable={false} style={{ flex: 1, padding: 16 }}>
       <TouchableOpacity
         testID="detail-back-button"
         onPress={() => navigation.goBack()}
