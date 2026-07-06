@@ -31,3 +31,4 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
+// smoke-test negativo — TODOs propositalmente não implementados
