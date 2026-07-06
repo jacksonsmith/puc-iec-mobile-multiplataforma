@@ -141,11 +141,19 @@ jobs:
           disable-animations: true
           script: |
             adb install -r "${{ env.APK_PATH }}"
+            adb logcat -c
             # Flows vêm do checkout confiável (main, sem prefixo _pr) — mesmo
             # sendo a pasta "pratica/flows", aqui é a cópia do professor no
             # repo, não a do fork do aluno. Nunca ler de dentro de `_pr/`,
             # senão o aluno poderia editar o próprio teste pra sempre passar.
             maestro test "exercicios/projeto-final/skeletons/${{ env.TEMA }}/${{ env.FRAMEWORK }}/pratica/flows/" --format junit --output results.xml
+            adb logcat -d > /tmp/logcat-dump.txt || true
+
+      - name: Mostrar logcat (diagnóstico temporário do smoke-test)
+        if: always()
+        run: |
+          echo "=== logcat (erros/warnings de JS/React/AndroidRuntime) ==="
+          grep -iE "ReactNative|AndroidRuntime|FATAL|chromium|error|exception" /tmp/logcat-dump.txt | tail -150 || echo "sem logcat capturado"
 
       - name: Parse resultado do Maestro
         if: always()
