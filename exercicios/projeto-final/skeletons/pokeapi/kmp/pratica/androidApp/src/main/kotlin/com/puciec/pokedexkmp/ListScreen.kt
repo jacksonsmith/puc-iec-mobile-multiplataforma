@@ -41,9 +41,14 @@ fun ListScreen(api: PokeApi, onSelect: (Int) -> Unit) {
     var categoryNames by remember { mutableStateOf<Set<String>?>(null) }
 
     LaunchedEffect(Unit) {
-        // TODO 1 (feature 1 — lista): chamar api.fetchList(), guardar em `all`.
-        // Tratar erro em `error` (try/catch) e marcar `loading = false` no final.
-        loading = false
+        // smoke-test: feature 1 implementada (lista), features 2-5 seguem TODO
+        try {
+            all = api.fetchList()
+        } catch (e: Exception) {
+            error = "Não foi possível carregar a lista de pokémons."
+        } finally {
+            loading = false
+        }
     }
 
     // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
