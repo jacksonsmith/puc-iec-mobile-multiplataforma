@@ -66,3 +66,4 @@ fun App(modifier: Modifier = Modifier) {
         }
     }
 }
+// smoke-test negativo — TODOs propositalmente não implementados
