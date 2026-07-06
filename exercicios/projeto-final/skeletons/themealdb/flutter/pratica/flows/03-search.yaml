@@ -1,0 +1,9 @@
+# Feature 3 — busca por texto
+appId: com.puciec.themeal_final
+---
+- launchApp
+- tapOn:
+    id: "search-input"
+- inputText: "sushi"
+- assertVisible:
+    id: "item-card-53065"

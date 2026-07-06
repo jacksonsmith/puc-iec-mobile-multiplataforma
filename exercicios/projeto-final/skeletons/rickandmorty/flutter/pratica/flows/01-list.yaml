@@ -1,0 +1,8 @@
+# Feature 1 — lista consumindo API real (Rick and Morty API)
+appId: com.puciec.rickmorty_final
+---
+- launchApp
+- assertVisible:
+    id: "item-list-screen"
+- assertVisible:
+    id: "item-card-1"

@@ -1,0 +1,11 @@
+# Feature 2 — navegação lista → detalhe
+appId: com.puciec.themealfinal
+---
+- launchApp
+- tapOn:
+    id: "item-card-53060"
+- assertVisible:
+    id: "detail-screen"
+- assertVisible:
+    id: "detail-title"
+- assertVisible: "Burek"

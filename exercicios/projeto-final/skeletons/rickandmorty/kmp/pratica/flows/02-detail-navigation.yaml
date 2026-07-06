@@ -1,0 +1,11 @@
+# Feature 2 — navegação lista → detalhe
+appId: com.puciec.rickmortykmp
+---
+- launchApp
+- tapOn:
+    id: "item-card-1"
+- assertVisible:
+    id: "detail-screen"
+- assertVisible:
+    id: "detail-title"
+- assertVisible: "Rick Sanchez"

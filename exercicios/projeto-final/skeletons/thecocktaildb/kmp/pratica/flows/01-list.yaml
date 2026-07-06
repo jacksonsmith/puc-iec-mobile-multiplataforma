@@ -1,0 +1,12 @@
+# Feature 1 — lista consumindo API real (TheCocktailDB)
+appId: com.puciec.cocktailkmp
+---
+- launchApp
+- assertVisible:
+    id: "item-list-screen"
+- scrollUntilVisible:
+    element:
+      id: "item-card-11000"
+    direction: DOWN
+- assertVisible:
+    id: "item-card-11000"
