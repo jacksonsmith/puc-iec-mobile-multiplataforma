@@ -1,0 +1,15 @@
+# Feature 2 — navegação lista → detalhe
+appId: com.puciec.cocktailkmp
+---
+- launchApp
+- scrollUntilVisible:
+    element:
+      id: "item-card-11000"
+    direction: DOWN
+- tapOn:
+    id: "item-card-11000"
+- assertVisible:
+    id: "detail-screen"
+- assertVisible:
+    id: "detail-title"
+- assertVisible: "Mojito"
