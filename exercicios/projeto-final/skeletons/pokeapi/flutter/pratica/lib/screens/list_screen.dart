@@ -29,12 +29,21 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<void> _loadList() async {
-    // TODO 1 (feature 1 — lista): chamar `_api.fetchList()`, guardar o resultado
-    // em `_all` e marcar `_loading = false` via setState. Tratar erro com
-    // `_error` (mensagem) igual ao padrão dos outros catch deste arquivo.
-    setState(() {
-      _loading = false;
-    });
+    // smoke-test: feature 1 implementada (lista), features 2-5 seguem TODO
+    try {
+      final list = await _api.fetchList();
+      if (!mounted) return;
+      setState(() {
+        _all = list;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = 'Não foi possível carregar a lista de pokémons.';
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _selectCategory(String? category) async {
