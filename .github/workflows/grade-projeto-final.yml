@@ -137,9 +137,11 @@ jobs:
           disable-animations: true
           script: |
             adb install -r "${{ env.APK_PATH }}"
-            # Flows vêm do checkout confiável (main), NUNCA do _pr do aluno —
+            # Flows vêm do checkout confiável (main, sem prefixo _pr) — mesmo
+            # sendo a pasta "pratica/flows", aqui é a cópia do professor no
+            # repo, não a do fork do aluno. Nunca ler de dentro de `_pr/`,
             # senão o aluno poderia editar o próprio teste pra sempre passar.
-            maestro test "exercicios/projeto-final/skeletons/${{ env.TEMA }}/${{ env.FRAMEWORK }}/flows/" --format junit --output results.xml
+            maestro test "exercicios/projeto-final/skeletons/${{ env.TEMA }}/${{ env.FRAMEWORK }}/pratica/flows/" --format junit --output results.xml
 
       - name: Parse resultado do Maestro
         working-directory: exercicios/projeto-final/grader
