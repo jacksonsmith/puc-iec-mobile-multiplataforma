@@ -48,6 +48,9 @@ tmdbClient.interceptors.request.use((config) => {
 // quando você substituir o throw abaixo pela implementação real.
 // ───────────────────────────────────────────────────────────────────────────
 
-export async function fetchPopularMovies(_page = 1): Promise<MoviesResponse> {
-  throw new Error('TODO 1: fetchPopularMovies não implementada');
+export async function fetchPopularMovies(page = 1): Promise<MoviesResponse> {
+  const { data } = await tmdbClient.get<MoviesResponse>('/movie/popular', {
+    params: { language: 'pt-BR', page },
+  });
+  return data;
 }
