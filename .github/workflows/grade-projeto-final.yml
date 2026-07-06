@@ -84,6 +84,7 @@ jobs:
 
       - name: Build APK — Flutter
         if: env.FRAMEWORK == 'flutter'
+        continue-on-error: true
         working-directory: _pr/${{ env.ENTREGA_PATH }}
         run: |
           flutter pub get
@@ -98,6 +99,7 @@ jobs:
 
       - name: Build APK — React Native
         if: env.FRAMEWORK == 'react-native'
+        continue-on-error: true
         working-directory: _pr/${{ env.ENTREGA_PATH }}
         run: |
           npm ci
@@ -107,6 +109,7 @@ jobs:
 
       - name: Build APK — KMP Compose Multiplatform
         if: env.FRAMEWORK == 'kmp'
+        continue-on-error: true
         working-directory: _pr/${{ env.ENTREGA_PATH }}
         run: |
           ./gradlew :androidApp:assembleDebug
@@ -127,6 +130,7 @@ jobs:
 
       - name: Rodar os 5 flows Maestro no emulador
         if: env.APK_PATH != ''
+        continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -137,15 +141,19 @@ jobs:
           disable-animations: true
           script: |
             adb install -r "${{ env.APK_PATH }}"
-            # Flows vêm do checkout confiável (main), NUNCA do _pr do aluno —
+            # Flows vêm do checkout confiável (main, sem prefixo _pr) — mesmo
+            # sendo a pasta "pratica/flows", aqui é a cópia do professor no
+            # repo, não a do fork do aluno. Nunca ler de dentro de `_pr/`,
             # senão o aluno poderia editar o próprio teste pra sempre passar.
-            maestro test "exercicios/projeto-final/skeletons/${{ env.TEMA }}/${{ env.FRAMEWORK }}/flows/" --format junit --output results.xml
+            maestro test "exercicios/projeto-final/skeletons/${{ env.TEMA }}/${{ env.FRAMEWORK }}/pratica/flows/" --format junit --output results.xml
 
       - name: Parse resultado do Maestro
+        if: always()
         working-directory: exercicios/projeto-final/grader
         run: npx ts-node parse-maestro-results.ts --results ../../../results.xml || true
 
       - name: Montar comentário + postar no PR
+        if: always()
         uses: actions/github-script@v7
         with:
           script: |

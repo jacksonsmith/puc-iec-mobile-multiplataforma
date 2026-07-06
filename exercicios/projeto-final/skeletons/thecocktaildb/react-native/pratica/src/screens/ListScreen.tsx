@@ -77,7 +77,7 @@ export default function ListScreen({ navigation }: Props) {
   }
 
   return (
-    <View testID="item-list-screen" style={{ flex: 1 }}>
+    <View testID="item-list-screen" collapsable={false} style={{ flex: 1 }}>
       <TextInput
         testID="search-input"
         placeholder="Buscar drink"

@@ -2,8 +2,14 @@
 appId: com.puciec.pokedex_final
 ---
 - launchApp
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
 - tapOn:
     id: "search-input"
 - inputText: "charizard"
 - assertVisible:
     id: "item-card-6"
+- assertNotVisible:
+    id: "item-card-1"
