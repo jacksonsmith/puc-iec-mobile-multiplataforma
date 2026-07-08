@@ -39,6 +39,7 @@ tmdbClient.interceptors.request.use((config) => {
 //
 // Dica: tmdbClient.get<MoviesResponse>('/movie/popular', { params: {...} })
 // e retorne o `data` da resposta.
+// smoke-test do autograder (PR de teste, sem solução) — apagar/fechar depois
 export async function fetchPopularMovies(_page = 1): Promise<MoviesResponse> {
   throw new Error('TODO 1: fetchPopularMovies não implementada');
 }
