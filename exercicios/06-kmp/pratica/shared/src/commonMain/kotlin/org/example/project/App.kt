@@ -24,6 +24,7 @@ import org.example.project.data.TmdbApi
 // tmdbToken vem do BuildConfig.TMDB_TOKEN (Android) ou vazio nas outras plataformas.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// smoke-test do autograder (PR de teste, sem solução) — apagar/fechar depois
 @Composable
 fun App(tmdbToken: String = "") {
     MaterialTheme {
