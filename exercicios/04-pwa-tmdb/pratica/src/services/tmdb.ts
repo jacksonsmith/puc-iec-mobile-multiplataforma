@@ -48,6 +48,7 @@ tmdbClient.interceptors.request.use((config) => {
 // quando você substituir o throw abaixo pela implementação real.
 // ───────────────────────────────────────────────────────────────────────────
 
+// smoke-test do autograder (PR de teste, sem solução) — apagar/fechar depois
 export async function fetchPopularMovies(_page = 1): Promise<MoviesResponse> {
   throw new Error('TODO 1: fetchPopularMovies não implementada');
 }
