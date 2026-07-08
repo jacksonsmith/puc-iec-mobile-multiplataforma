@@ -91,24 +91,30 @@ const t3a = checkTodo3a();
 const t3b = checkTodo3b();
 const t3c = checkTodo3c();
 
+// Pesos batem com a rubrica do enunciado.md (Critérios de avaliação) — soma 15.
 const results = [
-  { id: 'todo1',   label: 'TODO 1 — fetchPopularMovies', ...t1 },
-  { id: 'todo2',   label: 'TODO 2 — 3 testes useFavorites', ...t2 },
-  { id: 'todo3a',  label: 'TODO 3 Passo 1 — render favorites list', ...t3a },
-  { id: 'todo3b',  label: 'TODO 3 Passo 2 — empty state', ...t3b },
-  { id: 'todo3c',  label: 'TODO 3 Passo 3 — useOfflineStatus hook', ...t3c },
+  { id: 'todo1',   label: 'TODO 1 — fetchPopularMovies', weight: 4, ...t1 },
+  { id: 'todo2',   label: 'TODO 2 — 3 testes useFavorites', weight: 4, ...t2 },
+  { id: 'todo3a',  label: 'TODO 3 Passo 1 — render favorites list', weight: 3, ...t3a },
+  { id: 'todo3b',  label: 'TODO 3 Passo 2 — empty state', weight: 2, ...t3b },
+  { id: 'todo3c',  label: 'TODO 3 Passo 3 — useOfflineStatus hook', weight: 2, ...t3c },
 ];
 
 let allPass = true;
 for (const r of results) {
   const icon = r.pass ? '✅' : '❌';
-  console.log(`${icon} ${r.label}: ${r.note}`);
+  console.log(`${icon} ${r.label} (${r.pass ? r.weight : 0}/${r.weight}): ${r.note}`);
   if (!r.pass) allPass = false;
 }
+
+const autoScore = results.reduce((sum, r) => sum + (r.pass ? r.weight : 0), 0);
+const maxScore = results.reduce((sum, r) => sum + r.weight, 0);
 
 const grade = {
   results,
   allPass,
+  autoScore,
+  maxScore,
   summary: allPass ? 'Todos os critérios estruturais passaram.' : 'Há critérios pendentes — ver detalhes acima.',
 };
 

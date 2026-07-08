@@ -62,6 +62,7 @@ jobs:
             const fs = require('fs');
             let unitSummary = '⚠️ testes não rodaram';
             let structSummary = '⚠️ validator não rodou';
+            let scoreLine = '';
 
             try {
               const u = JSON.parse(fs.readFileSync(
@@ -77,9 +78,10 @@ jobs:
               const g = JSON.parse(fs.readFileSync(
                 'exercicios/04-pwa-tmdb/grader/grade.json', 'utf8'));
               const lines = g.results
-                .map(r => `${r.pass ? '✅' : '❌'} **${r.label}**: ${r.note}`)
+                .map(r => `${r.pass ? '✅' : '❌'} **${r.label}** (${r.pass ? r.weight : 0}/${r.weight}): ${r.note}`)
                 .join('\n');
               structSummary = '\n' + lines;
+              scoreLine = `\n**Nota mínima automática: ${g.autoScore}/${g.maxScore}**\n`;
             } catch {}
 
             const body = [
@@ -89,8 +91,8 @@ jobs:
               '',
               '**Checklist estrutural:**',
               structSummary,
-              '',
-              '> Nota final lançada no Canvas após revisão do prof.',
+              scoreLine,
+              '📝 Qualidade de código entra na nota final lançada no Canvas.',
             ].join('\n');
 
             github.rest.issues.createComment({
