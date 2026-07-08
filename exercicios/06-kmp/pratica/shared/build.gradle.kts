@@ -65,6 +65,9 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.ktor.client.android)
         }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
