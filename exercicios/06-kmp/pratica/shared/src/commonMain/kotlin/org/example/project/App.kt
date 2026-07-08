@@ -1,13 +1,17 @@
 package org.example.project
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.data.Movie
@@ -16,7 +20,8 @@ import org.example.project.data.TmdbApi
 // ─────────────────────────────────────────────────────────────────────────────
 // App — Composable raiz compartilhado entre Android, iOS e Web.
 //
-// tmdbToken vem do BuildConfig.TMDB_TOKEN (Android) ou vazio nas outras plataformas.
+// A busca de dados (TmdbApi) já está pronta — o exercício é construir a UI.
+// tmdbToken vem do BuildKonfig.TMDB_TOKEN (gerado do local.properties pra todas as plataformas).
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
@@ -28,26 +33,28 @@ fun App(tmdbToken: String = "") {
 
         val api = remember(tmdbToken) { TmdbApi(tmdbToken) }
 
-        // ── TODO 2 ──────────────────────────────────────────────────────────
-        // Busque os filmes populares ao iniciar o composable.
-        //
-        // Use LaunchedEffect(Unit) { ... } para executar código suspend.
-        // Dentro do bloco:
-        //   1. isLoading = true
-        //   2. chame api.popularMovies() dentro de try/catch
-        //   3. atribua o resultado a movies
-        //   4. em caso de erro, atribua a mensagem a error
-        //   5. isLoading = false
-        // ────────────────────────────────────────────────────────────────────
+        LaunchedEffect(Unit) {
+            if (tmdbToken.isBlank()) return@LaunchedEffect
+            isLoading = true
+            try {
+                movies = api.popularMovies().results
+            } catch (e: Exception) {
+                error = e.message ?: "Erro desconhecido"
+            } finally {
+                isLoading = false
+            }
+        }
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            when {
-                tmdbToken.isBlank() -> TokenMissingMessage()
-                isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-                error != null -> ErrorMessage(error!!)
-                else -> MovieList(movies)
+            // ── TODO 1 ──────────────────────────────────────────────────────
+            // Troque a linha abaixo por um `when` que mostra, nesta ordem:
+            //   - tmdbToken em branco       -> TokenMissingMessage()
+            //   - isLoading == true         -> CircularProgressIndicator() centralizado
+            //   - error != null             -> ErrorMessage(error!!)
+            //   - caso contrário            -> MovieList(movies)
+            // ────────────────────────────────────────────────────────────────
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("TODO 1: implemente os estados (loading / erro / lista)")
             }
         }
     }
@@ -62,28 +69,32 @@ private fun MovieList(movies: List<Movie>) {
         return
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        // ── TODO 3 ──────────────────────────────────────────────────────────
-        // Exiba cada filme da lista usando items(movies) { movie -> ... }.
-        //
-        // Para cada item, mostre pelo menos:
-        //   - movie.title  (nome do filme)
-        //   - movie.voteAverage  (nota, ex.: "8.5 ★")
-        //   - movie.releaseDate  (ano de lançamento, primeiros 4 chars)
-        //
-        // Sugestão: use um Card com Column dentro.
-        // ────────────────────────────────────────────────────────────────────
-        item {
-            Text(
-                text = "${movies.size} filmes populares",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp),
-            )
-        }
+    // ── TODO 2 ──────────────────────────────────────────────────────────────
+    // Monte um LazyColumn (fillMaxSize, contentPadding 16dp,
+    // verticalArrangement spacedBy 12dp) com:
+    //   - um item de cabeçalho: Text("${movies.size} filmes populares")
+    //   - um items(movies) { movie -> MovieCard(movie) }
+    // ────────────────────────────────────────────────────────────────────────
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("TODO 2: monte o LazyColumn com cabeçalho + itens")
+    }
+}
+
+@Composable
+private fun MovieCard(movie: Movie) {
+    // ── TODO 3 ──────────────────────────────────────────────────────────────
+    // Construa o card do filme. Sugestão de layout (Card > Row):
+    //   - Box à esquerda (56x84dp, cantos arredondados 6dp, background
+    //     MaterialTheme.colorScheme.primaryContainer) com a inicial do
+    //     título centralizada (placeholder de poster, sem imagem real)
+    //   - Column à direita (weight 1f) com: título (bold, 2 linhas max),
+    //     overview (2 linhas max), e uma Row com nota "⭐ X.X" + ano
+    // ────────────────────────────────────────────────────────────────────────
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "TODO 3: card de ${movie.title}",
+            modifier = Modifier.padding(16.dp),
+        )
     }
 }
 

@@ -1,0 +1,17 @@
+{
+  "name": "grader-projeto-final",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "discover": "ts-node discover.ts",
+    "validate": "ts-node validator-estrutural.ts",
+    "grade-e2e": "ts-node parse-maestro-results.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "fast-xml-parser": "^4.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  }
+}

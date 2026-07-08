@@ -16,3 +16,26 @@ code {
   border-radius: 4px;
   font-size: 0.9em;
 }
+
+/* bottom tab bar — visível só no mobile */
+.bottom-tab-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .bottom-tab-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #112233;
+    border-top: 1px solid #1e3a52;
+    height: 64px;
+    z-index: 100;
+  }
+
+  .main-content {
+    padding-bottom: 80px;
+  }
+}

@@ -1,0 +1,15 @@
+# Feature 3 — busca por texto
+appId: com.puciec.pokedexkmp
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
+- tapOn:
+    id: "search-input"
+- inputText: "charizard"
+- assertVisible:
+    id: "item-card-6"
+- assertNotVisible:
+    id: "item-card-1"

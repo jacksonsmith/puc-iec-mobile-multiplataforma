@@ -1,5 +1,7 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,6 +9,26 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.buildkonfig)
+}
+
+// Token TMDB lido de local.properties (não comitar).
+// Adicione: tmdb.token=eyJhbGc...  em local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
+
+// Gera org.example.project.BuildKonfig.TMDB_TOKEN pra TODAS as plataformas
+// (Android, iOS, Web) — env compartilhado do projeto.
+buildkonfig {
+    packageName = "org.example.project"
+    // público (default é internal) — androidApp/webApp ficam em outros módulos
+    exposeObjectWithName = "BuildKonfig"
+    defaultConfigs {
+        buildConfigField(STRING, "TMDB_TOKEN", localProperties["tmdb.token"]?.toString() ?: "")
+    }
 }
 
 kotlin {
@@ -64,6 +86,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.ktor.client.android)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
