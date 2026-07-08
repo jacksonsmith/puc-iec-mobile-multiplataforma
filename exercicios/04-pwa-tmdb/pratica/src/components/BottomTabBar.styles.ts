@@ -1,0 +1,45 @@
+import type React from 'react';
+
+export const styles: Record<string, React.CSSProperties> = {
+  tab: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 3,
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '8px 0',
+    fontSize: 11,
+    fontWeight: 600,
+    letterSpacing: 0.3,
+    transition: 'color 0.15s',
+  },
+  icon: {
+    fontSize: 22,
+    lineHeight: 1,
+  },
+  badge: {
+    position: 'absolute',
+    top: 6,
+    right: '50%',
+    transform: 'translateX(14px)',
+    background: '#e4a001',
+    color: '#0d253f',
+    borderRadius: 10,
+    fontSize: 10,
+    fontWeight: 800,
+    padding: '1px 5px',
+    minWidth: 16,
+    textAlign: 'center',
+  },
+  tabWrapper: {
+    flex: 1,
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+};

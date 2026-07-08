@@ -15,6 +15,7 @@ import kotlinx.serialization.json.Json
 
 private const val BASE_URL = "https://api.themoviedb.org/3"
 
+// Já pronto — o exercício é sobre construir a UI (App.kt), não a integração com a API.
 class TmdbApi(private val token: String) {
 
     // HttpClient do Ktor com suporte a JSON (kotlinx.serialization)
@@ -24,22 +25,12 @@ class TmdbApi(private val token: String) {
         }
     }
 
-    // ── TODO 1 ────────────────────────────────────────────────────────────────
-    // Implemente a função abaixo.
-    //
-    // Endpoint: GET $BASE_URL/movie/popular?language=pt-BR&page=1
-    // Header:   Authorization: Bearer $token
-    //
-    // Dica: use client.get(...) { header("Authorization", "Bearer $token") }
-    //       e depois .body<MoviesResponse>() pra deserializar o JSON.
-    //
-    // suspend fun popularMovies(page: Int = 1): MoviesResponse { ... }
-    // ─────────────────────────────────────────────────────────────────────────
-
-    suspend fun popularMovies(page: Int = 1): MoviesResponse {
-        // TODO 1: substitua o stub abaixo pela chamada real ao Ktor
-        return MoviesResponse(page = 1, results = emptyList(), totalPages = 0, totalResults = 0)
-    }
+    suspend fun popularMovies(page: Int = 1): MoviesResponse =
+        client.get("$BASE_URL/movie/popular") {
+            header("Authorization", "Bearer $token")
+            parameter("language", "pt-BR")
+            parameter("page", page)
+        }.body()
 }
 
 // URL pública de poster do TMDB (w342 = largura 342px)

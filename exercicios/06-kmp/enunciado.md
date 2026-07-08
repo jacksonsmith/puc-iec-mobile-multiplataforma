@@ -1,92 +1,66 @@
-# Atividade 6 — KMP: filmes populares com Ktor
+# Atividade 6 — KMP: Filmes Populares (10 pts)
 
-**Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma  
-**Entrega:** fork + PR no repositório da disciplina  
-**Valor:** 15 pontos
+**Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
+**Entrega:** ver Canvas
+**Modalidade:** individual
+**Tempo estimado:** ~2-3 horas
+**Dificuldade:** ⭐⭐⭐ Difícil — requer Android Studio (Kotlin Multiplatform plugin) + emulador Android
 
----
-
-## Contexto
-
-Nesta atividade você vai conectar o **KotlinProject** (Android/iOS/Web compartilhando um único módulo `shared`) à **API do TMDB**, buscando filmes populares e exibindo-os num LazyColumn em Compose.
-
-O exercício foca em:
-- Ktor HTTP client (multiplataforma)
-- kotlinx.serialization para deserializar JSON
-- Coroutines em Composable (`LaunchedEffect`)
-- Compose `LazyColumn` para listas
+> **Como vamos fazer:** a **aula** começa com o hands-on guiado do KMP wizard oficial (JetBrains) — isso é só demonstração, não é esta atividade. **Esta atividade** (`exercicios/06-kmp/`) usa o **mesmo projeto** gerado pelo wizard: você começa em aula e **termina em casa**. É a última atividade individual do curso, antes do Projeto Final em grupo.
 
 ---
 
-## Setup — antes de começar
+## Por que essa atividade
+
+KMP promete "uma base de código, três plataformas" — mas o que o aluno realmente sente na mão é escrever **UI declarativa em Compose** consumindo dados de uma API real. Esta atividade isola exatamente isso: a camada de rede (Ktor + TMDB) já vem pronta, o seu trabalho é **construir a interface** em `App.kt`, o arquivo compartilhado entre Android/iOS/Web.
+
+---
+
+## Setup
 
 ```bash
 cd exercicios/06-kmp/pratica
+ls shared/src/commonMain/kotlin/org/example/project    # deve listar App.kt e data/
 ```
 
-1. **Token TMDB**: gere o *API Read Access Token* (v4) em <https://www.themoviedb.org/settings/api>
-2. **Copie** `local.properties.example` para `local.properties` e preencha:
-   ```
-   sdk.dir=/Users/<seu-usuario>/Library/Android/sdk
-   tmdb.token=eyJhbGc...
-   ```
-3. **Sincronize o Gradle** no Android Studio (o botão "Sync Now" no banner amarelo).
-4. **Verifique** que o app compila: Run `androidApp` no emulador — deve aparecer a tela "Token TMDB não configurado" (porque o stub ainda não faz chamada real).
+1. Copie `local.properties.example` para `local.properties`
+2. Gere um token gratuito em [themoviedb.org](https://www.themoviedb.org/settings/api) (v4 Read Access Token) e cole em `tmdb.token=`
+3. Abra a pasta `pratica/` no Android Studio (Kotlin Multiplatform plugin já instalado da aula) → Sync Gradle → Run `androidApp`
 
-> ⚠️ `local.properties` já está no `.gitignore`. Nunca commite seu token.
+> **Toolchain:** Android Studio Quail 2026.1.1+, JDK 17. Mesmos requisitos verificados em aula. iOS/Web fazem parte do projeto wizard mas não são exigidos nesta atividade — só o `androidApp`.
 
 ---
 
-## O que você vai implementar
+## O que já vem pronto
 
-### Parte A — Camada de dados (5 pts)
+- `shared/src/commonMain/kotlin/org/example/project/data/Movie.kt` — `Movie`, `MoviesResponse` (`@Serializable`)
+- `shared/src/commonMain/kotlin/org/example/project/data/TmdbApi.kt` — `popularMovies()` via Ktor, já busca a API real
+- `App.kt` — o `LaunchedEffect` que chama a API e guarda `movies`/`isLoading`/`error` em `remember { mutableStateOf(...) }`
 
-**Arquivo:** `shared/src/commonMain/kotlin/org/example/project/data/TmdbApi.kt`
+Você **não mexe** nesses pontos — a integração com a API está resolvida. Seu trabalho é só Compose.
 
-Implemente o **TODO 1**: a função `popularMovies(page: Int = 1): MoviesResponse`.
+## O que você constrói (3 TODOs em `App.kt`)
 
-Endpoint TMDB:
-```
-GET https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1
-Authorization: Bearer <token>
-```
+| TODO | O quê | Pts |
+|---|---|---|
+| 1 | `when` que escolhe a tela certa: token em branco → `TokenMissingMessage()` · carregando → `CircularProgressIndicator()` centralizado · erro → `ErrorMessage(error!!)` · senão → `MovieList(movies)` | 4 |
+| 2 | `MovieList`: `LazyColumn` com item de cabeçalho (`"N filmes populares"`) + `items(movies) { MovieCard(it) }` | 3 |
+| 3 | `MovieCard`: card com placeholder de poster (box colorido com a inicial do título) + título (2 linhas) + overview (2 linhas) + nota/ano | 3 |
 
-O modelo `MoviesResponse` e `Movie` já estão prontos em `Movie.kt`.
+Os comentários `// TODO N` no arquivo `pratica/shared/src/commonMain/kotlin/org/example/project/App.kt` trazem a especificação exata de cada um.
 
-**Critério:** `popularMovies()` retorna pelo menos 1 filme (lista não-vazia).
-
-### Parte B — UI com Compose (10 pts)
-
-**Arquivo:** `shared/src/commonMain/kotlin/org/example/project/App.kt`
-
-Implemente os **TODOs 2 e 3**:
-
-**TODO 2** — busca ao iniciar:
-- Use `LaunchedEffect(Unit)` para chamar `api.popularMovies()`
-- Gerencie `isLoading` e `error`
-
-**TODO 3** — lista de filmes:
-- Use `items(movies)` dentro do `LazyColumn`
-- Exiba para cada filme: título, nota (`voteAverage`) e ano de lançamento
-- Sugestão: `Card` com `Column` dentro
-
-**Critério B1 (5 pts):** lista carrega e exibe os títulos dos filmes.  
-**Critério B2 (5 pts):** cada item mostra nota + ano de lançamento formatados.
+**Critério eliminatório:** se `./gradlew :androidApp:assembleDebug` não builda, os 10 pts ficam zerados.
 
 ---
 
 ## Entrega
 
-1. Faça o fork do repositório da disciplina (se ainda não fez)
-2. Implemente os TODOs acima
-3. Abra um PR com o título: `feat(a6-kmp): <seu-login>`
-4. O bot vai comentar o score automático no PR
+PR no **seu fork** do repo público tocando `exercicios/06-kmp/pratica/`. Link do PR colado no Canvas.
 
----
+```
+meu-fork/
+  exercicios/06-kmp/pratica/
+    shared/src/commonMain/kotlin/org/example/project/App.kt   ← os 3 TODOs resolvidos
+```
 
-## Links úteis
-
-- [Ktor client — Getting Started](https://ktor.io/docs/client-create-new-application.html)
-- [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization)
-- [TMDB API — Movie Popular](https://developer.themoviedb.org/reference/movie-popular-list)
-- [Compose LazyColumn](https://developer.android.com/develop/ui/compose/lists)
+> Não precisa commitar `local.properties` (contém seu token — já está no `.gitignore`).

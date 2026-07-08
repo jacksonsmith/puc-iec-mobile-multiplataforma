@@ -1,0 +1,225 @@
+name: Projeto Final — E2E Autograder
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'exercicios/projeto-final/skeletons/**'
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      ok: ${{ steps.find.outputs.ok }}
+      tema: ${{ steps.find.outputs.tema }}
+      framework: ${{ steps.find.outputs.framework }}
+      entrega_path: ${{ steps.find.outputs.entrega_path }}
+      error: ${{ steps.find.outputs.error }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            exercicios/projeto-final/grader
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar deps do grader
+        working-directory: exercicios/projeto-final/grader
+        run: npm ci
+      - name: Descobrir tema + framework tocados no PR
+        id: find
+        working-directory: exercicios/projeto-final/grader
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx ts-node discover.ts \
+            --owner ${{ github.repository_owner }} \
+            --repo ${{ github.event.repository.name }} \
+            --pr ${{ github.event.pull_request.number }} || true
+
+  grade:
+    needs: discover
+    if: needs.discover.outputs.ok == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      TEMA: ${{ needs.discover.outputs.tema }}
+      FRAMEWORK: ${{ needs.discover.outputs.framework }}
+      ENTREGA_PATH: ${{ needs.discover.outputs.entrega_path }}
+    steps:
+      # DOIS checkouts (regra do CLAUDE.md "Autograder por PR"): base = grader
+      # confiável do professor; head = entrega do aluno, isolada, só leitura.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: _pr
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar deps do grader
+        working-directory: exercicios/projeto-final/grader
+        run: npm ci
+
+      - name: Validator estrutural (testID hardcoded/escondido)
+        working-directory: exercicios/projeto-final/grader
+        run: npx ts-node validator-estrutural.ts --entrega "../../../_pr/${{ env.ENTREGA_PATH }}" || true
+
+      # --- Build por framework (só roda o step do framework tocado no PR) ---
+
+      - uses: subosito/flutter-action@v2
+        if: env.FRAMEWORK == 'flutter'
+        with:
+          channel: stable
+
+      - name: Build APK — Flutter
+        if: env.FRAMEWORK == 'flutter'
+        continue-on-error: true
+        working-directory: _pr/${{ env.ENTREGA_PATH }}
+        run: |
+          flutter pub get
+          flutter build apk --debug
+          echo "APK_PATH=_pr/${{ env.ENTREGA_PATH }}/build/app/outputs/flutter-apk/app-debug.apk" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-java@v4
+        if: env.FRAMEWORK == 'react-native' || env.FRAMEWORK == 'kmp'
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build APK — React Native
+        if: env.FRAMEWORK == 'react-native'
+        continue-on-error: true
+        working-directory: _pr/${{ env.ENTREGA_PATH }}
+        run: |
+          npm ci
+          npx expo prebuild --platform android --no-install
+          # O build "debug" do RN pula o bundle de JS por padrão (espera um
+          # Metro rodando) — sem Metro no CI, o app nunca renderiza nada.
+          # Forçar o bundle mesmo no variant debug (achado no smoke-test real).
+          sed -i 's/bundleCommand = "export:embed"/bundleCommand = "export:embed"\n    debuggableVariants = []/' android/app/build.gradle
+          cd android && ./gradlew assembleDebug
+          echo "APK_PATH=_pr/${{ env.ENTREGA_PATH }}/android/app/build/outputs/apk/debug/app-debug.apk" >> "$GITHUB_ENV"
+
+      - name: Build APK — KMP Compose Multiplatform
+        if: env.FRAMEWORK == 'kmp'
+        continue-on-error: true
+        working-directory: _pr/${{ env.ENTREGA_PATH }}
+        run: |
+          ./gradlew :androidApp:assembleDebug
+          echo "APK_PATH=_pr/${{ env.ENTREGA_PATH }}/androidApp/build/outputs/apk/debug/androidApp-debug.apk" >> "$GITHUB_ENV"
+
+      # --- Emulador + Maestro ---
+
+      - name: Instalar Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Enable KVM (Android emulator speed)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Rodar os 5 flows Maestro no emulador
+        if: env.APK_PATH != ''
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            adb install -r "${{ env.APK_PATH }}"
+            adb logcat -c
+            # Flows vêm do checkout confiável (main, sem prefixo _pr) — mesmo
+            # sendo a pasta "pratica/flows", aqui é a cópia do professor no
+            # repo, não a do fork do aluno. Nunca ler de dentro de `_pr/`,
+            # senão o aluno poderia editar o próprio teste pra sempre passar.
+            maestro test "exercicios/projeto-final/skeletons/${{ env.TEMA }}/${{ env.FRAMEWORK }}/pratica/flows/" --format junit --output results.xml || true
+            adb logcat -d > /tmp/logcat-dump.txt || true
+
+      - name: Mostrar logcat (diagnóstico temporário do smoke-test)
+        if: always()
+        run: |
+          echo "=== logcat (erros/warnings de JS/React/AndroidRuntime) ==="
+          grep -iE "ReactNative|AndroidRuntime|FATAL|chromium|error|exception" /tmp/logcat-dump.txt | tail -150 || echo "sem logcat capturado"
+
+      - name: Parse resultado do Maestro
+        if: always()
+        working-directory: exercicios/projeto-final/grader
+        run: npx ts-node parse-maestro-results.ts --results ../../../results.xml || true
+
+      - name: Montar comentário + postar no PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+            const estrutural = JSON.parse(fs.readFileSync('exercicios/projeto-final/grader/grade-estrutural.json', 'utf8'))
+            const e2e = fs.existsSync('exercicios/projeto-final/grader/grade-e2e.json')
+              ? JSON.parse(fs.readFileSync('exercicios/projeto-final/grader/grade-e2e.json', 'utf8'))
+              : null
+
+            const e2eSection = e2e
+              ? `### E2E (Maestro)\n${e2e.breakdown}\n\n**Score E2E: ${e2e.autoScore}/${e2e.maxScore}**`
+              : '### E2E (Maestro)\n❌ App não buildou ou emulador não rodou.'
+
+            const body = [
+              `## 🤖 Autograder — Projeto Final (${{ env.TEMA }} · ${{ env.FRAMEWORK }})`,
+              '',
+              e2eSection,
+              '',
+              '### Convenção de testID',
+              estrutural.breakdown,
+              '',
+              '📝 Critérios manuais (contribuição individual, qualidade) contam só na nota final do Canvas — esta é a nota MÍNIMA automática.',
+            ].join('\n')
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            })
+
+      - name: Upload artifacts (grade.json completo + resultados)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: grade-artifacts
+          path: |
+            exercicios/projeto-final/grader/grade-estrutural.json
+            exercicios/projeto-final/grader/grade-e2e.json
+            results.xml
+          if-no-files-found: ignore
+
+  discover-failed:
+    needs: discover
+    if: needs.discover.outputs.ok != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comentar erro de discover no PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `⚠️ Autograder não conseguiu identificar a entrega: ${{ needs.discover.outputs.error }}`,
+            })

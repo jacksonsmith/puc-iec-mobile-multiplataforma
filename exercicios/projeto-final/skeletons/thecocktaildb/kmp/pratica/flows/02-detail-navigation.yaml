@@ -1,0 +1,19 @@
+# Feature 2 — navegação lista → detalhe
+appId: com.puciec.cocktailkmp
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
+- scrollUntilVisible:
+    element:
+      id: "item-card-11000"
+    direction: DOWN
+- tapOn:
+    id: "item-card-11000"
+- assertVisible:
+    id: "detail-screen"
+- assertVisible:
+    id: "detail-title"
+- assertVisible: "Mojito"

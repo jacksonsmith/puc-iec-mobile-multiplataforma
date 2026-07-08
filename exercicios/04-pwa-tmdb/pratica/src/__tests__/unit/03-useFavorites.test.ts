@@ -1,6 +1,7 @@
 // src/__tests__/unit/03-useFavorites.test.ts
-// ✅ AVALIATIVO — implemente os casos marcados com TODO
-// Os casos 1 e 2 já estão prontos como exemplo. Implemente 3, 4 e 5.
+// ✅ AVALIATIVO — implemente os casos marcados com it.todo
+// 📘 MODELO: testes 1 e 2 estão prontos — leia antes de começar
+// 🧑‍💻 SEU TRABALHO: testes 3, 4 e 5 (1 pt cada)
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
@@ -12,11 +13,13 @@ beforeEach(() => {
 });
 
 describe('useFavorites', () => {
+  // 📘 MODELO — leia e entenda antes de escrever os próximos
   it('1. começa sem favoritos', () => {
     const { result } = renderHook(() => useFavorites());
     expect(result.current.count).toBe(0);
   });
 
+  // 📘 MODELO
   it('2. toggle adiciona um id aos favoritos', () => {
     const { result } = renderHook(() => useFavorites());
     act(() => result.current.toggle(42));
