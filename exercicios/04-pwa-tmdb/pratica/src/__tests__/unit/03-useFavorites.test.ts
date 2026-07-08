@@ -27,7 +27,7 @@ describe('useFavorites', () => {
     expect(result.current.count).toBe(1);
   });
 
-  it('3. toggle duas vezes remove o favorito — renderize o hook, toggle(42) × 2, isFavorite(42) === false', () => {
+  it('3. toggle duas vezes remove o favorito', () => {
     const { result } = renderHook(() => useFavorites())
 
     act(() => result.current.toggle(42));
@@ -36,7 +36,7 @@ describe('useFavorites', () => {
     expect(result.current.isFavorite(42)).toBe(false);
   });
 
-  it('4. persiste favoritos no localStorage — adicione id=7, desmonte, remonte, isFavorite(7) === true', () => {
+  it('4. persiste favoritos no localStorage', () => {
     const { result: firstMount, unmount } = renderHook(() => useFavorites())
 
     act(() => firstMount.current.toggle(7));
@@ -48,10 +48,18 @@ describe('useFavorites', () => {
     expect(secondMount.current.isFavorite(7)).toBe(true);
   });
 
-  it('5. chama navigator.setAppBadge com a contagem — mock vi.fn(), toggle(1), setAppBadge chamado com 1', () => {
-    const setAppBadge = vi.fn();
+  it('5. chama navigator.setAppBadge com a contagem', () => {
+    const mockSetAppBadge = vi.fn();
 
-    navigator.setAppBadge = setAppBadge
+    Object.defineProperties(
+      navigator,
+      {
+        'setAppBadge': {
+          value: mockSetAppBadge,
+          configurable: true
+        }
+      }
+    )
 
     const { result } = renderHook(() => useFavorites());
 
@@ -59,18 +67,6 @@ describe('useFavorites', () => {
       result.current.toggle(1);
     });
 
-    expect(setAppBadge).toHaveBeenCalledWith(1);
+    expect(mockSetAppBadge).toHaveBeenCalledWith(1);
   });
-  // 🧑‍💻 TODO 2a — toggle duas vezes deve REMOVER o favorito
-  // Dica: chame toggle(42) duas vezes e verifique isFavorite + count
-  it.todo('3. toggle duas vezes remove o favorito');
-
-  // 🧑‍💻 TODO 2b — favoritos devem sobreviver a um unmount + remount
-  // Dica: use { result, unmount } = renderHook(...), faça toggle, unmount(),
-  //       renderHook novamente e verifique isFavorite no novo result
-  it.todo('4. persiste favoritos no localStorage');
-
-  // 🧑‍💻 TODO 2c — hook deve chamar navigator.setAppBadge com a contagem
-  // Dica: vi.fn() + Object.defineProperty(navigator, 'setAppBadge', { value: mockBadge, configurable: true })
-  it.todo('5. chama navigator.setAppBadge com a contagem');
 });

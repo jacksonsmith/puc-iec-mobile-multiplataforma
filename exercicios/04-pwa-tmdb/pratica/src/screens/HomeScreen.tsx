@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { usePopularMovies, isTokenMissing } from '../hooks/useTmdb';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { useOfflineStatus } from '../hooks/useOfflineStatus'; // TODO 3 — Passo 3
+import { OfflineBanner } from '../components/OfflineBanner';
 import { AppHeader } from '../components/AppHeader';
 import { InstallButton } from '../components/InstallButton';
 import { MovieCard } from '../components/MovieCard';
@@ -39,7 +40,7 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
   const { movies, loading, error, hasMore, loadMore } = usePopularMovies();
   const [search, setSearch] = useState('');
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const { isOnline } = useOfflineStatus(); // TODO 3 — Passo 3
+  const isOnline  = useOfflineStatus(); 
 
   useInfiniteScroll(sentinelRef, loadMore);
 
@@ -48,29 +49,33 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
 
   const isEmpty = !loading && movies.length === 0;
 
-  // ─── tab: favorites — TODO 3 ────────────────────────────────────────────────
-  // Passo 1: filtre `movies` por isFavorite(m.id) → `favMovies`
-  //   Renderize um <MovieCard key={m.id} movie={m} isFavorite={true} onToggleFavorite={toggleFavorite} />
-  //   por cada filme em favMovies dentro de <section>...</section>
-  //
-  // Passo 2: estado vazio — se favMovies.length === 0, mostre <p>:
-  //   - isEmpty é true  → 'Nenhum filme carregado ainda.'
-  //   - isEmpty é false → 'Nenhum favorito ainda — toque ★ em um filme.'
-  //   Estilo sugerido: {{ color: '#90a4ae', textAlign: 'center', padding: '40px 0', fontSize: 15 }}
-  //
-  // Passo 3: banner offline — use `isOnline` (já importado acima)
-  //   Se !isOnline, renderize ANTES da lista:
-  //   <div style={{ background:'#C2410C', color:'#fff', padding:'8px 16px', textAlign:'center', fontSize:14 }}>
-  //     📡 Offline — exibindo dados do cache
-  //   </div>
   if (activeTab === 'favorites') {
+    const visible = movies.filter((m) => isFavorite(m.id));
+
     return (
       <main style={styles.main} className="main-content">
         <AppHeader title="★ Favoritos" />
-        {/* TODO 3 — implemente os Passos 1, 2 e 3 aqui */}
-        <p style={{ color: '#90a4ae', textAlign: 'center', padding: '40px 0' }}>
-          🚧 Passo 1: filtre e renderize os filmes favoritos
-        </p>
+        <NetworkToggle/>
+        <OfflineBanner isOnline={isOnline} />
+        <section>
+          {visible.length === 0 && (
+            <p style={{ color: '#90a4ae', textAlign: 'center', padding: '40px 0', fontSize: 15 }}>
+                { isEmpty ? 
+                  "Nenhum filme carregado ainda" 
+                  :
+                  "Nenhum favorito ainda — toque ★ em um filme."
+                }
+            </p>
+          )}
+          {visible.map((m) => (
+            <MovieCard
+              key={m.id}
+              movie={m}
+              isFavorite={isFavorite(m.id)}
+              onToggleFavorite={toggleFavorite}
+            />
+          ))}
+        </section>
       </main>
     );
   }
@@ -84,6 +89,7 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
       <main style={styles.main} className="main-content">
         <AppHeader title="🔍 Buscar" />
         <NetworkToggle />
+        <OfflineBanner isOnline={isOnline} />
         <input
           type="search"
           placeholder="Buscar filme…"
@@ -126,6 +132,7 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
     <main style={styles.main} className="main-content">
       <AppHeader />
       <NetworkToggle />
+      <OfflineBanner isOnline={isOnline} />
       <InstallButton />
       <section>
         {isEmpty && <EmptyMoviesScreen />}

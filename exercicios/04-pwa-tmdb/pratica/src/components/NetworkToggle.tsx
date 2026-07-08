@@ -3,9 +3,12 @@
 import { useState } from 'react';
 import { setSimulateOffline, isSimulatingOffline } from '../services/tmdb';
 import { clearMovies } from '../services/db';
+import { useOfflineStatus } from '../hooks/useOfflineStatus';
 
 export function NetworkToggle() {
   const [offline, setOffline] = useState(isSimulatingOffline);
+
+  const isOnline  = useOfflineStatus(); 
 
   const toggle = () => {
     const next = !offline;
@@ -24,8 +27,8 @@ export function NetworkToggle() {
 
   return (
     <div style={styles.wrap}>
-      <button onClick={toggle} style={{ ...styles.btn, ...(offline ? styles.offline : styles.online) }}>
-        {offline ? '📵 Offline' : '🌐 Online'}
+      <button onClick={toggle} style={{ ...styles.btn, ...(offline || !isOnline ? styles.offline : styles.online) }}>
+        {offline || !isOnline ? '📵 Offline' : '🌐 Online'}
       </button>
       <button onClick={clearCache} style={{ ...styles.btn, ...styles.clear }}>
         🗑 Limpar cache
