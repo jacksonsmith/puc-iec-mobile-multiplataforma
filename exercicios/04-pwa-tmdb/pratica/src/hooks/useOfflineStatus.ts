@@ -10,8 +10,16 @@ export function useOfflineStatus(): boolean {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
 
   useEffect(() => {
-    window.addEventListener('online', () => setIsOnline(true))
-    window.addEventListener('offline', () => setIsOnline(false))
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    }
   }, [isOnline]);
 
   return isOnline;
