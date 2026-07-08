@@ -104,6 +104,10 @@ jobs:
         run: |
           npm ci
           npx expo prebuild --platform android --no-install
+          # O build "debug" do RN pula o bundle de JS por padrão (espera um
+          # Metro rodando) — sem Metro no CI, o app nunca renderiza nada.
+          # Forçar o bundle mesmo no variant debug (achado no smoke-test real).
+          sed -i 's/bundleCommand = "export:embed"/bundleCommand = "export:embed"\n    debuggableVariants = []/' android/app/build.gradle
           cd android && ./gradlew assembleDebug
           echo "APK_PATH=_pr/${{ env.ENTREGA_PATH }}/android/app/build/outputs/apk/debug/app-debug.apk" >> "$GITHUB_ENV"
 
@@ -146,7 +150,7 @@ jobs:
             # sendo a pasta "pratica/flows", aqui é a cópia do professor no
             # repo, não a do fork do aluno. Nunca ler de dentro de `_pr/`,
             # senão o aluno poderia editar o próprio teste pra sempre passar.
-            maestro test "exercicios/projeto-final/skeletons/${{ env.TEMA }}/${{ env.FRAMEWORK }}/pratica/flows/" --format junit --output results.xml
+            maestro test "exercicios/projeto-final/skeletons/${{ env.TEMA }}/${{ env.FRAMEWORK }}/pratica/flows/" --format junit --output results.xml || true
             adb logcat -d > /tmp/logcat-dump.txt || true
 
       - name: Mostrar logcat (diagnóstico temporário do smoke-test)

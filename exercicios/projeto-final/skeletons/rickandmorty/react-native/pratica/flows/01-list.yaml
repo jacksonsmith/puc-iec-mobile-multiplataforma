@@ -2,7 +2,9 @@
 appId: com.puciec.rickmortyfinal
 ---
 - launchApp
-- assertVisible:
-    id: "item-list-screen"
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
 - assertVisible:
     id: "item-card-1"

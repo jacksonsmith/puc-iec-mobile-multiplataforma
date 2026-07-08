@@ -2,6 +2,10 @@
 appId: com.puciec.cocktail_final
 ---
 - launchApp
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
 - tapOn:
     id: "category-chip-shot"
 - assertVisible:

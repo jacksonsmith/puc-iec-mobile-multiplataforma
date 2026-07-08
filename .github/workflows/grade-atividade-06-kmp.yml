@@ -1,0 +1,110 @@
+name: Atividade 6 — KMP Autograder
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'exercicios/06-kmp/pratica/**'
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # DOIS checkouts (regra do CLAUDE.md "Autograder por PR"): base = grader
+      # confiável do professor; head = entrega do aluno, isolada, só leitura/build.
+      # Não precisa de discover: a entrega é sempre exercicios/06-kmp/pratica/ (projeto
+      # Gradle editado in-place, não uma pasta escolhida pelo aluno) — o path filter
+      # acima já garante que só disparamos quando esse caminho muda.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: _pr
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build — androidApp:assembleDebug
+        id: build
+        continue-on-error: true
+        working-directory: _pr/exercicios/06-kmp/pratica
+        run: ./gradlew :androidApp:assembleDebug
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar deps do grader
+        working-directory: exercicios/06-kmp/grader
+        run: npm ci
+
+      - name: Validator estrutural (3 TODOs) + critério eliminatório de build
+        id: validate
+        working-directory: exercicios/06-kmp/grader
+        continue-on-error: true
+        run: |
+          npx ts-node validator.ts \
+            --entrega ../../../_pr/exercicios/06-kmp/pratica \
+            --build-ok ${{ steps.build.outcome == 'success' }}
+
+      - name: Montar comentário + postar no PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+            const gradePath = 'exercicios/06-kmp/grader/grade.json'
+            const buildOk = '${{ steps.build.outcome }}' === 'success'
+
+            let body
+            if (!fs.existsSync(gradePath)) {
+              body = [
+                '## 🤖 Autograder — Atividade 6 (KMP)',
+                '',
+                buildOk
+                  ? '⚠️ Build passou mas o validator não rodou até o fim — ver logs do job.'
+                  : '❌ **Build falhou** e o validator não conseguiu rodar — ver logs do job (`Build — androidApp:assembleDebug`).',
+              ].join('\n')
+            } else {
+              const grade = JSON.parse(fs.readFileSync(gradePath, 'utf8'))
+              const buildLine = buildOk
+                ? '✅ `./gradlew :androidApp:assembleDebug` builda'
+                : '❌ `./gradlew :androidApp:assembleDebug` **NÃO builda** — critério eliminatório: os 10pts abaixo ficam zerados independente da checagem estrutural.'
+              body = [
+                '## 🤖 Autograder — Atividade 6 (KMP)',
+                '',
+                buildLine,
+                '',
+                '### Checagem estrutural (3 TODOs)',
+                grade.breakdown,
+                '',
+                `**Nota mínima automática: ${grade.autoScore}/${grade.maxAutoScore}**`,
+                '',
+                '📝 Esta é a nota MÍNIMA auto-verificável. Qualidade de código e organização entram na nota final do Canvas.',
+              ].join('\n')
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            })
+
+      - name: Upload artifact (grade.json)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: grade-artifact
+          path: exercicios/06-kmp/grader/grade.json
+          if-no-files-found: ignore
