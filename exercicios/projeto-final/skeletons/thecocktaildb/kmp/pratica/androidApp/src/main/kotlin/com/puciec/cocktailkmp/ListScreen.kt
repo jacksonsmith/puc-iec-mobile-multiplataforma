@@ -47,9 +47,13 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
     var categoryNames by remember { mutableStateOf<Set<String>?>(null) }
 
     LaunchedEffect(Unit) {
-        // TODO 1 (feature 1 — lista): chamar api.fetchList(), guardar em `all`.
-        // Tratar erro em `error` (try/catch) e marcar `loading = false` no final.
-        loading = false
+        try {
+            all = api.fetchList()
+        } catch (e: Exception) {
+            error = e.message
+        } finally {
+            loading = false
+        }
     }
 
     // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
