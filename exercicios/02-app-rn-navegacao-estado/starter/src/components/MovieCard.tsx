@@ -9,20 +9,16 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { Movie } from '@/types/movie';
 import { posterUrl } from '@/utils/poster-url';
 import type { RootStackParamList } from '@/routes/RootStack';
-// TODO [TASK 6]: import store de favoritos
-// import { useFavoritesStore } from '@/store/favoritesStore';
-// TODO [TASK 8]: import HeartButton (criar componente Reanimated)
-// import HeartButton from './HeartButton';
+import { useFavoritesStore } from '@/store/favoritesStore';
+import HeartButton from './HeartButton';
 
 type Props = { movie: Movie };
 
 export default function MovieCard({ movie }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const poster = posterUrl(movie.poster_path, 'w185');
-
-  // TODO [TASK 6]: ler isFavorite + toggle do store
-  // const isFav = useFavoritesStore((s) => s.isFavorite(movie.id));
-  // const toggle = useFavoritesStore((s) => s.toggle);
+  const isFav = useFavoritesStore((state) => state.isFavorite(movie.id));
+  const toggle = useFavoritesStore((state) => state.toggle);
 
   return (
     <Pressable
@@ -37,16 +33,13 @@ export default function MovieCard({ movie }: Props) {
         <Text style={styles.meta}>⭐ {movie.vote_average.toFixed(1)}</Text>
       </View>
 
-      {/* TODO [TASK 8]: substituir por <HeartButton active={isFav} onPress={() => toggle(movie.id)} /> */}
-      <Pressable
-        onPress={(e) => {
-          e.stopPropagation();
-          // TODO [TASK 6]: toggle(movie.id)
+      <HeartButton
+        active={isFav}
+        onPress={(event) => {
+          event.stopPropagation();
+          toggle(movie.id);
         }}
-        style={styles.heart}
-      >
-        <Text style={styles.heartIcon}>🤍</Text>
-      </Pressable>
+      />
     </Pressable>
   );
 }
@@ -64,6 +57,4 @@ const styles = StyleSheet.create({
   info: { flex: 1, gap: 4 },
   title: { fontSize: 16, fontWeight: '600' },
   meta: { color: '#666', fontSize: 12 },
-  heart: { padding: 8 },
-  heartIcon: { fontSize: 24 },
 });
