@@ -59,7 +59,7 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
     // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
     // `all` por `categoryNames` (quando não-nulo, `names.contains(it.strDrink)`)
     // e por `searchText` (substring case-insensitive do `strDrink`).
-    val filtered = all
+    val filtered = all.filter { it.strDrink.contains(searchText, ignoreCase = true) }
 
     if (loading) {
         Box(
@@ -73,9 +73,11 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
         return
     }
 
-    Box(Modifier
-        .fillMaxSize()
-        .testTag("item-list-screen")) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .testTag("item-list-screen")
+    ) {
         LazyColumn(Modifier.fillMaxSize()) {
             item {
                 OutlinedTextField(
