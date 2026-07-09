@@ -74,7 +74,16 @@ private fun MovieList(movies: List<Movie>) {
     //   - um items(movies) { movie -> MovieCard(movie) }
     // ────────────────────────────────────────────────────────────────────────
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("TODO 2: monte o LazyColumn com cabeçalho + itens")
+        LazyColumn(
+            Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            content = {
+                item {
+                    Text("${movies.size} filmes populares")
+                }
+                items(movies) { movie -> MovieCard(movie) }
+            })
     }
 }
 
