@@ -1,10 +1,10 @@
-name: Atividade 6 — KMP Autograder
+name: Atividade 5 — KMP Autograder
 
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
     paths:
-      - 'exercicios/06-kmp/pratica/**'
+      - 'exercicios/05-kmp/pratica/**'
 
 permissions:
   pull-requests: write
@@ -17,7 +17,7 @@ jobs:
     steps:
       # DOIS checkouts (regra do CLAUDE.md "Autograder por PR"): base = grader
       # confiável do professor; head = entrega do aluno, isolada, só leitura/build.
-      # Não precisa de discover: a entrega é sempre exercicios/06-kmp/pratica/ (projeto
+      # Não precisa de discover: a entrega é sempre exercicios/05-kmp/pratica/ (projeto
       # Gradle editado in-place, não uma pasta escolhida pelo aluno) — o path filter
       # acima já garante que só disparamos quando esse caminho muda.
       - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
       - name: Build — androidApp:assembleDebug
         id: build
         continue-on-error: true
-        working-directory: _pr/exercicios/06-kmp/pratica
+        working-directory: _pr/exercicios/05-kmp/pratica
         run: ./gradlew :androidApp:assembleDebug
 
       - uses: actions/setup-node@v4
@@ -45,16 +45,16 @@ jobs:
           node-version: 20
 
       - name: Instalar deps do grader
-        working-directory: exercicios/06-kmp/grader
+        working-directory: exercicios/05-kmp/grader
         run: npm ci
 
       - name: Validator estrutural (3 TODOs) + critério eliminatório de build
         id: validate
-        working-directory: exercicios/06-kmp/grader
+        working-directory: exercicios/05-kmp/grader
         continue-on-error: true
         run: |
           npx ts-node validator.ts \
-            --entrega ../../../_pr/exercicios/06-kmp/pratica \
+            --entrega ../../../_pr/exercicios/05-kmp/pratica \
             --build-ok ${{ steps.build.outcome == 'success' }}
 
       - name: Montar comentário + postar no PR
@@ -63,13 +63,13 @@ jobs:
         with:
           script: |
             const fs = require('fs')
-            const gradePath = 'exercicios/06-kmp/grader/grade.json'
+            const gradePath = 'exercicios/05-kmp/grader/grade.json'
             const buildOk = '${{ steps.build.outcome }}' === 'success'
 
             let body
             if (!fs.existsSync(gradePath)) {
               body = [
-                '## 🤖 Autograder — Atividade 6 (KMP)',
+                '## 🤖 Autograder — Atividade 5 (KMP)',
                 '',
                 buildOk
                   ? '⚠️ Build passou mas o validator não rodou até o fim — ver logs do job.'
@@ -81,7 +81,7 @@ jobs:
                 ? '✅ `./gradlew :androidApp:assembleDebug` builda'
                 : '❌ `./gradlew :androidApp:assembleDebug` **NÃO builda** — critério eliminatório: os 10pts abaixo ficam zerados independente da checagem estrutural.'
               body = [
-                '## 🤖 Autograder — Atividade 6 (KMP)',
+                '## 🤖 Autograder — Atividade 5 (KMP)',
                 '',
                 buildLine,
                 '',
@@ -106,5 +106,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: grade-artifact
-          path: exercicios/06-kmp/grader/grade.json
+          path: exercicios/05-kmp/grader/grade.json
           if-no-files-found: ignore

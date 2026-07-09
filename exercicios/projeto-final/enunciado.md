@@ -10,7 +10,7 @@
 ## O que é
 
 Cada grupo escolhe **um tema** (app + API pública gratuita) e **um framework** (Flutter, React
-Native ou KMP Compose Multiplatform — os 3 que vocês já usaram nas Atividades 2, 3 e 6) dentre as
+Native ou KMP Compose Multiplatform — os 3 que vocês já usaram nas Atividades 2, 3 e 5) dentre as
 combinações disponíveis. Nós já construímos os **skeletons** dos 3 frameworks para cada tema — sua
 tarefa é completar **5 features** que faltam no skeleton `pratica/` do seu tema+framework escolhido,
 até fazer os **5 testes E2E (Maestro)** passarem de verdade em CI.
@@ -72,7 +72,7 @@ Escolha 1 dos 3 (o mesmo grupo entrega só **1 combinação** tema+framework):
 |---|---|---|
 | React Native | Atividade 2 | ⭐⭐ |
 | Flutter | Atividade 3 | ⭐⭐⭐ |
-| KMP Compose Multiplatform | Atividade 6 | ⭐⭐⭐⭐ |
+| KMP Compose Multiplatform | Atividade 5 | ⭐⭐⭐⭐ |
 
 ## Regra de exclusividade: sem combinação repetida
 
@@ -93,29 +93,41 @@ Escolha 1 dos 3 (o mesmo grupo entrega só **1 combinação** tema+framework):
 tabelas acima) e **reservem via issue** (regra de exclusividade acima). É a única decisão que
 precisa de consenso antes de escrever código.
 
-**1. Fork** — cada grupo faz fork do repo público da disciplina (só precisa de 1 fork, quem abre o PR).
+**1. Fork do grupo** — **UM** integrante faz fork do repo público da disciplina: esse fork é o
+**repo do grupo** e é dele que sai o PR final. Os outros integrantes **não criam fork próprio** —
+todos clonam o fork do grupo.
 
-**2. Implementar** — editem **só**
+**2. Trabalhar em grupo (política de contribuição)** — cada integrante clona o **fork do grupo**,
+cria uma branch com a sua parte e abre **PR interno → `main` do fork do grupo**. O grupo revisa e
+mergeia. É assim que cada um acumula commits/PRs na própria conta — exatamente o que o critério
+**Contribuição individual (4 pts)** avalia. (Dica: o dono do fork adiciona os colegas como
+*collaborators* em Settings → Collaborators pra todo mundo poder mergear.) Commits todos na conta
+de uma pessoa só = grupo perde esses pontos.
+
+**3. Implementar** — editem **só**
 `exercicios/projeto-final/skeletons/<tema>/<framework>/pratica/` e completem os 5 `// TODO`
 marcados nos arquivos de tela (a tela/navegação/testID já vêm prontos — ver "As 5 features" acima).
-Leiam o README do tema escolhido antes (endpoints exatos + fixtures).
+**Cada skeleton tem um `README.md`** dentro da `pratica/` com o setup do framework, onde está cada
+TODO e como rodar os flows Maestro localmente — comecem por ele. Leiam também o README do tema
+escolhido (endpoints exatos + fixtures).
 
-**3. Abrir o PR** — o autograder dispara sozinho: builda o app, sobe um emulador Android real no
-CI, roda os 5 flows Maestro contra ele, e comenta a nota no PR.
+**4. Abrir o PR final** — do `main` do **fork do grupo** → repo da disciplina. O autograder
+dispara sozinho: builda o app, sobe um emulador Android real no CI, roda os 5 flows Maestro contra
+ele, e comenta a nota no PR.
 
 > **Critério eliminatório:** se o app não builda, o autograder não consegue nem tentar rodar os
 > testes — os 15 pts do critério E2E ficam **zerados automaticamente**, então rodem `flutter build`
 > / `./gradlew assembleDebug` / `expo prebuild` localmente antes de confiar no PR.
 
-**4. Ler o comentário do bot** — a nota que aparece é **mínima automática** (só o que dá pra
+**5. Ler o comentário do bot** — a nota que aparece é **mínima automática** (só o que dá pra
 verificar sem humano: os 5 flows Maestro + convenção de testID). Contribuição individual e
 apresentação são avaliadas **manualmente depois**, no Canvas — não aparecem no comentário do bot.
 
-**5. Iterar** — deu 0/15 num flow, ou builda mas falha no meio? Ajustem o código e deem push na
+**6. Iterar** — deu 0/15 num flow, ou builda mas falha no meio? Ajustem o código e deem push na
 mesma branch — o autograder **roda de novo automaticamente** a cada commit novo no PR. Podem
 iterar quantas vezes quiserem até a apresentação.
 
-**6. Apresentação** — ao vivo, com demo funcionando (10min + 5min Q&A), data a combinar.
+**7. Apresentação** — ao vivo, com demo funcionando (10min + 5min Q&A), data a combinar.
 
 ## Rubrica (30 pts)
 

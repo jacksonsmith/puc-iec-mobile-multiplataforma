@@ -2,13 +2,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { Criterion, computeAuto, buildBreakdowns } from './lib/compute-score'
 
-// Validator da Atividade 6 (KMP — filmes populares). Sem emulador: o único artefato
+// Validator da Atividade 5 (KMP — filmes populares). Sem emulador: o único artefato
 // dinâmico é o build (`./gradlew :androidApp:assembleDebug`, rodado pelo workflow ANTES
 // de chamar este script, resultado passado via --build-ok). O resto é checagem
 // estrutural de App.kt — os 3 TODOs descritos no enunciado.
 //
 // Diferente do grader de projeto-final, aqui não tem discover multi-tema/framework:
-// a entrega é sempre `exercicios/06-kmp/pratica/` (projeto Gradle editado in-place,
+// a entrega é sempre `exercicios/05-kmp/pratica/` (projeto Gradle editado in-place,
 // não uma pasta escolhida pelo aluno) — o path filter do workflow já garante isso.
 
 const APP_KT_REL = 'shared/src/commonMain/kotlin/org/example/project/App.kt'
@@ -145,7 +145,7 @@ function main() {
 
   fs.writeFileSync(path.join(__dirname, 'grade.json'), JSON.stringify(result, null, 2))
 
-  console.log('\n=== VALIDATOR — Atividade 6 (KMP) ===')
+  console.log('\n=== VALIDATOR — Atividade 5 (KMP) ===')
   console.log(`buildOk: ${buildOk}`)
   console.log(`autoScore: ${autoScore}/${maxStructuralScore}`)
   console.log(priv)

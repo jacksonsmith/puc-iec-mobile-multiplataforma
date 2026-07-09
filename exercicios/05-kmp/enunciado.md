@@ -1,4 +1,4 @@
-# Atividade 6 — KMP: Filmes Populares (10 pts)
+# Atividade 5 — KMP: Filmes Populares (10 pts)
 
 **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
 **Entrega:** ver Canvas
@@ -6,7 +6,7 @@
 **Tempo estimado:** ~2-3 horas
 **Dificuldade:** ⭐⭐⭐ Difícil — requer Android Studio (Kotlin Multiplatform plugin) + emulador Android
 
-> **Como vamos fazer:** a **aula** começa com o hands-on guiado do KMP wizard oficial (JetBrains) — isso é só demonstração, não é esta atividade. **Esta atividade** (`exercicios/06-kmp/`) usa o **mesmo projeto** gerado pelo wizard: você começa em aula e **termina em casa**. É a última atividade individual do curso, antes do Projeto Final em grupo.
+> **Como vamos fazer:** a **aula** começa com o hands-on guiado do KMP wizard oficial (JetBrains) — isso é só demonstração, não é esta atividade. **Esta atividade** (`exercicios/05-kmp/`) usa o **mesmo projeto** gerado pelo wizard: você começa em aula e **termina em casa**. É a última atividade individual do curso, antes do Projeto Final em grupo.
 
 ---
 
@@ -19,7 +19,7 @@ KMP promete "uma base de código, três plataformas" — mas o que o aluno realm
 ## Setup
 
 ```bash
-cd exercicios/06-kmp/pratica
+cd exercicios/05-kmp/pratica
 ls shared/src/commonMain/kotlin/org/example/project    # deve listar App.kt e data/
 ```
 
@@ -55,11 +55,11 @@ Os comentários `// TODO N` no arquivo `pratica/shared/src/commonMain/kotlin/org
 
 ## Entrega
 
-PR no **seu fork** do repo público tocando `exercicios/06-kmp/pratica/`. Link do PR colado no Canvas.
+PR no **seu fork** do repo público tocando `exercicios/05-kmp/pratica/`. Link do PR colado no Canvas.
 
 ```
 meu-fork/
-  exercicios/06-kmp/pratica/
+  exercicios/05-kmp/pratica/
     shared/src/commonMain/kotlin/org/example/project/App.kt   ← os 3 TODOs resolvidos
 ```
 

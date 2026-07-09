@@ -4,7 +4,7 @@
 > **Modalidade:** Online ao vivo · 24h · 1º/2026
 > **Professor:** Jackson Smith Moisés Matias
 
-Repositório público com **exercícios, repos starter de aulas e materiais de referência** desta disciplina. Para alunos da Oferta 10 — Turma 1 (20/05 a 01/07/2026).
+Repositório público com **exercícios e materiais de referência** desta disciplina. Para alunos da Oferta 10 — Turma 1 (20/05 a 15/07/2026).
 
 ## Calendário
 
@@ -12,10 +12,10 @@ Repositório público com **exercícios, repos starter de aulas e materiais de r
 |---|------|------|
 | 1 | 20/05/2026 | Fundamentos & Panorama Mobile/Multiplataforma |
 | 2 | 27/05/2026 | React Native em profundidade — New Architecture |
-| 3 | 10/06/2026 | Cross-Platform Comparativo — Flutter, KMP, Native Bridging |
-| 4 | 17/06/2026 | PWA, Service Workers, Web Workers, Offline-First |
-| 5 | 24/06/2026 | Backend para Frontend — APIs, Middlewares, GraphQL, Segurança |
-| 6 | 01/07/2026 | Performance, Observabilidade, IA on-Device & Apresentações |
+| 3 | 17/06/2026 | Flutter — UI, Estado & Testes |
+| 4 | 01/07/2026 | PWA, Service Workers, Offline-First |
+| 5 | 08/07/2026 | Kotlin Multiplatform + lançamento do Projeto Final |
+| 6 | 15/07/2026 | Performance, Observabilidade, BFF/GraphQL & Apresentações |
 
 Todas quartas-feiras, 19:00–22:30.
 
@@ -35,11 +35,12 @@ Conceitos, requisitos e padrões arquiteturais para aplicações móveis e multi
 
 ```
 .
-├── exercicios/      # Atividades por aula (sem gabarito)
-├── starters/        # Repos starter pra cada aula (clone & build)
-├── labs/            # Hands-on labs feitos em sala
-├── README.md        # Você está aqui
-└── BIBLIOGRAFIA.md  # Referências completas
+├── exercicios/          # Atividades por aula (sem gabarito) — cada uma com pratica/
+├── slides/              # PDFs das aulas
+├── material-de-apoio/   # Leituras e referências por aula
+├── grader/              # Autograder (J.A.R.V.I.S.)
+├── README.md            # Você está aqui
+└── BIBLIOGRAFIA.md      # Referências completas
 ```
 
 ## Avaliação (100 pts)
@@ -47,22 +48,23 @@ Conceitos, requisitos e padrões arquiteturais para aplicações móveis e multi
 | Item | Pontos |
 |------|--------|
 | Atividade 1 — ADR Arquitetural | 15 |
-| Atividade 2 — App RN navegação + estado | 15 |
-| Atividade 3 — Native Module + comparativo | 15 |
-| Atividade 4 — PWA Offline-First | 15 |
-| Atividade 5 — Integração GraphQL + auth | 10 |
-| Quiz IA aplicada | 10 |
-| **Projeto Final Individual** | **20** |
+| Atividade 2 — App RN: navegação + estado | 15 |
+| Atividade 3 — Flutter: UI + Estado + Testes | 15 |
+| Atividade 4 — PWA TMDB offline-first | 15 |
+| Atividade 5 — KMP: Filmes Populares | 10 |
+| **Projeto Final em Grupo** | **30** |
+
+Cronograma com prazos: [`exercicios/README.md`](./exercicios/README.md).
 
 ## Como usar
 
 ```bash
-# Clone
-git clone https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma.git
+# Fork primeiro (entregas são via PR), depois clone o SEU fork:
+git clone https://github.com/<seu-usuario>/puc-iec-mobile-multiplataforma.git
 cd puc-iec-mobile-multiplataforma
 
-# Cada aula tem seu próprio starter em starters/aula-XX/
-cd starters/aula-01
+# Cada atividade vive em exercicios/NN-<slug>/pratica/ — ex.:
+cd exercicios/02-app-rn-navegacao-estado/pratica
 npm install
 npx expo start
 ```
@@ -93,19 +95,19 @@ Slides da abertura da Aula 2 com tutorial Fork+PR: [`slides/intro-fluxo-pr-githu
 
 ## Auto-grading via CI 🤖
 
-Atividades 2, 3, 4 e 5 são avaliadas automaticamente em PR. Workflow:
+Atividades 2, 3, 4, 5 e o Projeto Final são avaliadas automaticamente em PR. Workflow:
 
 1. **Fork** este repositório
-2. Crie pasta: `exercicios/<NN>-<atividade>/aluno-<seu-github-username>/`
-3. Implemente seguindo o `README.md` de cada exercício
-4. Push + abra PR para `main`
-5. CI dispara: **J.A.R.V.I.S.** (autograder) posta status no PR + sobe artifact privado pro prof
+2. Edite a pasta `pratica/` do exercício (os `TODO` marcados no código)
+3. Push + abra PR para `main`
+4. CI dispara: **J.A.R.V.I.S.** (autograder) comenta a nota mínima automática no PR a cada commit
 
 Atividades disponíveis:
-- [A2 — App RN navegação + estado](./exercicios/02-app-rn-navegacao-estado/)
-- [A3 — Native Module + comparativo](./exercicios/03-native-module-comparativo/)
-- [A4 — PWA Offline-First](./exercicios/04-pwa-offline-first/)
-- [A5 — GraphQL + Auth](./exercicios/05-graphql-auth/)
+- [A2 — App RN: navegação + estado](./exercicios/02-app-rn-navegacao-estado/)
+- [A3 — Flutter: UI + Estado + Testes](./exercicios/03-flutter-ui-estado/)
+- [A4 — PWA TMDB offline-first](./exercicios/04-pwa-tmdb/)
+- [A5 — KMP: Filmes Populares](./exercicios/05-kmp/)
+- [PF — Projeto Final em Grupo](./exercicios/projeto-final/)
 
 A1 (ADR) é correção manual.
 
