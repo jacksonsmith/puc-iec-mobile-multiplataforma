@@ -30,7 +30,8 @@ src/
 │   ├── MovieList.tsx
 │   └── MovieDetail.tsx
 ├── components/         ← Reutilizáveis
-│   └── MovieCard.tsx
+│   ├── MovieCard.tsx
+│   └── HeartButton.tsx
 ├── types/              ← Tipos TS
 │   └── movie.ts
 └── utils/              ← Helpers
@@ -150,6 +151,40 @@ Service em `src/services/api.ts` encapsula essas chamadas. Queries em `src/queri
 - **Path alias:** import com `@/` → resolve pra `src/`. Ex: `import { api } from '@/services/api'`.
 - **Reanimated:** plugin Babel já configurado (`babel.config.js`). Restart Metro se mudar config.
 - **Hermes:** habilitado por padrão no Expo SDK 54+.
+
+---
+
+## Entrega Atividade 2 (TODO [TASK 10])
+
+### Identificação
+
+- **Aluno:** [preencher seu nome]
+- **Opção Reanimated escolhida:** A — Heart pop (`withSequence` + `withSpring` no `HeartButton`)
+- **Repo (seu fork):** [colar URL do fork]
+
+### O que o app faz
+
+Lista filmes populares (TMDB), favorita com coração na lista e no detalhe, persiste favoritos via MMKV (polyfill `localStorage` na web) e anima o toque no coração com Reanimated.
+
+### Screenshot
+
+Coloque `screenshot.png` na pasta `starter/` (lista com pelo menos um ❤️ ativo):
+
+![Lista com favoritos](./screenshot.png)
+
+### Screencast
+
+Coloque `screencast.gif` na pasta `starter/` (~15s: toggle favorito + reload mostrando persistência):
+
+![Animação Reanimated](./screencast.gif)
+
+### Checklist antes do Canvas
+
+1. `npm test` — 7 testes verdes (CI exige ≥ 6)
+2. Adicionar `screenshot.png` e `screencast.gif` acima
+3. Preencher nome e URL do fork nesta seção
+4. Push no `main` do fork → conferir Actions verde
+5. Colar link do repo no Canvas
 
 ---
 
