@@ -123,6 +123,8 @@ grep -rn "TODO \[TASK" src/ __tests__/
 | TASK 9 | — | Testes favorites (IA) |
 | TASK 10 | — | README + screencast + entrega |
 
+Selected Reanimated option: A — Heart pop (pop + slight rotation on tap)
+
 ---
 
 ## Endpoints TMDB usados
