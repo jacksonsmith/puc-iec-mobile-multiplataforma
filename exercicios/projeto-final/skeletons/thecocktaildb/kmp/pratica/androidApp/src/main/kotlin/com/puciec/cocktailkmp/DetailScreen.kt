@@ -21,8 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.puciec.cocktailkmp.data.TheCocktailDbApi
 import com.puciec.cocktailkmp.data.DrinkDetail
+import com.puciec.cocktailkmp.data.TheCocktailDbApi
 
 @Composable
 fun DetailScreen(
@@ -36,24 +36,35 @@ fun DetailScreen(
     var error by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(drinkId) {
-        // TODO 2 (feature 2 — detalhe): chamar api.fetchDetail(drinkId) e
-        // guardar em `detail`. Tratar erro em `error` (try/catch).
+        try {
+            detail = api.fetchDetail(drinkId)
+        } catch (e: Exception) {
+            error = e.message
+        }
     }
 
-    Column(Modifier.fillMaxSize().testTag("detail-screen").padding(16.dp)) {
+    Column(Modifier
+        .fillMaxSize()
+        .testTag("detail-screen")
+        .padding(16.dp)) {
         Text(
             text = "< Voltar",
-            modifier = Modifier.testTag("detail-back-button").clickable { onBack() },
+            modifier = Modifier
+                .testTag("detail-back-button")
+                .clickable { onBack() },
         )
         when {
             error != null -> Text(error!!)
             detail == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
+
             else -> {
                 val d = detail!!
                 Row(
-                    Modifier.fillMaxWidth().padding(top = 16.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(

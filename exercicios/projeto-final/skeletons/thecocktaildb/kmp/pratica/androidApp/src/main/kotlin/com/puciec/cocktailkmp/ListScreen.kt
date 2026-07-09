@@ -62,7 +62,10 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
     val filtered = all
 
     if (loading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) { CircularProgressIndicator() }
         return
     }
     if (error != null) {
@@ -70,19 +73,26 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
         return
     }
 
-    Box(Modifier.fillMaxSize().testTag("item-list-screen")) {
+    Box(Modifier
+        .fillMaxSize()
+        .testTag("item-list-screen")) {
         LazyColumn(Modifier.fillMaxSize()) {
             item {
                 OutlinedTextField(
                     value = searchText,
                     onValueChange = { searchText = it },
                     label = { Text("Buscar drink") },
-                    modifier = Modifier.fillMaxWidth().padding(12.dp).testTag("search-input"),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .testTag("search-input"),
                 )
             }
             item {
                 LazyRow(
-                    Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     item {
