@@ -1,54 +1,79 @@
-# Atividade 2 — App RN navegação + estado (15 pts)
+# README — Atividade 2 — [Seu Nome]
 
-> **Disciplina:** Arquitetura Mobile Multiplataforma — PUC IEC 2026
-> **Aula correspondente:** Aula 2 (27/05/2026)
-> **Prazo:** 09/06/2026 — 23:59
-> **Auto-grading:** ✅ ativo via CI
+> Use isso como base do README.md do seu projeto.
 
-## Objetivo
+## Identificação
 
-Estender app RN da Aula 2 com favoritos persistentes (MMKV), animação Reanimated não trivial e medição de TTI.
+- **Aluno:** Matheus Mestre Picerne
+- **Opção Reanimated escolhida:** A heart pop
+- **Bonus implementado:** Bottom Tabs e TanStack Query staleTime + prefetch
+- **Repo (seu fork):** https://github.com/matheusmestre/puc-iec-mobile-multiplataforma
 
-## Como entregar
+## Como rodar
 
-1. **Fork** do repo
-2. Cria pasta: `exercicios/02-app-rn-navegacao-estado/aluno-<seu-github-username>/`
-3. Implementa app
-4. Push + abre PR para `main` do upstream
-5. CI roda autograder; J.A.R.V.I.S. comenta status
-
-## Estrutura esperada
-
-```
-exercicios/02-app-rn-navegacao-estado/aluno-<github-username>/
-├── package.json                 # com RN + react-navigation + RTK
-├── App.tsx (ou index.tsx)
-├── src/
-│   ├── navigation/              # NavigationContainer + Stack/Tab
-│   ├── store/                   # RTK slice ou Zustand
-│   └── screens/
-└── README.md                    # como rodar + features
+```bash
+npm install
+npx expo start
 ```
 
-## Critérios de avaliação automatizada
+> ⚠️ MMKV não roda em web. Use simulador iOS (`i`) ou Android (`a`).
 
-| # | Critério | Peso |
-|---|----------|------|
-| 1 | package.json com RN + react-navigation + RTK | 4 |
-| 2 | Ponto de entrada (App.tsx/index.tsx) | 2 |
-| 3 | NavigationContainer configurado | 3 |
-| 4 | Estado RTK ou Zustand | 3 |
-| 5 | Reanimated importado/usado | 2 |
-| 6 | README presente | 1 |
+## O que o app faz
 
-**Pass threshold:** 60%.
+- Exibe uma lista de filmes populares da API TMDB com busca e detalhes por título. 
+- Permite marcar e desmarcar favoritos com persistência local via MMKV e animação de coração (Reanimated). 
+- Organizado com navegação em abas (Bottom Tabs), gerenciamento de estado via Zustand e cache de dados com TanStack Query.
 
-## Anexar vídeo
+## Screenshot
 
-Mostre app rodando: navegação + estado + animação. ≤ 2min.
+![Lista com favoritos](./screenshot.png)
 
-## Pitfalls
+## Screencast da animação
 
-- Path errado → CI ignora
-- README ausente → -1pt
-- AsyncStorage em vez de MMKV → critério 4 não detecta MMKV mas valor pedagógico recomenda MMKV
+![Animação Reanimated](./screencast.gif)
+
+> Substitua pelas mídias reais. GIF deve ter 15-30s mostrando a animação acontecendo.
+
+## Arquitetura
+
+```
+src/
+├── navigation/
+│   └── RootStack.tsx
+├── screens/
+│   ├── MovieList.tsx
+│   └── MovieDetail.tsx
+├── components/
+│   ├── MovieCard.tsx
+│   └── HeartButton.tsx       ← animação Reanimated
+├── store/
+│   ├── counterStore.ts
+│   └── favoritesStore.ts     ← Zustand + persist + MMKV
+├── api/
+│   └── useMovies.ts          ← TanStack Query
+└── storage/
+    └── mmkv.ts
+```
+
+## Decisões técnicas (3-5 linhas)
+
+- O principal motivo pela escolha do Reanimated A foi a simplicidade tanto da solução quanto da implementação. 
+- MMKV opera de forma síncrona via JSI, eliminando a ponte assíncrona do React Native. Isso torna leituras e escritas instantâneas, sem await, ideal para persistência de estado frequente como favoritos.
+
+## Referência
+
+React Native Reanimated — https://docs.swmansion.com/react-native-reanimated/
+react-native-mmkv — https://github.com/mrousavy/react-native-mmkv
+Zustand — https://zustand.docs.pmnd.rs/
+TanStack Query — https://tanstack.com/query/latest/docs/framework/react/overview
+
+---
+
+## 🎁 Bonus implementado (opcional)
+
+- [X] **Bottom Tabs com aba Favoritos filtrada — +2pt**
+- [ ] Deep link `expo://detail/<id>` — +1pt
+- [ ] 2 das 3 opções Reanimated (A/B/C) — +1pt
+- [X] TanStack Query `staleTime` + `prefetchQuery` — +1pt
+- [ ] Hermes habilitado (verificar `app.json`) — +0.5pt
+- [ ] CI GitHub Actions verde — +0.5pt
