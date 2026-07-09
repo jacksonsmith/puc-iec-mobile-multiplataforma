@@ -7,6 +7,20 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useFavorites } from '../../hooks/useFavorites';
 
+const mockStorage: Record<string, string> = {};
+Object.defineProperty(globalThis, 'localStorage', {
+  value: {
+    getItem: (k: string) => mockStorage[k] || null,
+    setItem: (k: string, v: string) => { mockStorage[k] = v; },
+    clear: () => {
+      for (const key in mockStorage) {
+        delete mockStorage[key];
+      }
+    }
+  },
+  writable: true
+});
+
 beforeEach(() => {
   localStorage.clear();
   vi.restoreAllMocks();
@@ -29,14 +43,31 @@ describe('useFavorites', () => {
 
   // 🧑‍💻 TODO 2a — toggle duas vezes deve REMOVER o favorito
   // Dica: chame toggle(42) duas vezes e verifique isFavorite + count
-  it.todo('3. toggle duas vezes remove o favorito');
+  it('3. toggle duas vezes remove o favorito', () => {
+    const { result } = renderHook(() => useFavorites());
+    act(() => result.current.toggle(42));
+    act(() => result.current.toggle(42));
+    expect(result.current.isFavorite(42)).toBe(false);
+    expect(result.current.count).toBe(0);
+  });
 
   // 🧑‍💻 TODO 2b — favoritos devem sobreviver a um unmount + remount
   // Dica: use { result, unmount } = renderHook(...), faça toggle, unmount(),
   //       renderHook novamente e verifique isFavorite no novo result
-  it.todo('4. persiste favoritos no localStorage');
+  it('4. persiste favoritos no localStorage', () => {
+    const { result, unmount } = renderHook(() => useFavorites());
+    act(() => result.current.toggle(7));
+    unmount();
+    const { result: newResult } = renderHook(() => useFavorites());
+    expect(newResult.current.isFavorite(7)).toBe(true);
+  });
 
   // 🧑‍💻 TODO 2c — hook deve chamar navigator.setAppBadge com a contagem
   // Dica: vi.fn() + Object.defineProperty(navigator, 'setAppBadge', { value: mockBadge, configurable: true })
-  it.todo('5. chama navigator.setAppBadge com a contagem');
+  it('5. chama navigator.setAppBadge com a contagem', () => {
+    navigator.setAppBadge = vi.fn();
+    const { result } = renderHook(() => useFavorites());
+    act(() => result.current.toggle(1));
+    expect(navigator.setAppBadge).toHaveBeenCalledWith(1);
+  });
 });
