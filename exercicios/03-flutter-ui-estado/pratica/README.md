@@ -7,6 +7,13 @@ App de catálogo de filmes em **Flutter**. Já roda; você completa os scaffolds
 flutter pub get
 flutter run -d chrome   # abre no navegador — sem emulador, sem rede/token
 ```
+Caso esteja utilizando o Visual Studio Code como apoio, executar apertando a tecla F5 estando com o arquivo [main.dart](./lib/main.dart) aberto.
+
+## Prop Drilling x Provider
+O Provider evita que a aplicação precise carregar o estado na mão por toda a árvore de componentes. Por conta dessa
+caracteristica do Prop Drilling, além de ser muito díficil de escalar, é fácil que algum desenvolvedor passe algo errado
+em estruturas muito complexas. Isso é evitado passando o valor para toda uma subárvore, sem necessitar de passar
+via parâmetro.
 
 ## Testar (é o gate da Atividade 3)
 ```bash
