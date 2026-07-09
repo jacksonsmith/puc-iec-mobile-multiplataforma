@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -24,13 +25,17 @@ import com.puciec.cocktailkmp.data.TheCocktailDbApi
 import com.puciec.cocktailkmp.data.DrinkSummary
 
 @Composable
-fun FavoritesScreen(api: TheCocktailDbApi, favoritesStore: FavoritesStore, onSelect: (String) -> Unit) {
+fun FavoritesScreen(
+    api: TheCocktailDbApi,
+    favoritesStore: FavoritesStore,
+    onSelect: (String) -> Unit
+) {
     var favorites by remember { mutableStateOf<List<DrinkSummary>?>(null) }
 
     LaunchedEffect(Unit) {
-        // TODO 5 (feature 5 — favoritos): cruzar favoritesStore.load() (ids)
-        // com api.fetchList() (dados), guardar em `favorites`.
-        favorites = emptyList()
+        val all = api.fetchList()
+        val favoriteIDs = favoritesStore.load()
+        favorites = all.filter { favoriteIDs.contains(it.idDrink) }
     }
 
     val current = favorites
@@ -38,10 +43,14 @@ fun FavoritesScreen(api: TheCocktailDbApi, favoritesStore: FavoritesStore, onSel
         current == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
+
         current.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("Nenhum favorito ainda.")
         }
-        else -> LazyColumn(Modifier.fillMaxSize()) {
+
+        else -> LazyColumn(Modifier
+            .fillMaxSize()
+            .statusBarsPadding()) {
             items(current, key = { it.idDrink }) { drink ->
                 Text(
                     text = drink.strDrink,

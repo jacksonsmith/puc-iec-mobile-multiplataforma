@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,10 +44,13 @@ fun DetailScreen(
         }
     }
 
-    Column(Modifier
-        .fillMaxSize()
-        .testTag("detail-screen")
-        .padding(16.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .testTag("detail-screen")
+            .padding(16.dp)
+    ) {
         Text(
             text = "< Voltar",
             modifier = Modifier
@@ -80,6 +84,8 @@ fun DetailScreen(
                                 // TODO 5 (feature 5 — favoritos): chamar
                                 // favoritesStore.toggle(drinkId) e atualizar
                                 // `isFavorite` com o resultado.
+                                favoritesStore.toggle(d.idDrink)
+                                isFavorite = favoritesStore.load().contains(d.idDrink)
                             },
                         style = MaterialTheme.typography.headlineMedium,
                     )
