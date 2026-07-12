@@ -1,0 +1,14 @@
+# Feature 1 — lista consumindo API real (PokeAPI)
+appId: com.puciec.pokedexfinal
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
+- scrollUntilVisible:
+    element:
+      id: "item-card-25"
+    direction: DOWN
+- assertVisible:
+    id: "item-card-25"

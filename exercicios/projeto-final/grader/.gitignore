@@ -1,0 +1,5 @@
+node_modules/
+dist/
+grade.json
+grade-estrutural.json
+grade-e2e.json

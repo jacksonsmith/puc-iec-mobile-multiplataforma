@@ -1,0 +1,14 @@
+# Feature 4 — categoria/filtro estruturado (categoria "Shot")
+appId: com.puciec.cocktailfinal
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
+- tapOn:
+    id: "category-chip-shot"
+- assertVisible:
+    id: "item-card-17060"
+- assertNotVisible:
+    id: "item-card-11000"
