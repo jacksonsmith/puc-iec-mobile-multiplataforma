@@ -10,7 +10,7 @@
 ## O que é
 
 Cada grupo escolhe **um tema** (app + API pública gratuita) e **um framework** (Flutter, React
-Native ou KMP Compose Multiplatform — os 3 que vocês já usaram nas Atividades 2, 3 e 6) dentre as
+Native ou KMP Compose Multiplatform — os 3 que vocês já usaram nas Atividades 2, 3 e 5) dentre as
 combinações disponíveis. Nós já construímos os **skeletons** dos 3 frameworks para cada tema — sua
 tarefa é completar **5 features** que faltam no skeleton `pratica/` do seu tema+framework escolhido,
 até fazer os **5 testes E2E (Maestro)** passarem de verdade em CI.
@@ -40,20 +40,29 @@ cima de um elemento que não faz nada — o grader valida isso, ver seção de r
 ## Temas disponíveis
 
 Todos usam API pública **sem key real** (ou key de demonstração documentada oficialmente — nenhum
-segredo/cadastro pago necessário). Cada tema tem uma pasta própria em [`temas/`](./temas/) com
-endpoints, fixtures usadas nos testes e detalhes específicos.
+segredo/cadastro pago necessário), sem rate-limit que atrapalhe o CI, e todos resolvem a **feature 4
+(categoria/filtro)** via parâmetro real da API — não é filtro inventado. A diferença entre eles é
+domínio visual e o **tipo do id** (isso afeta o `FavoritesStore`/model nos 3 frameworks — vale olhar
+antes de escolher, não só depois de já ter começado).
 
-| # | Tema | API | Por que é real |
-|---|------|-----|-----------------|
-| 1 | **PokeAPI** — Pokédex | [pokeapi.co](https://pokeapi.co) | Schema simples e estável, zero rate-limit agressivo — "hello world" de API real amplamente usado em tutoriais de mobile |
-| 2 | **Rick and Morty API** — personagens | [rickandmortyapi.com](https://rickandmortyapi.com) | Filtro nativo por `status` mapeia direto na feature 4; domínio bem distinto visualmente do tema 1 |
-| 3 | **TheMealDB** — receitas | [themealdb.com](https://www.themealdb.com/api.php) | Domínio "comida" com variação visual real; filtro por categoria nativo |
-| 4 | **TheCocktailDB** — drinks | [thecocktaildb.com](https://www.thecocktaildb.com/api.php) | Mesmo mantenedor da TheMealDB (schema irmão), tema visual distinto |
-| 5 | **Studio Ghibli API** — filmes | [ghibliapi.vercel.app](https://ghibliapi.vercel.app) | Curadoria fixa e estável (22 filmes, não deprecia), filtro por diretor mapeia na feature 4 |
+| # | Tema | API retorna | Filtro (feature 4) | Tipo do id |
+|---|------|---|---|---|
+| 1 | **PokeAPI** — Pokédex (151 pokémons) | nome, sprite, tipos, altura/peso | `type` — 1 chamada extra pra cruzar com a lista | `Int` |
+| 2 | **Rick and Morty** — personagens (826, paginado) | nome, status (alive/dead/unknown), espécie, gênero | `status` — nativo, `?status=` já filtrado | `Int` |
+| 3 | **TheMealDB** — receitas (25 do seed) | nome, categoria, área/origem, foto do prato | `c` (categoria) — nativo, `filter.php?c=` | **`String`** |
+| 4 | **TheCocktailDB** — drinks (100 da categoria Cocktail) | nome, categoria, tipo de copo, alcoólico/não | `c` (categoria) — nativo, `filter.php?c=` (mesmo padrão do tema 3, mesmo mantenedor) | **`String`** |
+| 5 | **Studio Ghibli** — filmes (22, curadoria fixa) | título, diretor, ano, duração | `director` — nativo, `?director=` | **`String` (UUID)** |
 
-Ver `temas/01-pokeapi/README.md`, `temas/02-rickandmorty/README.md`, `temas/03-themealdb/README.md`,
-`temas/04-thecocktaildb/README.md` e `temas/05-studio-ghibli/README.md` pra detalhes de endpoint e as
-fixtures exatas que os testes Maestro usam.
+Domínio bicho (1) → personagem de série (2) → comida (3) → drinks (4) → filmes (5): escolham pelo
+que o grupo achar mais divertido de montar tela pra ele, a dificuldade técnica das 5 features é a
+mesma nos 5 temas. A única decisão que muda código de verdade é o tipo do id — temas 3, 4 e 5 usam
+`String` (não `Int`) no model e no `Set` de favoritos.
+
+Cada tema tem uma pasta própria em [`temas/`](./temas/) com endpoints exatos, fixtures usadas nos 5
+testes Maestro (qual item/categoria/termo de busca esperar) e gotchas específicos — abram o README
+do tema escolhido **antes** de começar a implementar: `temas/01-pokeapi/README.md`,
+`temas/02-rickandmorty/README.md`, `temas/03-themealdb/README.md`, `temas/04-thecocktaildb/README.md`,
+`temas/05-studio-ghibli/README.md`.
 
 ## Framework
 
@@ -63,19 +72,62 @@ Escolha 1 dos 3 (o mesmo grupo entrega só **1 combinação** tema+framework):
 |---|---|---|
 | React Native | Atividade 2 | ⭐⭐ |
 | Flutter | Atividade 3 | ⭐⭐⭐ |
-| KMP Compose Multiplatform | Atividade 6 | ⭐⭐⭐⭐ |
+| KMP Compose Multiplatform | Atividade 5 | ⭐⭐⭐⭐ |
 
-## Entrega
+## Regra de exclusividade: sem combinação repetida
 
-1. Fork do repo público da disciplina.
-2. Editar **só** `exercicios/projeto-final/skeletons/<tema>/<framework>/pratica/` — implementar os 5
-   `// TODO` marcados nos arquivos de tela.
-3. Abrir PR. O autograder roda automaticamente: builda o app, boota um emulador Android, roda os 5
-   flows Maestro, e comenta a nota no PR.
-4. Apresentação ao vivo com demo funcionando (data a combinar).
+**Cada combinação tema + framework só pode ser usada por UM grupo.** São 5 temas × 3 frameworks =
+**15 combinações** — e bem menos grupos que isso, então não tem por que repetir.
 
-**Critério eliminatório:** se o app não builda, o autograder não consegue nem tentar rodar os testes —
-os 15 pts do critério E2E ficam zerados automaticamente.
+- **Reserva:** o grupo **abre uma issue** no repo público da disciplina com o título
+  `Grupo <nomes> — <tema> + <framework>` assim que decidir. Vale a ordem de chegada
+  (timestamp da issue).
+- Antes de abrir a sua, **olhem as issues existentes** — se a combinação já foi reservada,
+  escolham outra (pode repetir o tema OU o framework, nunca os dois juntos).
+- PR entregue com combinação duplicada sem reserva: **quem reservou primeiro fica com ela**;
+  o outro grupo troca (o esforço nas 5 features transfere quase inteiro — muda só domínio/API).
+
+## Entrega — passo a passo
+
+**0. Grupo + escolha** — formem o grupo (3-4 pessoas), decidam **1 tema + 1 framework** juntos (ver
+tabelas acima) e **reservem via issue** (regra de exclusividade acima). É a única decisão que
+precisa de consenso antes de escrever código.
+
+**1. Fork do grupo** — **UM** integrante faz fork do repo público da disciplina: esse fork é o
+**repo do grupo** e é dele que sai o PR final. Os outros integrantes **não criam fork próprio** —
+todos clonam o fork do grupo.
+
+**2. Trabalhar em grupo (política de contribuição)** — cada integrante clona o **fork do grupo**,
+cria uma branch com a sua parte e abre **PR interno → `main` do fork do grupo**. O grupo revisa e
+mergeia. É assim que cada um acumula commits/PRs na própria conta — exatamente o que o critério
+**Contribuição individual (4 pts)** avalia. (Dica: o dono do fork adiciona os colegas como
+*collaborators* em Settings → Collaborators pra todo mundo poder mergear.) Commits todos na conta
+de uma pessoa só = grupo perde esses pontos.
+
+**3. Implementar** — editem **só**
+`exercicios/projeto-final/skeletons/<tema>/<framework>/pratica/` e completem os 5 `// TODO`
+marcados nos arquivos de tela (a tela/navegação/testID já vêm prontos — ver "As 5 features" acima).
+**Cada skeleton tem um `README.md`** dentro da `pratica/` com o setup do framework, onde está cada
+TODO e como rodar os flows Maestro localmente — comecem por ele. Leiam também o README do tema
+escolhido (endpoints exatos + fixtures).
+
+**4. Abrir o PR final** — do `main` do **fork do grupo** → repo da disciplina. O autograder
+dispara sozinho: builda o app, sobe um emulador Android real no CI, roda os 5 flows Maestro contra
+ele, e comenta a nota no PR.
+
+> **Critério eliminatório:** se o app não builda, o autograder não consegue nem tentar rodar os
+> testes — os 15 pts do critério E2E ficam **zerados automaticamente**, então rodem `flutter build`
+> / `./gradlew assembleDebug` / `expo prebuild` localmente antes de confiar no PR.
+
+**5. Ler o comentário do bot** — a nota que aparece é **mínima automática** (só o que dá pra
+verificar sem humano: os 5 flows Maestro + convenção de testID). Contribuição individual e
+apresentação são avaliadas **manualmente depois**, no Canvas — não aparecem no comentário do bot.
+
+**6. Iterar** — deu 0/15 num flow, ou builda mas falha no meio? Ajustem o código e deem push na
+mesma branch — o autograder **roda de novo automaticamente** a cada commit novo no PR. Podem
+iterar quantas vezes quiserem até a apresentação.
+
+**7. Apresentação** — ao vivo, com demo funcionando (10min + 5min Q&A), data a combinar.
 
 ## Rubrica (30 pts)
 

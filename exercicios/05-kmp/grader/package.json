@@ -1,0 +1,14 @@
+{
+  "name": "grader-06-kmp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "validate": "ts-node validator.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  }
+}
