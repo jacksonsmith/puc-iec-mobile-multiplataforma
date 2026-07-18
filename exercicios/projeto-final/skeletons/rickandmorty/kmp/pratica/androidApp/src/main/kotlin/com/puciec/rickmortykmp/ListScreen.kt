@@ -38,11 +38,15 @@ fun ListScreen(api: RickAndMortyApi, onSelect: (Int) -> Unit) {
     var searchText by remember { mutableStateOf("") }
     var selectedStatus by remember { mutableStateOf<String?>(null) }
     var statusNames by remember { mutableStateOf<Set<String>?>(null) }
-
+    
     LaunchedEffect(Unit) {
-        // TODO 1 (feature 1 — lista): chamar api.fetchList(), guardar em `all`.
-        // Tratar erro em `error` (try/catch) e marcar `loading = false` no final.
-        loading = false
+        try {
+            all = api.fetchList()
+        } catch (t: Throwable) {
+            error = "Não foi possível carregar personagens."
+        } finally {
+            loading = false
+        }
     }
 
     // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
