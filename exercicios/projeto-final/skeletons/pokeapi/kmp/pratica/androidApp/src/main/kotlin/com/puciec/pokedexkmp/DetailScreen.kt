@@ -1,5 +1,6 @@
 package com.puciec.pokedexkmp
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,8 +38,12 @@ fun DetailScreen(
     var error by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pokemonId) {
-        // TODO 2 (feature 2 — detalhe): chamar api.fetchDetail(pokemonId) e
-        // guardar em `detail`. Tratar erro em `error` (try/catch).
+        try {
+            detail = api.fetchDetail(pokemonId)
+        } catch (e: Exception) {
+            Log.e("ERROR", e.message, e)
+            error = e.message ?: "Erro desconhecido"
+        }
     }
 
     Column(Modifier.fillMaxSize().testTag("detail-screen").padding(16.dp)) {
@@ -67,9 +72,9 @@ fun DetailScreen(
                         modifier = Modifier
                             .testTag("detail-favorite-button")
                             .clickable {
-                                // TODO 5 (feature 5 — favoritos): chamar
-                                // favoritesStore.toggle(pokemonId) e atualizar
-                                // `isFavorite` com o resultado.
+                                val toggle: Set<Int> = favoritesStore.toggle(pokemonId)
+
+                                isFavorite = toggle.contains(pokemonId)
                             },
                         style = MaterialTheme.typography.headlineMedium,
                     )

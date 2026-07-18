@@ -22,6 +22,7 @@ class PokeApi {
             parameter("limit", limit)
             parameter("offset", 0)
         }.body()
+
         return response.results.map { it.toSummary() }
     }
 
