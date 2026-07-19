@@ -15,9 +15,9 @@ export default function FavoritesScreen({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
-      // TODO 5 (feature 5 — favoritos): cruzar loadFavorites() (ids) com
-      // fetchList() (dados), setFavorites() com o resultado filtrado.
-      setFavorites([]);
+      Promise.all([loadFavorites(), fetchList()]).then(([favIds, films]) =>
+        setFavorites(films.filter((f) => favIds.has(f.id))),
+      );
       return () => {};
     }, []),
   );
