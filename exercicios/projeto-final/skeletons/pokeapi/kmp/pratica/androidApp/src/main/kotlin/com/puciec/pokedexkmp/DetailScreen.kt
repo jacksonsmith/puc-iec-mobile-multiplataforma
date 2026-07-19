@@ -1,6 +1,7 @@
 package com.puciec.pokedexkmp
 
-import android.util.Log
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.puciec.pokedexkmp.data.PokeApi
@@ -34,14 +38,23 @@ fun DetailScreen(
     onBack: () -> Unit,
 ) {
     var detail by remember { mutableStateOf<PokemonDetailResponse?>(null) }
+    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var isFavorite by remember { mutableStateOf(favoritesStore.load().contains(pokemonId)) }
     var error by remember { mutableStateOf<String?>(null) }
 
+    suspend fun loadPokemonDetail(pokemonId: Int) {
+        detail = api.fetchDetail(pokemonId)
+
+        val imageBytes = api.fetchImageBytes(detail!!.sprites.frontDefault)
+
+        imageBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            .asImageBitmap()
+    }
+
     LaunchedEffect(pokemonId) {
         try {
-            detail = api.fetchDetail(pokemonId)
+            loadPokemonDetail(pokemonId)
         } catch (e: Exception) {
-            Log.e("ERROR", e.message, e)
             error = e.message ?: "Erro desconhecido"
         }
     }
@@ -53,7 +66,7 @@ fun DetailScreen(
         )
         when {
             error != null -> Text(error!!)
-            detail == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            detail == null || imageBitmap == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
             else -> {
@@ -79,6 +92,13 @@ fun DetailScreen(
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 }
+                Image(
+                    bitmap = imageBitmap!!,
+                    contentDescription = d.name,
+                    modifier = Modifier
+                        .size(250.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
                 Text(d.types.joinToString(", ") { it.type.name })
                 Text("Altura: ${d.height / 10.0} m")
                 Text("Peso: ${d.weight / 10.0} kg")

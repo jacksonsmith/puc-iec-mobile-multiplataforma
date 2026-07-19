@@ -5,6 +5,8 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readBytes
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -32,5 +34,10 @@ class PokeApi {
     suspend fun fetchNamesByType(type: String): Set<String> {
         val response: PokemonTypeResponse = client.get("$BASE_URL/type/$type").body()
         return response.pokemon.map { it.pokemon.name }.toSet()
+    }
+
+    suspend fun fetchImageBytes(urlImage: String): ByteArray {
+        val response: HttpResponse = client.get(urlImage)
+        return response.readBytes();
     }
 }
