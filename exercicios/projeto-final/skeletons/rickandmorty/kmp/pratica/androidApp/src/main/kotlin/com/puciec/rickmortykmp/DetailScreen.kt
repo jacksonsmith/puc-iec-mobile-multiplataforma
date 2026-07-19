@@ -78,9 +78,8 @@ fun DetailScreen(
                         modifier = Modifier
                             .testTag("detail-favorite-button")
                             .clickable {
-                                // TODO 5 (feature 5 — favoritos): chamar
-                                // favoritesStore.toggle(characterId) e atualizar
-                                // `isFavorite` com o resultado.
+                                val ids = favoritesStore.toggle(characterId)
+                                isFavorite = ids.contains(characterId)
                             },
                         style = MaterialTheme.typography.headlineMedium,
                     )
