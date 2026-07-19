@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.puciec.rickmortykmp.data.RickAndMortyApi
 import com.puciec.rickmortykmp.data.CharacterSummary
 import com.puciec.rickmortykmp.data.capitalize
+import kotlin.coroutines.cancellation.CancellationException
 
 private val STATUSES = listOf("alive", "dead", "unknown")
 
@@ -49,10 +50,14 @@ fun ListScreen(api: RickAndMortyApi, onSelect: (Int) -> Unit) {
         }
     }
 
-    // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
-    // `all` por `statusNames` (quando não-nulo, `names.contains(it.name)`)
-    // e por `searchText` (substring case-insensitive do `name`).
+    // A busca é client-side: o skeleton já carregou a primeira página em `all`,
+    // então basta refinar localmente. Usar o endpoint de busca da API traria
+    // resultados fora da página carregada e quebraria os testIDs esperados.
+    // Já o filtro por status usa parâmetro real da API (ver LaunchedEffect abaixo),
+    // porque `CharacterSummary` não é garantido carregar o status na listagem.
     val filtered = all
+        .filter { character -> statusNames?.contains(character.name) ?: true }
+        .filter { character -> character.name.contains(searchText.trim(), ignoreCase = true) }
 
     if (loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
@@ -111,8 +116,20 @@ fun ListScreen(api: RickAndMortyApi, onSelect: (Int) -> Unit) {
     }
 
     LaunchedEffect(selectedStatus) {
-        // TODO 4 (feature 4 — categoria/filtro): quando `selectedStatus` não
-        // é null, chamar api.fetchNamesByStatus(status) e guardar em
-        // `statusNames`.
+        // Filtro por status usa o parâmetro real `status` da API.
+        // A chave `selectedStatus` resolve a concorrência: ao trocar de chip o
+        // Compose cancela a chamada anterior, então uma resposta atrasada nunca
+        // sobrescreve o filtro atual.
+        statusNames = try {
+            selectedStatus?.let { api.fetchNamesByStatus(it) }
+        } catch (c: CancellationException) {
+            // Repropaga: cancelamento não é erro, e engolir aqui deixaria a
+            // chamada cancelada sobrescrever o estado do chip mais novo.
+            throw c
+        } catch (t: Throwable) {
+            // Falha de rede no filtro não deve derrubar a tela: mantém a lista
+            // sem filtro de status em vez de propagar a exceção.
+            null
+        }
     }
 }
