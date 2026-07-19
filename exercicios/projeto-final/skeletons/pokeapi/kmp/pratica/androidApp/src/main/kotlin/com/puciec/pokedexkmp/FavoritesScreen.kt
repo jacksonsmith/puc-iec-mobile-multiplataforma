@@ -27,15 +27,26 @@ import com.puciec.pokedexkmp.data.capitalize
 @Composable
 fun FavoritesScreen(api: PokeApi, favoritesStore: FavoritesStore, onSelect: (Int) -> Unit) {
     var favorites by remember { mutableStateOf<List<PokemonSummary>?>(null) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    fun loadFavorites(pokemonList: List<PokemonSummary>): List<PokemonSummary> {
+
+        val idsFavorites = favoritesStore.load()
+
+        return pokemonList.filter { idsFavorites.contains(it.id) }
+    }
 
     LaunchedEffect(Unit) {
-        // TODO 5 (feature 5 — favoritos): cruzar favoritesStore.load() (ids)
-        // com api.fetchList() (dados), guardar em `favorites`.
-        favorites = emptyList()
+        try {
+            favorites = loadFavorites(api.fetchList())
+        } catch (e: Exception) {
+            error = e.message ?: "Erro desconhecido"
+        }
     }
 
     val current = favorites
     when {
+        error != null -> Text(error!!)
         current == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
