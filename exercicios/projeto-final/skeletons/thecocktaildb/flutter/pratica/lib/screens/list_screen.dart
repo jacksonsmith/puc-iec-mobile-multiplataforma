@@ -51,21 +51,40 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<void> _selectCategory(String? category) async {
-    // TODO 4 (feature 4 — categoria/filtro): quando `category` não é null,
-    // chamar `_api.fetchNamesByCategory(_apiCategory(category))` e guardar
-    // em `_categoryNames` (setState). Quando `category` é null, limpar
-    // `_categoryNames`.
-    setState(() {
-      _selectedCategory = category;
-    });
+    try {
+      if (category == null) {
+        setState(() {
+          _selectedCategory = null;
+          _categoryNames = null;
+        });
+      } else {
+        final result = await _api.fetchNamesByCategory(_apiCategory(category));
+        setState(() {
+          _categoryNames = result.toSet();
+          _selectedCategory = category;
+        });
+      }
+    } catch (error) {
+      print(error.toString());
+      setState(() {
+        _error = error.toString();
+        _loading = false;
+      });
+    }
   }
 
   List<DrinkSummary> get _filtered {
     // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
     // `_all` por `_categoryNames` (quando não-nulo, `_categoryNames!.contains`)
     // e por `_searchText` (substring case-insensitive do `name`).
-    return _all;
-  }
+    return _all.where((drink) {
+          final matchesCategory =
+              _categoryNames == null || _categoryNames!.contains(drink.name);
+          final matchesSearch =
+              drink.name.toLowerCase().contains(_searchText.toLowerCase());
+          return matchesCategory && matchesSearch;
+        }).toList();
+      }
 
   @override
   Widget build(BuildContext context) {
