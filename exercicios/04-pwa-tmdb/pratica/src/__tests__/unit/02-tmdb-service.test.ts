@@ -1,6 +1,5 @@
-// src/__tests__/unit/02-tmdb-service.test.ts
+// src/__tests__/tmdb.service.test.ts
 // ✅ AVALIATIVO — valida o TODO 1 (fetchPopularMovies)
-// Estes testes ficam VERMELHOS no scaffold e VERDES depois que você implementar fetchPopularMovies.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fetchPopularMovies, tmdbClient } from '../../services/tmdb';

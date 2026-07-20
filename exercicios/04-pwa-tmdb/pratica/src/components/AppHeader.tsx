@@ -1,20 +1,13 @@
 // src/components/AppHeader.tsx
 
-import { InstallButton } from './InstallButton';
 import { styles } from './AppHeader.styles';
 
-type Props = { favoritesCount: number };
+type Props = { title?: string };
 
-export function AppHeader({ favoritesCount }: Props) {
+export function AppHeader({ title = '🎬 Filmes Populares' }: Props) {
   return (
     <header style={styles.header}>
-      <div>
-        <h1 style={styles.h1}>🎬 Filmes Populares</h1>
-        {favoritesCount > 0 && (
-          <p style={styles.badge}>★ {favoritesCount} favorito{favoritesCount !== 1 ? 's' : ''}</p>
-        )}
-      </div>
-      <InstallButton />
+      <h1 style={styles.h1}>{title}</h1>
     </header>
   );
 }

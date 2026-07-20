@@ -1,4 +1,4 @@
-// src/__tests__/unit/01-MovieCard.test.tsx
+// src/__tests__/MovieCard.test.tsx
 // 📘 MODELO — leia antes de escrever os outros testes
 
 import { describe, it, expect, vi } from 'vitest';

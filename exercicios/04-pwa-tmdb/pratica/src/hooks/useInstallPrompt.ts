@@ -44,5 +44,10 @@ export function useInstallPrompt() {
     if (outcome === 'accepted') setDeferred(null);
   };
 
-  return { canInstall: !!deferred, triggerInstall };
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (navigator as any).standalone === true;
+
+  return { canInstall: !!deferred, triggerInstall, isIOS, isStandalone };
 }
