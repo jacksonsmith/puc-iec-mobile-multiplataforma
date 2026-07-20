@@ -49,16 +49,25 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
     LaunchedEffect(Unit) {
         // TODO 1 (feature 1 — lista): chamar api.fetchList(), guardar em `all`.
         // Tratar erro em `error` (try/catch) e marcar `loading = false` no final.
-        loading = false
+        try {
+            all = api.fetchList()
+        } catch (e: Exception) {
+            error = e.message
+        } finally {
+            loading = false
+        }
     }
 
     // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
     // `all` por `categoryNames` (quando não-nulo, `names.contains(it.strDrink)`)
     // e por `searchText` (substring case-insensitive do `strDrink`).
-    val filtered = all
+    val filtered = all.filter { it.strDrink.contains(searchText, ignoreCase = true) }
 
     if (loading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) { CircularProgressIndicator() }
         return
     }
     if (error != null) {
@@ -66,19 +75,28 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
         return
     }
 
-    Box(Modifier.fillMaxSize().testTag("item-list-screen")) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .testTag("item-list-screen")
+    ) {
         LazyColumn(Modifier.fillMaxSize()) {
             item {
                 OutlinedTextField(
                     value = searchText,
                     onValueChange = { searchText = it },
                     label = { Text("Buscar drink") },
-                    modifier = Modifier.fillMaxWidth().padding(12.dp).testTag("search-input"),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .testTag("search-input"),
                 )
             }
             item {
                 LazyRow(
-                    Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     item {
@@ -117,5 +135,14 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
         // TODO 4 (feature 4 — categoria/filtro): quando `selectedCategory` não
         // é null, chamar api.fetchNamesByCategory(apiCategory(category)) e
         // guardar em `categoryNames`.
+        try {
+            all = if (selectedCategory == null) {
+                api.fetchList()
+            } else {
+                api.fetchList(apiCategory(selectedCategory!!))
+            }
+        } catch (e: Exception) {
+            error = e.message
+        }
     }
 }
