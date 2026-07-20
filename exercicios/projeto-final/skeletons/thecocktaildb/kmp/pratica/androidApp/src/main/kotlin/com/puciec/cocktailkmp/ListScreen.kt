@@ -47,6 +47,8 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
     var categoryNames by remember { mutableStateOf<Set<String>?>(null) }
 
     LaunchedEffect(Unit) {
+        // TODO 1 (feature 1 — lista): chamar api.fetchList(), guardar em `all`.
+        // Tratar erro em `error` (try/catch) e marcar `loading = false` no final.
         try {
             all = api.fetchList()
         } catch (e: Exception) {
@@ -56,6 +58,9 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
         }
     }
 
+    // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
+    // `all` por `categoryNames` (quando não-nulo, `names.contains(it.strDrink)`)
+    // e por `searchText` (substring case-insensitive do `strDrink`).
     val filtered = all.filter { it.strDrink.contains(searchText, ignoreCase = true) }
 
     if (loading) {
@@ -127,6 +132,9 @@ fun ListScreen(api: TheCocktailDbApi, onSelect: (String) -> Unit) {
     }
 
     LaunchedEffect(selectedCategory) {
+        // TODO 4 (feature 4 — categoria/filtro): quando `selectedCategory` não
+        // é null, chamar api.fetchNamesByCategory(apiCategory(category)) e
+        // guardar em `categoryNames`.
         try {
             all = if (selectedCategory == null) {
                 api.fetchList()

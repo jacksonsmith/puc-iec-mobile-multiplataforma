@@ -33,6 +33,8 @@ fun FavoritesScreen(
     var favorites by remember { mutableStateOf<List<DrinkSummary>?>(null) }
 
     LaunchedEffect(Unit) {
+        // TODO 5 (feature 5 — favoritos): cruzar favoritesStore.load() (ids)
+        // com api.fetchList() (dados), guardar em `favorites`.
         val all = api.fetchList()
         val favoriteIDs = favoritesStore.load()
         favorites = all.filter { favoriteIDs.contains(it.idDrink) }

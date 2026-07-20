@@ -37,6 +37,8 @@ fun DetailScreen(
     var error by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(drinkId) {
+        // TODO 2 (feature 2 — detalhe): chamar api.fetchDetail(drinkId) e
+        // guardar em `detail`. Tratar erro em `error` (try/catch).
         try {
             detail = api.fetchDetail(drinkId)
         } catch (e: Exception) {
