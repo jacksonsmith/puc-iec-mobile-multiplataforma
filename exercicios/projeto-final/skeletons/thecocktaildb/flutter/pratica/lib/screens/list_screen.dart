@@ -42,12 +42,19 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<void> _loadList() async {
-    // TODO 1 (feature 1 — lista): chamar `_api.fetchList()`, guardar o
-    // resultado em `_all` e marcar `_loading = false` via setState. Tratar
-    // erro com `_error` (mensagem) igual ao padrão do catch abaixo.
-    setState(() {
-      _loading = false;
-    });
+    try {
+      final result = await _api.fetchList();
+      setState(() {
+        _all = result;
+        _loading = false;
+      });
+    } catch (error) {
+      print(error.toString());
+      setState(() {
+        _error = error.toString();
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _selectCategory(String? category) async {
@@ -90,10 +97,7 @@ class _ListScreenState extends State<ListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Drinks')),
-      body: Semantics(
-        identifier: 'item-list-screen',
-        child: _buildBody(),
-      ),
+      body: Semantics(identifier: 'item-list-screen', child: _buildBody()),
     );
   }
 
@@ -164,7 +168,9 @@ class _ListScreenState extends State<ListScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Semantics(
-        identifier: category == null ? 'category-chip-all' : 'category-chip-$category',
+        identifier: category == null
+            ? 'category-chip-all'
+            : 'category-chip-$category',
         child: ChoiceChip(
           label: Text(capitalize(label)),
           selected: selected,

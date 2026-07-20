@@ -2,6 +2,10 @@
 appId: com.puciec.ghibli_final
 ---
 - launchApp
+- extendedWaitUntil:
+    visible:
+      id: "item-list-screen"
+    timeout: 20000
 - tapOn:
     id: "item-card-2baf70d1-42bb-4437-b551-e5fed5a87abe"
 - assertVisible:

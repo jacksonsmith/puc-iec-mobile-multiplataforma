@@ -1,9 +1,10 @@
-name: Grade — Atividade 4 (PWA)
+name: A4 — PWA (autograder)
 
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
     paths:
-      - 'exercicios/04-pwa-offline-first/aluno-*/**'
+      - 'exercicios/04-pwa-tmdb/**'
 
 permissions:
   pull-requests: write
@@ -11,96 +12,101 @@ permissions:
 
 jobs:
   grade:
+    name: Grade A4
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
     steps:
+      # 1. checkout BASE (grader confiável do prof)
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - working-directory: ./grader
-        run: npm ci || npm install
-
-      - id: discover
-        run: |
-          MATRICULA=$(echo "${{ github.event.pull_request.user.login }}" | tr '[:upper:]' '[:lower:]')
-          ENTREGA="exercicios/04-pwa-offline-first/aluno-${MATRICULA}"
-          echo "matricula=${MATRICULA}" >> $GITHUB_OUTPUT
-          echo "entrega=${ENTREGA}" >> $GITHUB_OUTPUT
-          if [ ! -d "${ENTREGA}" ]; then
-            echo "::error ::Entrega não encontrada em ${ENTREGA}"
-            exit 1
-          fi
-
-      - working-directory: ./grader
-        run: |
-          npx tsx lib/validators/pwa-lighthouse.ts \
-            --entrega "../${{ steps.discover.outputs.entrega }}" \
-            --output /tmp/grade.json \
-            --student-login "${{ steps.discover.outputs.matricula }}" \
-            --commit-sha "${{ github.event.pull_request.head.sha }}" || true
-
-      - if: always()
-        uses: actions/upload-artifact@v4
         with:
-          name: grade-${{ steps.discover.outputs.matricula }}
-          path: /tmp/grade.json
-          retention-days: 30
-          if-no-files-found: warn
+          ref: main
 
-      - if: always()
+      # 2. checkout PR do aluno em pasta isolada (não-confiável)
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: _pr
+
+      # 3. instalar deps do pratica (do PR do aluno)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: _pr/exercicios/04-pwa-tmdb/pratica/package-lock.json
+
+      - name: Install deps
+        working-directory: _pr/exercicios/04-pwa-tmdb/pratica
+        run: npm ci
+
+      # 4. rodar testes unitários (entrega do aluno)
+      - name: Unit tests
+        id: unit
+        working-directory: _pr/exercicios/04-pwa-tmdb/pratica
+        run: npm test -- --reporter=json --outputFile=unit-results.json
         continue-on-error: true
+
+      # 5. rodar validator estrutural (grader do prof, lê entrega em _pr/)
+      - name: Structural validator
+        id: validator
+        working-directory: exercicios/04-pwa-tmdb/grader
+        run: |
+          npm ci
+          npx ts-node validator.ts --entrega ../../../_pr/exercicios/04-pwa-tmdb/pratica
+        continue-on-error: true
+
+      # 6. postar comentário no PR
+      - name: Post grade comment
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const path = '/tmp/grade.json';
-            if (!fs.existsSync(path)) {
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: `## 🤖 J.A.R.V.I.S. — *autograder do Prof. Jackson*\n\n` +
-                  `> *Just A Rather Very Intelligent System* — bot que executa as regras de avaliação automatizada do prof nos PRs de exercício.\n\n` +
-                  `**Atividade 4 (PWA)**\n\n` +
-                  `❌ Não consegui avaliar sua entrega. Verifique o path: \`exercicios/04-pwa-offline-first/aluno-<seu-github-username>/\``,
-              });
-              return;
-            }
-            const grade = JSON.parse(fs.readFileSync(path, 'utf8'));
-            const passou = grade.pass;
+            let unitSummary = '⚠️ testes não rodaram';
+            let structSummary = '⚠️ validator não rodou';
+            let scoreLine = '';
+
+            try {
+              const u = JSON.parse(fs.readFileSync(
+                '_pr/exercicios/04-pwa-tmdb/pratica/unit-results.json', 'utf8'));
+              const passed = u.numPassedTests ?? 0;
+              const failed = u.numFailedTests ?? 0;
+              const todos  = u.numTodoTests ?? 0;
+              const total  = passed + failed + todos;
+              unitSummary = `${passed}/${total} passando · ${todos} it.todo pendente(s)`;
+            } catch {}
+
+            try {
+              const g = JSON.parse(fs.readFileSync(
+                'exercicios/04-pwa-tmdb/grader/grade.json', 'utf8'));
+              const lines = g.results
+                .map(r => `${r.pass ? '✅' : '❌'} **${r.label}** (${r.pass ? r.weight : 0}/${r.weight}): ${r.note}`)
+                .join('\n');
+              structSummary = '\n' + lines;
+              scoreLine = `\n**Nota mínima automática: ${g.autoScore}/${g.maxScore}**\n`;
+            } catch {}
+
             const body = [
-              `## 🤖 J.A.R.V.I.S. — *autograder do Prof. Jackson*`,
-              ``,
-              `> *Just A Rather Very Intelligent System* — bot que executa as regras de avaliação automatizada do prof nos PRs de exercício.`,
-              ``,
-              `**Atividade 4 (PWA Offline-First)**`,
-              ``,
-              `**Status:** ${passou ? '✅ Critérios mínimos automatizados atendidos' : '⚠️ Revisão manual necessária'}`,
-              ``,
-              `Avaliação automatizada parcial concluída. A **pontuação final**`,
-              `será lançada por mim (Prof. Jackson) **no Canvas** após revisão manual.`,
-              ``,
-              `### 🎥 Anexe um vídeo (≤ 2min)`,
-              ``,
-              `Mostre PWA funcionando em modo offline (DevTools → Network → Offline).`,
-              `Cole o vídeo (\`.mp4\`/\`.mov\`/\`.webm\`) ou link (Loom/YouTube unlisted) na descrição deste PR.`,
-              ``,
-              `_Pontuação final no Canvas._`,
-              `_Dúvidas? **Teams da turma** ou jackson.96@gmail.com._`,
+              '## 🤖 A4 — PWA Autograder',
+              '',
+              `**Testes unitários:** ${unitSummary}`,
+              '',
+              '**Checklist estrutural:**',
+              structSummary,
+              scoreLine,
+              '📝 Qualidade de código entra na nota final lançada no Canvas.',
             ].join('\n');
-            await github.rest.issues.createComment({
+
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body,
             });
 
-      - if: always()
-        run: |
-          if [ -f /tmp/grade.json ]; then
-            PASS=$(cat /tmp/grade.json | grep -o '"pass":[^,]*' | head -1 | cut -d: -f2 | tr -d ' ')
-            [ "$PASS" = "true" ] && exit 0 || exit 1
-          else
-            exit 1
-          fi
+      # 7. upload artifacts (privado — só o prof vê)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: grade-results
+          path: |
+            exercicios/04-pwa-tmdb/grader/grade.json
+            _pr/exercicios/04-pwa-tmdb/pratica/unit-results.json

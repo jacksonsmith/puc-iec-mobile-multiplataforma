@@ -1,9 +1,9 @@
-name: A7 — PWA Tests
+name: A4 — PWA Tests
 
 on:
   pull_request:
     paths:
-      - 'exercicios/07-pwa-tmdb/pratica/**'
+      - 'exercicios/04-pwa-tmdb/pratica/**'
 
 permissions:
   pull-requests: write
@@ -14,18 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: exercicios/07-pwa-tmdb/pratica
+        working-directory: exercicios/04-pwa-tmdb/pratica
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm, cache-dependency-path: exercicios/07-pwa-tmdb/pratica/package-lock.json }
+        with: { node-version: 22, cache: npm, cache-dependency-path: exercicios/04-pwa-tmdb/pratica/package-lock.json }
       - run: npm ci
       - run: npm test -- --reporter=json --outputFile=unit-results.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: unit-results
-          path: exercicios/07-pwa-tmdb/pratica/unit-results.json
+          path: exercicios/04-pwa-tmdb/pratica/unit-results.json
 
   e2e:
     name: E2E (Playwright)
@@ -33,13 +33,13 @@ jobs:
     needs: unit
     defaults:
       run:
-        working-directory: exercicios/07-pwa-tmdb/pratica
+        working-directory: exercicios/04-pwa-tmdb/pratica
     env:
       VITE_TMDB_TOKEN: ${{ secrets.VITE_TMDB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm, cache-dependency-path: exercicios/07-pwa-tmdb/pratica/package-lock.json }
+        with: { node-version: 22, cache: npm, cache-dependency-path: exercicios/04-pwa-tmdb/pratica/package-lock.json }
       - run: npm ci
       - run: npx playwright install chromium --with-deps
       - run: npm run build
@@ -48,4 +48,4 @@ jobs:
         if: always()
         with:
           name: playwright-results
-          path: exercicios/07-pwa-tmdb/pratica/playwright-results.json
+          path: exercicios/04-pwa-tmdb/pratica/playwright-results.json
