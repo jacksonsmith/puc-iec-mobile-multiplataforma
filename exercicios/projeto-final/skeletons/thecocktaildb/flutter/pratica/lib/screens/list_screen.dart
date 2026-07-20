@@ -44,6 +44,7 @@ class _ListScreenState extends State<ListScreen> {
   Future<void> _loadList() async {
     try {
       final result = await _api.fetchList();
+      result.sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
       setState(() {
         _all = result;
         _loading = false;
@@ -88,7 +89,7 @@ class _ListScreenState extends State<ListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Drinks')),
-      body: Semantics(identifier: 'item-list-screen', child: _buildBody()),
+      body: Semantics(identifier: _loading ? null : 'item-list-screen', child: _buildBody()),
     );
   }
 
