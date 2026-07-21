@@ -8,17 +8,21 @@ class FavoritesStore {
   Future<Set<String>> load() async {
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getStringList(_key) ?? [];
-    return stored.toSet();
+    return stored.toSet()
   }
 
-  Future<void> toggle(String id) async {
+  Future<bool> toggle(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final current = await load();
+    final bool isNowFavorite;
     if (current.contains(id)) {
       current.remove(id);
+      isNowFavorite = false;
     } else {
       current.add(id);
+      isNowFavorite = true;
     }
     await prefs.setStringList(_key, current.toList());
+    return isNowFavorite;
   }
 }
