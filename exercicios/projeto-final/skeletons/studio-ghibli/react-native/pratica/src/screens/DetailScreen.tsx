@@ -21,14 +21,15 @@ export default function DetailScreen({ route, navigation }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // TODO 2 (feature 2 — detalhe): chamar fetchDetail(filmId) e setDetail()
-    // com o resultado (setError() em caso de falha). Também chamar
-    // loadFavorites() e setIsFavorite(favs.has(filmId)).
+    fetchDetail(filmId)
+      .then(setDetail)
+      .catch(() => setError('Erro ao carregar detalhes'));
+    loadFavorites().then((favs) => setIsFavorite(favs.has(filmId)));
   }, [filmId]);
 
   const onToggleFavorite = async () => {
-    // TODO 5 (feature 5 — favoritos): chamar toggleFavorite(filmId) e
-    // setIsFavorite(favs.has(filmId)) com o resultado.
+    const favs = await toggleFavorite(filmId);
+    setIsFavorite(favs.has(filmId));
   };
 
   return (

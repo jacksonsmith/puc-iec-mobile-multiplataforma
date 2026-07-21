@@ -30,23 +30,29 @@ export default function ListScreen({ navigation }: Props) {
   const [titlesForDirector, setTitlesForDirector] = useState<Set<string> | null>(null);
 
   useEffect(() => {
-    // TODO 1 (feature 1 — lista): chamar fetchList(), setAll() com o
-    // resultado, setError() em caso de falha, setLoading(false) no final.
-    setLoading(false);
+    fetchList()
+      .then(setAll)
+      .catch(() => setError('Erro ao carregar filmes'))
+      .finally(() => setLoading(false));
   }, []);
 
   const onSelectDirector = async (slug: string | null) => {
-    // TODO 4 (feature 4 — categoria/filtro): quando `slug` não é null,
-    // chamar fetchTitlesByDirector(DIRECTORS[slug]) e setTitlesForDirector()
-    // com o resultado. Quando é null, limpar titlesForDirector.
     setSelectedDirectorSlug(slug);
+    if (slug === null) {
+      setTitlesForDirector(null);
+    } else {
+      const titles = await fetchTitlesByDirector(DIRECTORS[slug]);
+      setTitlesForDirector(titles);
+    }
   };
 
   const filtered = useMemo(() => {
-    // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
-    // `all` por `titlesForDirector` (quando não-nulo, `titlesForDirector.has(f.title)`)
-    // e por `searchText` (substring case-insensitive do `title`).
-    return all;
+    const term = searchText.trim().toLowerCase();
+    return all.filter(
+      (f) =>
+        (titlesForDirector === null || titlesForDirector.has(f.title)) &&
+        f.title.toLowerCase().includes(term),
+    );
   }, [all, titlesForDirector, searchText]);
 
   if (loading) {
