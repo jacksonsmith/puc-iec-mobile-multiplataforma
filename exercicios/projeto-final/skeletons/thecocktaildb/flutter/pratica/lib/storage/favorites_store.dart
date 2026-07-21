@@ -8,7 +8,7 @@ class FavoritesStore {
   Future<Set<String>> load() async {
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getStringList(_key) ?? [];
-    return stored.toSet()
+    return stored.toSet();
   }
 
   Future<bool> toggle(String id) async {
