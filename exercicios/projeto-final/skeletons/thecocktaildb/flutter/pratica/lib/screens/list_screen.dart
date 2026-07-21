@@ -29,6 +29,7 @@ class _ListScreenState extends State<ListScreen> {
   final CocktailDbApi _api = CocktailDbApi();
 
   List<DrinkSummary> _all = [];
+  List<DrinkSummary>? _categoryDrinks;
   bool _loading = true;
   String? _error;
   String _searchText = '';
@@ -44,6 +45,7 @@ class _ListScreenState extends State<ListScreen> {
   Future<void> _loadList() async {
     try {
       final result = await _api.fetchList();
+      result.sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
       setState(() {
         _all = result;
         _loading = false;
@@ -59,14 +61,19 @@ class _ListScreenState extends State<ListScreen> {
 
   Future<void> _selectCategory(String? category) async {
     try {
-      if (category != null) {
-        final result = await _api.fetchNamesByCategory(_apiCategory(category));
+      if (category == null) {
         setState(() {
-          _categoryNames = result.toSet();
-          _selectedCategory = category;
+          _selectedCategory = null;
+          _categoryNames = null;
+          _categoryDrinks = null;
         });
       } else {
-        _categoryNames!.clear();
+        final drinks = await _api.fetchList(category: _apiCategory(category));
+        setState(() {
+          _selectedCategory = category;
+          _categoryDrinks = drinks;
+          _categoryNames = drinks.map((d) => d.name).toSet();
+        });
       }
     } catch (error) {
       print(error.toString());
@@ -81,14 +88,17 @@ class _ListScreenState extends State<ListScreen> {
     // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
     // `_all` por `_categoryNames` (quando não-nulo, `_categoryNames!.contains`)
     // e por `_searchText` (substring case-insensitive do `name`).
-    return _all;
+    final base = _categoryDrinks ?? _all;
+    return base.where((drink) {
+      return drink.name.toLowerCase().contains(_searchText.toLowerCase());
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Drinks')),
-      body: Semantics(identifier: 'item-list-screen', child: _buildBody()),
+      body: Semantics(identifier: _loading ? null : 'item-list-screen', child: _buildBody()),
     );
   }
 
