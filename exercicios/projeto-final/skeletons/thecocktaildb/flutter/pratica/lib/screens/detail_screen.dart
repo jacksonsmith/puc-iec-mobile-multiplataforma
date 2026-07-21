@@ -42,8 +42,10 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<void> _toggleFavorite() async {
-    // TODO 5 (feature 5 — favoritos): chamar `_favoritesStore.toggle(widget.drinkId)`
-    // e atualizar `_isFavorite` via setState.
+    final isFavorite = await _favoritesStore.toggle(widget.drinkId);
+    setState(() {
+      _isFavorite = isFavorite;
+    });
   }
 
   @override
