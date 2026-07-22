@@ -27,14 +27,25 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<void> _load() async {
-    // TODO 2 (feature 2 — detalhe): chamar `_api.fetchDetail(widget.drinkId)`
-    // e `_favoritesStore.load()`, guardar em `_detail`/`_isFavorite` via
-    // setState. Tratar erro com `_error` (ver padrão do catch abaixo).
+    try {
+      final detail = await _api.fetchDetail(widget.drinkId);
+      final favorites = await _favoritesStore.load();
+      setState(() {
+        _detail = detail;
+        _isFavorite = favorites.contains(widget.drinkId);
+      });
+    } catch (error) {
+      setState(() {
+        _error = error.toString();
+      });
+    }
   }
 
   Future<void> _toggleFavorite() async {
-    // TODO 5 (feature 5 — favoritos): chamar `_favoritesStore.toggle(widget.drinkId)`
-    // e atualizar `_isFavorite` via setState.
+    final isFavorite = await _favoritesStore.toggle(widget.drinkId);
+    setState(() {
+      _isFavorite = isFavorite;
+    });
   }
 
   @override
