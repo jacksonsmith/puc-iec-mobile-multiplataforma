@@ -5,8 +5,6 @@ import android.content.Context
 private const val PREFS_NAME = "favorites"
 private const val KEY_IDS = "favorite_character_ids"
 
-// Android-specific no skeleton: SharedPreferences é a persistência local da
-// plataforma, e guardamos apenas IDs para buscar os dados atuais na API.
 class FavoritesStore(context: Context) {
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 

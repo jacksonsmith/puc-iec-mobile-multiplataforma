@@ -31,8 +31,6 @@ fun FavoritesScreen(api: RickAndMortyApi, favoritesStore: FavoritesStore, onSele
     LaunchedEffect(Unit) {
         val ids = favoritesStore.load()
         val all = api.fetchList()
-        // A tela salva só IDs localmente e cruza com dados reais da API antes
-        // de renderizar, evitando manter uma cópia desatualizada dos personagens.
         favorites = all.filter { ids.contains(it.id) }
     }
 

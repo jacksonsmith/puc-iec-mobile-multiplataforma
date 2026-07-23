@@ -50,11 +50,6 @@ fun ListScreen(api: RickAndMortyApi, onSelect: (Int) -> Unit) {
         }
     }
 
-    // A busca é client-side: o skeleton já carregou a primeira página em `all`,
-    // então basta refinar localmente. Usar o endpoint de busca da API traria
-    // resultados fora da página carregada e quebraria os testIDs esperados.
-    // Já o filtro por status usa parâmetro real da API (ver LaunchedEffect abaixo),
-    // porque `CharacterSummary` não é garantido carregar o status na listagem.
     val filtered = all
         .filter { character -> statusNames?.contains(character.name) ?: true }
         .filter { character -> character.name.contains(searchText.trim(), ignoreCase = true) }
@@ -116,19 +111,11 @@ fun ListScreen(api: RickAndMortyApi, onSelect: (Int) -> Unit) {
     }
 
     LaunchedEffect(selectedStatus) {
-        // Filtro por status usa o parâmetro real `status` da API.
-        // A chave `selectedStatus` resolve a concorrência: ao trocar de chip o
-        // Compose cancela a chamada anterior, então uma resposta atrasada nunca
-        // sobrescreve o filtro atual.
         statusNames = try {
             selectedStatus?.let { api.fetchNamesByStatus(it) }
         } catch (c: CancellationException) {
-            // Repropaga: cancelamento não é erro, e engolir aqui deixaria a
-            // chamada cancelada sobrescrever o estado do chip mais novo.
             throw c
         } catch (t: Throwable) {
-            // Falha de rede no filtro não deve derrubar a tela: mantém a lista
-            // sem filtro de status em vez de propagar a exceção.
             null
         }
     }

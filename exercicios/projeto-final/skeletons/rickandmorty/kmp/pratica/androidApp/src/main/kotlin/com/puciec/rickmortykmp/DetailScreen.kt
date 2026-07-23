@@ -36,15 +36,7 @@ fun DetailScreen(
     var isFavorite by remember { mutableStateOf(favoritesStore.load().contains(characterId)) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    // `characterId` é a fronteira de navegação entre Lista e Detalhe: o único
-    // dado trafegado entre telas é o Int do ID, garantindo que o Detalhe sempre
-    // consulte dados frescos e completos, independente do que foi exibido na lista.
     LaunchedEffect(characterId) {
-        // TODO 2 — RESOLVIDO (Etapa 3 — Detalhe e Navegação)
-        // Usamos `fetchDetail` e não os dados resumidos de `CharacterSummary` porque
-        // o endpoint real `/character/{id}` retorna campos extras (status, species,
-        // gender, image) que só existem em `CharacterDetail`. Isso evita dados
-        // incompletos e garante consistência mesmo se a lista mudar no cache.
         try {
             detail = api.fetchDetail(characterId)
         } catch (t: Throwable) {
