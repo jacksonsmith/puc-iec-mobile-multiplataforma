@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.puciec.rickmortykmp.data.RickAndMortyApi
 import com.puciec.rickmortykmp.data.CharacterSummary
 import com.puciec.rickmortykmp.data.capitalize
+import kotlin.coroutines.cancellation.CancellationException
 
 private val STATUSES = listOf("alive", "dead", "unknown")
 
@@ -38,17 +39,20 @@ fun ListScreen(api: RickAndMortyApi, onSelect: (Int) -> Unit) {
     var searchText by remember { mutableStateOf("") }
     var selectedStatus by remember { mutableStateOf<String?>(null) }
     var statusNames by remember { mutableStateOf<Set<String>?>(null) }
-
+    
     LaunchedEffect(Unit) {
-        // TODO 1 (feature 1 — lista): chamar api.fetchList(), guardar em `all`.
-        // Tratar erro em `error` (try/catch) e marcar `loading = false` no final.
-        loading = false
+        try {
+            all = api.fetchList()
+        } catch (t: Throwable) {
+            error = "Não foi possível carregar personagens."
+        } finally {
+            loading = false
+        }
     }
 
-    // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
-    // `all` por `statusNames` (quando não-nulo, `names.contains(it.name)`)
-    // e por `searchText` (substring case-insensitive do `name`).
     val filtered = all
+        .filter { character -> statusNames?.contains(character.name) ?: true }
+        .filter { character -> character.name.contains(searchText.trim(), ignoreCase = true) }
 
     if (loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
@@ -107,8 +111,12 @@ fun ListScreen(api: RickAndMortyApi, onSelect: (Int) -> Unit) {
     }
 
     LaunchedEffect(selectedStatus) {
-        // TODO 4 (feature 4 — categoria/filtro): quando `selectedStatus` não
-        // é null, chamar api.fetchNamesByStatus(status) e guardar em
-        // `statusNames`.
+        statusNames = try {
+            selectedStatus?.let { api.fetchNamesByStatus(it) }
+        } catch (c: CancellationException) {
+            throw c
+        } catch (t: Throwable) {
+            null
+        }
     }
 }
