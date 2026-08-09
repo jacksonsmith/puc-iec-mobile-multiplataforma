@@ -25,10 +25,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   Future<void> _load() async {
-    // TODO 5 (feature 5 — favoritos): cruzar `_favoritesStore.load()` (ids)
-    // com `_api.fetchList()` (dados), guardar em `_favorites` via setState
-    // e marcar `_loading = false`.
+    final ids = await _favoritesStore.load();
+    final all = await _api.fetchList();
     setState(() {
+      _favorites = all.where((drink) => ids.contains(drink.id)).toList();
       _loading = false;
     });
   }

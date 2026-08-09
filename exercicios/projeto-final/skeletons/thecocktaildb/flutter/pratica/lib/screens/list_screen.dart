@@ -29,6 +29,7 @@ class _ListScreenState extends State<ListScreen> {
   final CocktailDbApi _api = CocktailDbApi();
 
   List<DrinkSummary> _all = [];
+  List<DrinkSummary>? _categoryDrinks;
   bool _loading = true;
   String? _error;
   String _searchText = '';
@@ -42,39 +43,62 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<void> _loadList() async {
-    // TODO 1 (feature 1 — lista): chamar `_api.fetchList()`, guardar o
-    // resultado em `_all` e marcar `_loading = false` via setState. Tratar
-    // erro com `_error` (mensagem) igual ao padrão do catch abaixo.
-    setState(() {
-      _loading = false;
-    });
+    try {
+      final result = await _api.fetchList();
+      result.sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
+      setState(() {
+        _all = result;
+        _loading = false;
+      });
+    } catch (error) {
+      print(error.toString());
+      setState(() {
+        _error = error.toString();
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _selectCategory(String? category) async {
-    // TODO 4 (feature 4 — categoria/filtro): quando `category` não é null,
-    // chamar `_api.fetchNamesByCategory(_apiCategory(category))` e guardar
-    // em `_categoryNames` (setState). Quando `category` é null, limpar
-    // `_categoryNames`.
-    setState(() {
-      _selectedCategory = category;
-    });
+    try {
+      if (category == null) {
+        setState(() {
+          _selectedCategory = null;
+          _categoryNames = null;
+          _categoryDrinks = null;
+        });
+      } else {
+        final drinks = await _api.fetchList(category: _apiCategory(category));
+        setState(() {
+          _selectedCategory = category;
+          _categoryDrinks = drinks;
+          _categoryNames = drinks.map((d) => d.name).toSet();
+        });
+      }
+    } catch (error) {
+      print(error.toString());
+      setState(() {
+        _error = error.toString();
+        _loading = false;
+      });
+    }
   }
 
   List<DrinkSummary> get _filtered {
     // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
     // `_all` por `_categoryNames` (quando não-nulo, `_categoryNames!.contains`)
     // e por `_searchText` (substring case-insensitive do `name`).
-    return _all;
+    final base = _categoryDrinks ?? _all;
+    return base.where((drink) {
+      return drink.name.toLowerCase().contains(_searchText.toLowerCase());
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Drinks')),
-      body: Semantics(
-        identifier: 'item-list-screen',
-        child: _buildBody(),
-      ),
+      body: Semantics(identifier: _loading ? null : 'item-list-screen', child: _buildBody()),
     );
   }
 
@@ -145,7 +169,9 @@ class _ListScreenState extends State<ListScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Semantics(
-        identifier: category == null ? 'category-chip-all' : 'category-chip-$category',
+        identifier: category == null
+            ? 'category-chip-all'
+            : 'category-chip-$category',
         child: ChoiceChip(
           label: Text(capitalize(label)),
           selected: selected,
