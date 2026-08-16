@@ -29,6 +29,10 @@ Comece com os testes **vermelhos**; deixe-os **verdes**.
 
 Veja o `guia-passo-a-passo.md` (na pasta do exercício) e o `enunciado.md` (rubrica).
 
+## Por que provider em vez de prop drilling?
+
+O estado de favoritos é lido em três pontos da árvore de widgets — o `MovieCard` (coração), o header do `HomeScreen` (contador `♥ N`) e o botão limpar (também no header) — sendo que `MovieCard` só chega a `HomeScreen` através do `ListView.builder`. Passar esse estado por parâmetro (prop drilling) exigiria repassá-lo manualmente por cada widget intermediário nesse caminho até os consumidores, acoplando componentes que não deveriam saber uns dos outros e obrigando a reescrever a cadeia de props toda vez que a árvore mudasse. Com o `favoritesProvider`, cada widget lê (`ref.watch`) ou escreve (`ref.read(...notifier)`) diretamente na fonte única de estado, sem depender da posição na árvore — o que escala melhor conforme o app cresce e os consumidores se multiplicam.
+
 ## Entrega
 Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** roda `flutter test` no seu PR.
 - ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`. O autograder roda `flutter test` nessa pasta.
