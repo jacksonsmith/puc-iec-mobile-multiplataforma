@@ -31,12 +31,20 @@ data class PokemonDetailResponse(
     val height: Int,
     val weight: Int,
     val types: List<PokemonTypeSlot>,
+    val sprites: Sprites,
 )
 
 @Serializable
 data class PokemonTypeSlot(
     val type: NamedResource,
 )
+
+@Serializable
+data class Sprites(
+    @SerialName("front_default")
+    val frontDefault: String,
+)
+
 
 @Serializable
 data class NamedResource(

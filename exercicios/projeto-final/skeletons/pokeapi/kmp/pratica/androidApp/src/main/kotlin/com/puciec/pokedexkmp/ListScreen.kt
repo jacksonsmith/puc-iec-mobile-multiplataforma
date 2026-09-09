@@ -3,7 +3,6 @@ package com.puciec.pokedexkmp
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,15 +40,19 @@ fun ListScreen(api: PokeApi, onSelect: (Int) -> Unit) {
     var categoryNames by remember { mutableStateOf<Set<String>?>(null) }
 
     LaunchedEffect(Unit) {
-        // TODO 1 (feature 1 — lista): chamar api.fetchList(), guardar em `all`.
-        // Tratar erro em `error` (try/catch) e marcar `loading = false` no final.
-        loading = false
+        try {
+            all = api.fetchList()
+        } catch (e: Exception) {
+            error = e.message ?: "Erro desconhecido"
+        } finally {
+            loading = false
+        }
     }
 
-    // TODO 3 (feature 3 — busca) + TODO 4 (feature 4 — categoria): filtrar
-    // `all` por `categoryNames` (quando não-nulo, `names.contains(it.name)`)
-    // e por `searchText` (substring case-insensitive do `name`).
-    val filtered = all
+    val filtered = all.filter {
+        (searchText.isBlank() || it.name.contains(searchText, ignoreCase = true))
+                && (selectedCategory == null || categoryNames?.contains(it.name) == true)
+    }
 
     if (loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
@@ -108,8 +111,12 @@ fun ListScreen(api: PokeApi, onSelect: (Int) -> Unit) {
     }
 
     LaunchedEffect(selectedCategory) {
-        // TODO 4 (feature 4 — categoria/filtro): quando `selectedCategory` não
-        // é null, chamar api.fetchNamesByType(category) e guardar em
-        // `categoryNames`.
+        val category = selectedCategory ?: return@LaunchedEffect
+
+        try {
+            categoryNames = api.fetchNamesByType(category)
+        } catch (e: Exception) {
+            error = e.message ?: "Erro desconhecido"
+        }
     }
 }
