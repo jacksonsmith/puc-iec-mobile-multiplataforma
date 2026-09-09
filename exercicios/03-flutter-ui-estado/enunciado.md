@@ -1,7 +1,7 @@
 # Atividade 3 — App Flutter: UI + Estado + Testes (15 pts)
 
 **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
-**Aula:** 3 (17/06/2026) · **Entrega:** até **23/06/2026 23:59**
+**Aula:** 3 · **Entrega:** ver Canvas
 **Modalidade:** individual · **Dificuldade:** ⭐⭐ Médio
 **Auto-grade:** ✅ (J.A.R.V.I.S. roda `flutter test` no seu PR)
 
@@ -71,4 +71,4 @@ Uma fonte só (`favoritesProvider`) refletindo no **card**, no **contador** e no
 - **Hands-on da aula não pontua** — a entrega solo (testes verdes) vale os 15 pts.
 - ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`. O autograder roda `flutter test` nessa pasta.
 
-> **Bridging nativo entra na Aula 4** (KMP + Platform Channel) — aqui o foco é **UI + estado + testes**.
+> **KMP entra na Aula 5** — aqui o foco é **UI + estado + testes**.

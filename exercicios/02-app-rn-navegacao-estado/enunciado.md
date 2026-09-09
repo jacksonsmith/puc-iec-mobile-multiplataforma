@@ -1,9 +1,10 @@
 # Atividade 2 — App de Feed: Favoritos + MMKV + Reanimated (15 pts)
 
 **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
-**Entrega:** até **10/06/2026** (2 semanas)
+**Entrega:** ver Canvas
 **Modalidade:** individual
 **Tempo estimado:** **~2h-2h30** (estende app construído no hands-on da Aula 2)
+**Dificuldade:** ⭐⭐⭐ Difícil — implementação RN com MMKV + Reanimated + Zustand; requer simulador iOS ou Android
 
 ---
 
@@ -25,7 +26,7 @@ Starter `aula-02` rodando localmente:
 
 ```bash
 git clone https://github.com/SEU-USER/puc-iec-mobile-multiplataforma.git
-cd puc-iec-mobile-multiplataforma/exercicios/02-app-rn-navegacao-estado/starter
+cd puc-iec-mobile-multiplataforma/starters/aula-02
 npm install
 cp .env.example .env  # editar com TMDB token
 npx expo start
@@ -179,7 +180,7 @@ Resumo:
 
 ## Material de apoio (todos no GitHub público)
 
-- **[Starter `aula-02`](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/exercicios/02-app-rn-navegacao-estado/starter)** — base obrigatória (com TODOs guiados, CI configurado, testes prontos pra preencher)
+- **[Starter `aula-02`](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/starters/aula-02)** — base obrigatória (com TODOs guiados, CI configurado, testes prontos pra preencher)
 - **[guia-passo-a-passo.md](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/02-app-rn-navegacao-estado/guia-passo-a-passo.md)** — comandos + código exemplo
 - **[template-relatorio.md](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/02-app-rn-navegacao-estado/template-relatorio.md)** — README modelo
 - **[Material aula 2](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/material-de-apoio/aula-02)** (Meta New Arch, Hermes, Reanimated)
