@@ -14,9 +14,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // NÃO REMOVA — sem testTagsAsResourceId=true, Modifier.testTag(...) não
-            // vira resource-id na árvore de acessibilidade e o Maestro (seletor `id:`)
-            // não encontra nenhum elemento.
             App(
                 modifier = Modifier
                     .fillMaxSize()

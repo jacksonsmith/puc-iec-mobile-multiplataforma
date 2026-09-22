@@ -29,9 +29,9 @@ fun FavoritesScreen(api: RickAndMortyApi, favoritesStore: FavoritesStore, onSele
     var favorites by remember { mutableStateOf<List<CharacterSummary>?>(null) }
 
     LaunchedEffect(Unit) {
-        // TODO 5 (feature 5 — favoritos): cruzar favoritesStore.load() (ids)
-        // com api.fetchList() (dados), guardar em `favorites`.
-        favorites = emptyList()
+        val ids = favoritesStore.load()
+        val all = api.fetchList()
+        favorites = all.filter { ids.contains(it.id) }
     }
 
     val current = favorites
