@@ -1,110 +1,62 @@
 # Atividade 1 — ADR Arquitetural (15 pts)
 
-> **Disciplina:** Arquitetura Mobile Multiplataforma — PUC IEC 2026
-> **Aula correspondente:** Aula 1 (20/05/2026)
-> **Prazo:** 26/05/2026 — 23:59 (horário Brasília)
-> **Formato:** markdown (preferido) ou PDF
-> **Auto-grading:** ✅ feedback rápido no PR (J.A.R.V.I.S.) + revisão manual final no Canvas
+**Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
+**Entrega:** ver Canvas
+**Modalidade:** individual
+**Tempo estimado:** ~1 hora
+**Dificuldade:** ⭐ Fácil — redação técnica curta, sem setup de código
 
-## Objetivo
+---
 
-Redigir um **Architecture Decision Record (ADR)** completo justificando a escolha de stack mobile para um caso real, com matriz quantitativa de trade-offs e fundamentação acadêmica.
+## Contexto
 
-## Cenários sugeridos (escolha 1)
+Architecture Decision Records (ADRs) são o artefato que distingue **decisão técnica** de **palpite**. Nesta atividade você vai redigir um ADR curto (1 página) justificando a escolha de stack mobile pra um cenário concreto.
 
-Você pode propor outro cenário, mas precisa ter **escala e restrições reais** (não app pessoal).
+## Tarefa
 
-| # | Domínio | Restrições típicas |
-|---|---------|--------------------|
-| A | Banco digital retail | BACEN, biometria, SSL pinning, fraude |
-| B | E-commerce marketplace | Pico Black Friday, checkout, deep linking |
-| C | Streaming de mídia | DRM, offline, codec, bateria |
-| D | Saúde / telemedicina | LGPD + dados sensíveis, videochamada, integração SUS |
-| E | Logística / delivery | Background location, mapas, offline-first |
+1. **Escolha 1 cenário** (ou proponha o seu, com o mesmo nível de detalhe):
 
-## Requisitos mínimos
+   | # | Cenário | Restrições |
+   |---|---|---|
+   | A | App de delivery de comida pra bairro | Time pequeno (4 devs), orçamento curto, prazo de 6 meses |
+   | B | App de agendamento pra clínica pequena | Time de 2 devs, sem experiência mobile prévia, prazo de 3 meses |
+   | C | App de catálogo + pedidos pra loja de roupas local | Time de 3 devs (todos JS/web), quer lançar em 2 meses |
 
-1. **Mínimo 4 alternativas analisadas** entre: Nativo (Kotlin+Swift), React Native, Flutter, Kotlin Multiplatform, PWA
-2. **Matriz quantitativa** com critérios + pesos justificados + score por alternativa
-3. **Decisão clara** em 1 frase
-4. **Consequências** positivas e negativas (não esconda o negativo)
-5. **≥3 fontes confiáveis**, sendo **≥1 acadêmica** (paper peer-reviewed ou livro técnico publicado). Outras 2 podem ser: doc oficial (RN/Flutter/KMP/Apple/Google), post de engenharia validado (Airbnb Engineering, Netflix Tech Blog, Meta Engineering, Discord, Square), white paper técnico. **Não conta:** Medium pessoal, dev.to random, blog sem revisão.
-6. **1 página** de extensão alvo. ADR de 20 páginas perde pontos.
+2. **Redigir o ADR** usando `adr-template.md` como base, comparando **pelo menos 3 alternativas** entre: Nativo (Kotlin + Swift), React Native, Flutter, Kotlin Multiplatform (KMP), PWA.
 
-## Como entregar
+3. **Comparação qualitativa** — tabela simples de prós/contras por alternativa (ver template). **Não precisa de matriz de peso × nota** — isso é coisa pro Projeto Final, quando o cenário for mais complexo.
 
-1. **Fork** deste repo
-2. Cria pasta: `exercicios/01-adr-arquitetural/aluno-<seu-github-username>/`
-3. Coloca o ADR em `ADR-0001-<slug-do-caso>.md` (baseado em [`../adr-template.md`](../adr-template.md))
-4. Adiciona `README.md` com link pro ADR + 1 parágrafo de contexto
-5. Push + abre PR pra `main` do upstream
-6. Também sobe o ADR (markdown ou PDF) no Canvas
+4. **≥2 fontes confiáveis**: doc oficial da tecnologia escolhida + pelo menos mais 1 (paper, livro técnico, post de engenharia validado — Airbnb/Discord/Netflix Tech Blog).
 
-## Estrutura esperada
+## Critérios de avaliação
 
-```
-exercicios/01-adr-arquitetural/aluno-<github-username>/
-├── ADR-0001-<slug>.md         # ADR principal
-├── README.md                  # link + contexto curto
-└── referencias.bib            # opcional, BibTeX se ABNT/IEEE
-```
+| Critério | Pontos |
+|---|---|
+| Estrutura ADR correta (status com autor+data, contexto, decisão, alternativas, consequências) | 5 |
+| Comparação de ≥3 alternativas com prós/contras claros | 5 |
+| ≥2 referências confiáveis e pertinentes | 3 |
+| Clareza e coerência (decisão sustentada pelo contexto) | 2 |
 
-## Critérios de avaliação (15 pts)
+## Template + exemplo
 
-| # | Critério | Peso |
-|---|----------|------|
-| 1 | Contexto bem delimitado (forças, restrições, escala) | 2 |
-| 2 | ≥ 4 alternativas analisadas com profundidade | 3 |
-| 3 | Matriz quantitativa com critérios + pesos justificados | 3 |
-| 4 | Decisão clara + consequências (+ e −) | 2 |
-| 5 | ≥ 3 referências acadêmicas reais | 2 |
-| 6 | Coerência interna (decisão sustentada pelo contexto) | 2 |
-| 7 | Formato 1-página (ADR enxuto) | 1 |
+- Template (estrutura vazia): [`adr-template.md`](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/01-adr-arquitetural/adr-template.md)
+- Exemplo preenchido (pra ver o formato, **não copiar**): [`exemplo/`](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/exercicios/01-adr-arquitetural/exemplo)
 
-**Pass threshold:** 60% (9 pts).
+## Entrega
 
-## Template + Exemplo
+**Direto no Canvas, sem PR** (fluxo de fork + Pull Request a gente só vê na Aula 2 — não precisa disso agora).
 
-- **Template (estrutura vazia):** [`../adr-template.md`](../adr-template.md)
-- **Exemplo completo do prof:** [`exemplo-banco-investimento/`](./exemplo-banco-investimento/) — leia pra entender formato esperado, **não copie**.
+- Sobe o arquivo (`.md`, `.pdf` ou `.txt`) **ou** cola o texto direto na caixa de texto do Canvas
+- Tamanho alvo: **1 página**
 
-## Auto-grading no PR (J.A.R.V.I.S.)
+## Anti-padrões a evitar
 
-Quando você abre o PR, um bot roda o validator e comenta o status na hora:
+❌ ADR sem autor nem data — irrastreável
+❌ ADR depois do código (vira justificativa, não decisão)
+❌ ADR de 10+ páginas (ninguém lê)
+❌ Alternativas sem prós/contras — só listar nomes não conta
+❌ Referências só de blog pessoal sem credibilidade
 
-- ✅ se atender critérios mínimos automatizados (60%)
-- ⚠️ se faltar algo — diz exatamente qual critério
+## Material de apoio
 
-**Critérios automatizados** (`grader/lib/validators/adr-arquitetural.ts`):
-
-| # | Critério | Peso |
-|---|----------|------|
-| 1 | Arquivo `ADR-NNNN-*.md` presente | 2 |
-| 2 | Seções obrigatórias (Status, Contexto, Decisão, Alternativas, Consequências) | 3 |
-| 3 | Matriz quantitativa (tabela com notas numéricas) | 3 |
-| 4 | ≥4 alternativas analisadas | 2 |
-| 5 | Seção referências com ≥3 itens | 2 |
-| 6 | ≥1 referência acadêmica detectada (heurística) | 2 |
-| 7 | README na sua pasta | 1 |
-
-**Pontuação final = manual no Canvas.** O autograder valida estrutura; o prof avalia raciocínio.
-
-## Referências sugeridas pra começar
-
-- **Nygard, M.** (2011) *Documenting Architecture Decisions* — fonte do padrão ADR
-- **Charland, A.; Leroux, B.** (2011) *Mobile Application Development: Web vs. Native*. CACM, 54(5)
-- **Eisenman, B.** *Learning React Native* (O'Reilly, 2ed)
-- **Airbnb Engineering** *Sunsetting React Native* (série 5 partes)
-- **JetBrains** *KMP Production Stories* (Square, McDonald's, Netflix)
-
-## Pitfalls
-
-- ADR escrito **depois** da decisão pronta → vira justificativa, não decisão
-- Alternativas só listadas, sem matriz quantitativa → critério 3 zero
-- "PWA é ruim" sem dado → opinião, não análise
-- Referências = blog posts random → critério 5 zero
-- 15 páginas de ADR → critério 7 zero
-
-## Dúvidas
-
-Fórum do Canvas (módulo Atividade 1) ou e-mail do professor.
+- Material de apoio aula 1 (pasta `material-de-apoio/`): Charland & Leroux 2011, Nygard 2011, série Airbnb 2018, RN docs
