@@ -24,16 +24,24 @@ Docs oficiais React Native (open source, MIT):
 
 > Doc oficial > livro O'Reilly desatualizado: mesma cobertura conceitual, sempre atualizada com SDK corrente.
 
-## Airbnb Engineering — caso real "Sunsetting React Native" (5 posts)
+## Airbnb Engineering — caso real "Sunsetting React Native" (5 posts, 2018)
 
 Peal, G. (2018). Série Medium, Airbnb Engineering. Open access.
 
-- `airbnb-2018-part1-react-native-at-airbnb.pdf` — *React Native at Airbnb*
+- `airbnb-2018-part1-react-native-at-airbnb.pdf` — *React Native at Airbnb*. https://medium.com/airbnb-engineering/react-native-at-airbnb-f95aa460be1c
 - `airbnb-2018-part2-the-technology.pdf` — *The Technology*
 - `airbnb-2018-part3-cross-platform-mobile-team.pdf` — *Building a Cross-Platform Mobile Team*
 - `airbnb-2018-part4-sunsetting-react-native.pdf` — *Sunsetting React Native*
 - `airbnb-2018-part5-whats-next-for-mobile.pdf` — *What's Next for Mobile at Airbnb*
 - Fonte: https://medium.com/airbnb-engineering
+
+## Shopify Engineering — "Native is now the future of mobile at Shopify" (set/2026)
+
+Caso simétrico e recente ao de Airbnb: Shopify adotou RN em 2020, reafirmou em 2025, e anunciou a saída pra nativo (Swift/Kotlin) em 10/09/2026 — reescreveram o Shop app em 12 semanas com 6 engenheiros, citando ganho de produtividade de IA como razão econômica.
+
+- Shopify Engineering (2026). *Native is now the future of mobile at Shopify*. https://shopify.engineering/back-to-native
+
+> Leia Airbnb (saiu do RN em 2018) e Shopify (saiu do RN em 2026) **juntos** — mesma decisão revertida 8 anos depois, por motivos diferentes. Bom material pra Atividade 1 (ADR).
 
 ## Por que ler?
 
@@ -43,5 +51,6 @@ Peal, G. (2018). Série Medium, Airbnb Engineering. Open access.
 | Charland/Leroux | Argumento clássico web vs native — embasa decisão arquitetural |
 | RN docs | Setup + componentes core pra hands-on Aula 2 |
 | Airbnb série | Caso real de decisão técnica que deu errado — aprenda com cicatriz alheia |
+| Shopify (2026) | Mesma decisão, contexto diferente 8 anos depois — mostra que "certo" muda com o tempo |
 
 > Quem não ler **fica perdido** na Aula 2 (RN deep dive).
