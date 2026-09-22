@@ -35,9 +35,10 @@ Adotaremos **PWA** (Progressive Web App) como stack.
 - 1 dev consegue manter sozinho no orçamento disponível
 
 **Negativas:**
-- Se um dia precisar de leitor de código de barras via câmera com mais performance, PWA pode ficar limitado — vale revisar essa decisão se o escopo crescer
+- Leitor de código de barras via câmera tem suporte parcial em PWA (Barcode Detection API ainda não é padrão em todo navegador/iOS) — vale revisar essa decisão se isso virar crítico
 
 ## Referências
 
-- MDN Web Docs — Progressive Web Apps. https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps
+- Nygard, M. (2011). *Documenting Architecture Decisions* — fonte do formato ADR usado aqui. https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions
+- MDN Web Docs — Progressive Web Apps (doc oficial da plataforma web). https://developer.mozilla.org/docs/Web/Progressive_web_apps
 - Charland, A.; Leroux, B. (2011). *Mobile Application Development: Web vs. Native*. Communications of the ACM, 54(5).
