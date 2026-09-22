@@ -6,7 +6,6 @@ Auto-correção das atividades práticas via GitHub Actions. Aluno faz **fork �
 
 | # | Atividade | Validator | Status |
 |---|-----------|-----------|--------|
-| A1 | ADR Arquitetural | `adr-arquitetural.ts` | a calibrar |
 | A2 | App RN: Favoritos + MMKV + Reanimated | `rn-app.ts` | **calibrado (rubrica real)** |
 | A3 | Native Module comparativo | `native-module.ts` | a calibrar |
 | A4 | PWA offline-first | `pwa-lighthouse.ts` | a calibrar |
@@ -40,7 +39,6 @@ grader/
 ├── lib/
 │   ├── compute-score.ts            # tipos + helpers (rubrica → score, piso auto/manual)
 │   └── validators/
-│       ├── adr-arquitetural.ts     # A1
 │       ├── rn-app.ts               # A2 (calibrado)
 │       ├── native-module.ts        # A3
 │       ├── pwa-lighthouse.ts       # A4
