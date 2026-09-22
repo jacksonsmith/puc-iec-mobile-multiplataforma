@@ -6,7 +6,7 @@
 
 ## Status
 
-`Proposto` | `Aceito`
+`Proposto` | `Aceito` — escolha um e apague o outro.
 
 **Data:** YYYY-MM-DD
 **Autor:** Nome do(a) decisor(a)
@@ -15,17 +15,17 @@
 
 > Descreva as **forças em jogo** em poucos bullets: o que o produto precisa, restrições de negócio/prazo/equipe, o que não pode dar errado.
 
-Exemplo:
-- **Produto:** app de delivery de comida pra bairro
-- **Escala alvo:** 50 mil pedidos/mês em 6 meses
-- **Time:** 4 engenheiros, nenhum com experiência nativa
-- **Restrição:** orçamento curto, precisa lançar rápido
+Exemplo (ilustrativo — use os dados do SEU cenário, não este):
+- **Produto:** app de agendamento pra barbearia
+- **Escala alvo:** ~500 agendamentos/mês, 1 unidade só
+- **Time:** 2 engenheiros, background web
+- **Restrição:** orçamento apertado, dono quer lançar em 2 meses
 
 ## Decisão
 
 > **Uma frase clara** com a escolha feita.
 
-Exemplo: Adotaremos Flutter como stack mobile, por unificar iOS/Android com 1 time pequeno.
+Exemplo: Adotaremos PWA, por ser o mais rápido de lançar sem loja de app.
 
 ## Alternativas consideradas
 
@@ -33,9 +33,9 @@ Exemplo: Adotaremos Flutter como stack mobile, por unificar iOS/Android com 1 ti
 
 | Alternativa | Prós | Contras |
 |---|---|---|
-| **Flutter** (escolhida) | 1 codebase, hot reload, boa performance | Time precisa aprender Dart |
-| React Native | Time já sabe JS, ecossistema grande | Bridging nativo pode complicar em apps simples |
-| Nativo (Kotlin + Swift) | Melhor performance/UX possível | 2 codebases, 2x o tempo pra time de 4 pessoas |
+| **PWA** (escolhida, exemplo) | Lança direto no navegador, sem loja de app, 1 dev mantém | Sem acesso a hardware avançado |
+| React Native | Ecossistema grande, app "de verdade" na loja | Overhead de manter build iOS/Android pra time de 2 |
+| Nativo (Kotlin + Swift) | Melhor performance/UX possível | 2 codebases — inviável pro prazo de 2 meses |
 
 ## Consequências
 

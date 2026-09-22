@@ -40,7 +40,7 @@ Architecture Decision Records (ADRs) são o artefato que distingue **decisão t�
 ## Template + exemplo
 
 - Template (estrutura vazia): [`adr-template.md`](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/01-adr-arquitetural/adr-template.md)
-- Exemplo preenchido (pra ver o formato, **não copiar**): [`exemplo/`](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/tree/main/exercicios/01-adr-arquitetural/exemplo)
+- Exemplo preenchido (pra ver o formato, **não copiar** — é um cenário diferente dos 3 acima): [`ADR-0001-controle-estoque-oficina.md`](https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma/blob/main/exercicios/01-adr-arquitetural/exemplo/ADR-0001-controle-estoque-oficina.md)
 
 ## Entrega
 
