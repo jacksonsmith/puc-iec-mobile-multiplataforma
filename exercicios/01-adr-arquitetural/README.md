@@ -51,11 +51,11 @@ Architecture Decision Records (ADRs) são o artefato que distingue **decisão t�
 
 ## Anti-padrões a evitar
 
-❌ ADR sem autor nem data — irrastreável
-❌ ADR depois do código (vira justificativa, não decisão)
-❌ ADR de 10+ páginas (ninguém lê)
-❌ Alternativas sem prós/contras — só listar nomes não conta
-❌ Referências só de blog pessoal sem credibilidade
+- ❌ ADR sem autor nem data — irrastreável
+- ❌ ADR depois do código (vira justificativa, não decisão)
+- ❌ ADR de 10+ páginas (ninguém lê)
+- ❌ Alternativas sem prós/contras — só listar nomes não conta
+- ❌ Referências só de blog pessoal sem credibilidade
 
 ## Material de apoio
 
