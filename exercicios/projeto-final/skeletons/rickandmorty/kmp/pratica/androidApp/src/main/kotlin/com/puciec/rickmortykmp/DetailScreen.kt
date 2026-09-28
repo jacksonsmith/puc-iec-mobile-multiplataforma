@@ -37,8 +37,11 @@ fun DetailScreen(
     var error by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(characterId) {
-        // TODO 2 (feature 2 — detalhe): chamar api.fetchDetail(characterId) e
-        // guardar em `detail`. Tratar erro em `error` (try/catch).
+        try {
+            detail = api.fetchDetail(characterId)
+        } catch (t: Throwable) {
+            error = "Não foi possível carregar o detalhe."
+        }
     }
 
     Column(Modifier.fillMaxSize().testTag("detail-screen").padding(16.dp)) {
@@ -67,9 +70,8 @@ fun DetailScreen(
                         modifier = Modifier
                             .testTag("detail-favorite-button")
                             .clickable {
-                                // TODO 5 (feature 5 — favoritos): chamar
-                                // favoritesStore.toggle(characterId) e atualizar
-                                // `isFavorite` com o resultado.
+                                val ids = favoritesStore.toggle(characterId)
+                                isFavorite = ids.contains(characterId)
                             },
                         style = MaterialTheme.typography.headlineMedium,
                     )

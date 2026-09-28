@@ -27,8 +27,6 @@ class RickAndMortyApi {
     suspend fun fetchDetail(id: Int): CharacterDetail =
         client.get("$BASE_URL/character/$id").body()
 
-    // A própria API filtra por status — sem precisar de endpoint separado
-    // de "tipo" como o PokeAPI.
     suspend fun fetchNamesByStatus(status: String): Set<String> {
         val response: CharacterListResponse = client.get("$BASE_URL/character/") {
             parameter("status", status)
