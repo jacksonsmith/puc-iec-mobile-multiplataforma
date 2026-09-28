@@ -2,7 +2,7 @@
 //
 // ATIVIDADE 2 — testar useFavoritesStore.
 //
-// TODO [TASK 9]: gerar testes pra favoritesStore usando IA.
+// DONE [TASK 9]: gerar testes pra favoritesStore usando IA.
 //
 // Prompt sugerido:
 //   "Gere testes Jest pra useFavoritesStore (Zustand) cobrindo:
@@ -21,8 +21,27 @@ describe('favoritesStore', () => {
     useFavoritesStore.setState({ ids: [] });
   });
 
-  // TODO [TASK 9]: adicione 3+ testes aqui (use IA).
-  test.skip('placeholder — remova quando implementar', () => {
-    expect(true).toBe(true);
+  // DONE [TASK 9]: adicione 3+ testes aqui (use IA).
+  test('toggle adiciona id se não existe e remove se existe', () => {
+    useFavoritesStore.getState().toggle(42);
+    expect(useFavoritesStore.getState().isFavorite(42)).toBe(true);
+    expect(useFavoritesStore.getState().ids).toEqual([42]);
+    useFavoritesStore.getState().toggle(42);
+    expect(useFavoritesStore.getState().isFavorite(42)).toBe(false);
+    expect(useFavoritesStore.getState().ids).toEqual([]);
+  });
+
+  test('isFavorite retorna true após add', () => {
+    useFavoritesStore.getState().add(7);
+    expect(useFavoritesStore.getState().isFavorite(7)).toBe(true);
+    expect(useFavoritesStore.getState().isFavorite(99)).toBe(false);
+  });
+
+  test('clear esvazia ids', () => {
+    useFavoritesStore.getState().add(10);
+    useFavoritesStore.getState().add(20);
+    useFavoritesStore.getState().clear();
+    expect(useFavoritesStore.getState().ids).toEqual([]);
+    expect(useFavoritesStore.getState().isFavorite(10)).toBe(false);
   });
 });

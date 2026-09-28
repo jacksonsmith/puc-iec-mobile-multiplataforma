@@ -13,7 +13,6 @@ const fetchMovieById = async (id: number) => {
   return res.data;
 };
 
-// Já implementado — usado na MovieDetail. Use como referência.
 export const useMovieById = (id: number) =>
   useQuery({
     queryKey: ['movie', id],

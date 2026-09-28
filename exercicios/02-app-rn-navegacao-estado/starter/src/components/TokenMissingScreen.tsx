@@ -1,8 +1,3 @@
-// src/components/TokenMissingScreen.tsx
-//
-// Tela de erro amigável quando TMDB API token não está configurado.
-// Aparece automaticamente quando service detecta erro 401 ou token ausente.
-
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function TokenMissingScreen() {

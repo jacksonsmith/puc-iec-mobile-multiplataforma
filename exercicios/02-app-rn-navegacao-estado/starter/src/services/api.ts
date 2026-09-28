@@ -12,7 +12,6 @@ import axios from 'axios';
 
 const TOKEN = process.env.EXPO_PUBLIC_TMDB_TOKEN;
 
-// Detecta token ausente, vazio, placeholder ou dummy de teste.
 export const isTokenMissing = (() => {
   if (!TOKEN) return true;
   const t = TOKEN.trim();
@@ -22,8 +21,6 @@ export const isTokenMissing = (() => {
   return false;
 })();
 
-// TMDB API key v3 (32 chars hex) usa query param ?api_key=.
-// API Read Access Token v4 (JWT longo eyJhbGc...) usa Authorization: Bearer.
 const isV4Token = TOKEN ? TOKEN.startsWith('eyJ') : false;
 
 export const api = axios.create({
@@ -31,7 +28,6 @@ export const api = axios.create({
   timeout: 10000,
 });
 
-// Interceptor: adiciona Bearer token + idioma em toda request.
 api.interceptors.request.use((config) => {
   if (isTokenMissing) {
     return Promise.reject(
@@ -43,18 +39,15 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${TOKEN}`;
     config.params = baseParams;
   } else {
-    // v3 API key — usa query param ?api_key=
     config.params = { ...baseParams, api_key: TOKEN };
   }
   return config;
 });
 
-// Interceptor: log de erro centralizado.
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err?.response?.status === 401 || err?.message?.startsWith?.('TMDB_TOKEN_MISSING')) {
-      // sinaliza erro de auth pro screen tratar com tela amigável
       err.isTokenError = true;
     }
     console.warn('[api] erro:', err?.response?.status ?? err?.message, err?.config?.url);
@@ -62,7 +55,6 @@ api.interceptors.response.use(
   }
 );
 
-// Helper pra detectar erro de token em qualquer ponto do app.
 export const isTokenError = (error: unknown): boolean => {
   if (!error) return false;
   const e = error as { isTokenError?: boolean; response?: { status?: number }; message?: string };
