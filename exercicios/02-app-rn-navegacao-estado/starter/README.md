@@ -7,8 +7,8 @@ App Expo + TypeScript com arquitetura profissional separando **services**, **que
 - **Nome:** Amir Gabriel
 - **Opção Reanimated:** A — Heart pop (`withSequence(withTiming(1.4), withSpring(1))`)
 
-![Exercicio-02](assets/exercicio-01.png)
-![Exercicio-02 Gif](<assets/exercicio-01.gif>)
+![Exercicio-02](assets/exercicio-02.png)
+![Exercicio-02 Gif](<assets/exercicio-02.gif>)
 
 > Você vai usar esse starter no **hands-on da Aula 2** (em sala) e na **Atividade 2** (entrega 10/06, 15pts).
 
