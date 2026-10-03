@@ -9,22 +9,19 @@
 // - Hook gerado pelo create() consumido direto em componentes
 // - Sem Provider, sem configureStore (diferente do Redux)
 
-import { create } from 'zustand';
+import { create } from "zustand";
 
 type CounterState = {
   count: number;
-  // TODO [TASK 1]: declarar tipos das actions abaixo
-  //   increment: () => void;
-  //   decrement: () => void;
-  //   reset: () => void;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
 };
 
-// TODO [TASK 1]: implementar store com create<CounterState>((set) => ({...}))
-// - count inicial = 0
-// - increment: set((s) => ({ count: s.count + 1 }))
-// - decrement: set((s) => ({ count: s.count - 1 }))
-// - reset: set({ count: 0 })
 export const useCounterStore = create<CounterState>((set) => ({
   count: 0,
+  increment: () => set((s) => ({ count: s.count + 1 })),
+  decrement: () => set((s) => ({ count: s.count - 1 })),
+  reset: () => set({ count: 0 }),
   // ← preenche aqui
 }));
