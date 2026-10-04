@@ -11,6 +11,8 @@ import { posterUrl } from '@/utils/poster-url';
 import type { RootStackParamList } from '@/routes/RootStack';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { HeartButton } from './HeartButton';
+import { prefetchMovieById } from '@/queries/movies/get-movie-by-id';
+import { useQueryClient } from '@tanstack/react-query';
 
 type Props = { movie: Movie };
 
@@ -18,11 +20,14 @@ export default function MovieCard({ movie }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const poster = posterUrl(movie.poster_path, 'w185');
 
+  const queryClient = useQueryClient();
+
   const isFavorite = useFavoritesStore((s) => s.isFavorite(movie.id));
   const toggle = useFavoritesStore((s) => s.toggle);
 
   return (
     <Pressable
+      onPressIn={() => prefetchMovieById(queryClient, movie.id)}
       onPress={() => navigation.navigate('Detail', { id: movie.id, title: movie.title })}
       style={styles.card}
     >

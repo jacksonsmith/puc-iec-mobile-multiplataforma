@@ -1,21 +1,20 @@
-// src/routes/FavoritiesStack.tsx
+// src/routes/FavoritesStack.tsx
 //
 // CAMADA ROUTES — navegação do app.
 // Doc: https://reactnavigation.org/docs/native-stack-navigator
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MovieList from '@/screens/MovieList';
 import MovieDetail from '@/screens/MovieDetail';
 import FavoriteMovieList from '@/screens/FavoriteMovieList';
 
-export type FavoritiesStackParamList = {
+export type FavoritesStackParamList = {
   Home: undefined;
-  Detail: { id: number; title: string };
+  Detail: { id: number; title?: string };
 };
 
-const Stack = createNativeStackNavigator<FavoritiesStackParamList>();
+const Stack = createNativeStackNavigator<FavoritesStackParamList>();
 
-export default function FavoritiesStack() {
+export default function FavoritesStack() {
   return (
     <Stack.Navigator
       screenOptions={{

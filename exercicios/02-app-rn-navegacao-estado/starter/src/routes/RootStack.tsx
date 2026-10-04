@@ -9,7 +9,7 @@ import MovieDetail from '@/screens/MovieDetail';
 
 export type RootStackParamList = {
   Home: undefined;
-  Detail: { id: number; title: string };
+  Detail: { id: number; title?: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
