@@ -3,12 +3,12 @@
 // CAMADA ROUTES — navegação do app.
 // Doc: https://reactnavigation.org/docs/native-stack-navigator
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MovieList from '@/screens/MovieList';
-import MovieDetail from '@/screens/MovieDetail';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import MovieDetail from "@/screens/MovieDetail";
+import MainTabs from "@/routes/MainTabs";
 
 export type RootStackParamList = {
-  Home: undefined;
+  Main: undefined;
   Detail: { id: number; title: string };
 };
 
@@ -20,16 +20,16 @@ export default function RootStack() {
       screenOptions={{
         // Garante header back button visível em web e nativo
         headerBackVisible: true,
-        headerBackTitle: 'Voltar',
+        headerBackTitle: "Voltar",
       }}
     >
-      <Stack.Screen name="Home" component={MovieList} options={{ title: 'Filmes' }} />
+      <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
       <Stack.Screen
         name="Detail"
         component={MovieDetail}
         options={({ route }) => ({
           title: route.params.title,
-          headerBackTitle: 'Voltar',
+          headerBackTitle: "Voltar",
         })}
       />
     </Stack.Navigator>
