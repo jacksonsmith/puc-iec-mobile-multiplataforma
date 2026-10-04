@@ -10,7 +10,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import RootStack from '@/routes/RootStack';
+import { RootNavigation } from '@/routes/RootNavigation';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,7 +26,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <NavigationContainer>
-          <RootStack />
+          <RootNavigation />
           <StatusBar style="auto" />
         </NavigationContainer>
       </ThemeProvider>
