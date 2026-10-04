@@ -35,6 +35,20 @@
 //   removeItem: (name: string) => deleteItem(name),
 // };
 
+import { MMKV } from 'react-native-mmkv';
+
+export const storage = new MMKV({ id: 'favorites-store' });
+
+// Helpers tipados
+export const persistedStorage = {
+  getItem: (name: string) => {
+    const value = storage.getString(name);
+    return value ?? null;
+  },
+  setItem: (name: string, value: string) => storage.set(name, value),
+  removeItem: (name: string) => storage.delete(name),
+};
+
 export const mmkvStorage = {
   getItem: (_name: string) => null,
   setItem: (_name: string, _value: string) => {},
