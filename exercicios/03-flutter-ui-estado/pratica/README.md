@@ -43,3 +43,4 @@ Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código
 - ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`.
 
 > **Não comite** `.dart_tool/`, `build/`, `pubspec.lock` (já no `.gitignore`).
+
