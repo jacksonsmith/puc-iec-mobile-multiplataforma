@@ -1,42 +1,44 @@
 // src/storage/mmkv.ts
 //
-// ATIVIDADE 2 — TASK 7 (storage síncrono)
+// ATIVIDADE 2: TASK 7 (storage síncrono)
 //
 // MMKV (C++ via JSI) é ~30x mais rápido que AsyncStorage.
-// Funciona em iOS/Android nativo. Em web (testes/dev), polyfill com localStorage.
+// No web o próprio react-native-mmkv usa localStorage e no Jest usa um mock em memória.
+// No Expo Go o módulo nativo não existe: cai num Map em memória (sem persistência)
+// pra o app continuar rodando. Persistência real exige development build.
 //
 // Doc: https://github.com/mrousavy/react-native-mmkv
 
-// TODO [TASK 7]: implementar storage com polyfill web
-//
-// Estrutura esperada:
-//
-// const isWeb = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-//
-// let getString: (k: string) => string | undefined;
-// let setItem: (k: string, v: string) => void;
-// let deleteItem: (k: string) => void;
-//
-// if (isWeb) {
-//   getString = (k) => window.localStorage.getItem(k) ?? undefined;
-//   setItem = (k, v) => window.localStorage.setItem(k, v);
-//   deleteItem = (k) => window.localStorage.removeItem(k);
-// } else {
-//   const { MMKV } = require('react-native-mmkv');
-//   const storage = new MMKV({ id: 'favorites-store' });
-//   getString = (k) => storage.getString(k);
-//   setItem = (k, v) => storage.set(k, v);
-//   deleteItem = (k) => storage.delete(k);
-// }
-//
-// export const mmkvStorage = {
-//   getItem: (name: string) => getString(name) ?? null,
-//   setItem: (name: string, value: string) => setItem(name, value),
-//   removeItem: (name: string) => deleteItem(name),
-// };
+import { MMKV } from 'react-native-mmkv';
+
+type KeyValueStorage = {
+  getString: (key: string) => string | undefined;
+  set: (key: string, value: string) => void;
+  delete: (key: string) => void;
+};
+
+const createMemoryStorage = (): KeyValueStorage => {
+  const memory = new Map<string, string>();
+  return {
+    getString: (key) => memory.get(key),
+    set: (key, value) => void memory.set(key, value),
+    delete: (key) => void memory.delete(key),
+  };
+};
+
+const createStorage = (): KeyValueStorage => {
+  try {
+    return new MMKV({ id: 'favorites-store' });
+  } catch (error) {
+    console.warn('MMKV indisponível (Expo Go?), usando storage em memória.', error);
+    return createMemoryStorage();
+  }
+};
+
+export const storage = createStorage();
 
 export const mmkvStorage = {
-  getItem: (_name: string) => null,
-  setItem: (_name: string, _value: string) => {},
-  removeItem: (_name: string) => {},
+  getItem: (name: string) => storage.getString(name) ?? null,
+  setItem: (name: string, value: string) => storage.set(name, value),
+  removeItem: (name: string) => storage.delete(name),
 };
