@@ -4,7 +4,7 @@
 //
 // Doc: https://github.com/pmndrs/zustand
 
-import { create } from 'zustand';
+import { create } from "zustand";
 // TODO [TASK 7]: descomentar quando implementar persist (depois de mmkv.ts pronto)
 // import { mmkvStorage } from '@/storage/mmkv';
 
@@ -12,10 +12,9 @@ type FavoritesState = {
   ids: number[];
   toggle: (id: number) => void;
   isFavorite: (id: number) => boolean;
-  // TODO [TASK 5]: declarar tipos das actions add, remove, clear
-  //   add: (id: number) => void;
-  //   remove: (id: number) => void;
-  //   clear: () => void;
+  add: (id: number) => void;
+  remove: (id: number) => void;
+  clear: () => void;
 };
 
 // TODO [TASK 7]: ler estado inicial do storage (persist load)
@@ -27,15 +26,21 @@ type FavoritesState = {
 //   } catch { return []; }
 // };
 
-// TODO [TASK 5]: implementar actions abaixo
 export const useFavoritesStore = create<FavoritesState>((set, get) => ({
   ids: [], // TODO [TASK 7]: trocar por loadInitial() pra carregar do storage
-  toggle: (id) => {
-    // TODO [TASK 5]: implementar
-    // - se id já existe em ids → remover
-    // - se não existe → adicionar
-    // Dica: usa get() pra ler ids atual, set({ ids: ... }) pra atualizar
+  add: (id) => {
+    if (get().ids.includes(id)) return;
+    set({ ids: [...get().ids, id] });
   },
+  remove: (id) => set({ ids: get().ids.filter((favId) => favId !== id) }),
+  toggle: (id) => {
+    if (get().isFavorite(id)) {
+      get().remove(id);
+    } else {
+      get().add(id);
+    }
+  },
+  clear: () => set({ ids: [] }),
   isFavorite: (id) => get().ids.includes(id),
 }));
 
