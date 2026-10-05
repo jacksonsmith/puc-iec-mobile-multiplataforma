@@ -5,8 +5,8 @@ module.exports = function (api) {
     plugins: [
       // Path alias @/ → ./src/
       ['module-resolver', { root: ['./src'], alias: { '@': './src' } }],
-      // Reanimated PRECISA ser o último plugin
-      'react-native-reanimated/plugin',
+      // Worklets (Reanimated 4) PRECISA ser o último plugin
+      'react-native-worklets/plugin',
     ],
   };
 };
