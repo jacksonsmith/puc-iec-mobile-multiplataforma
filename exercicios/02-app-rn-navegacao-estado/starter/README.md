@@ -107,7 +107,7 @@ CI roda automático em todo push pro `main` do seu fork. Mínimo: **6 testes ver
 - **Aluno:** João Almeida Barbosa Júnior
 - **Opção Reanimated:** A — Heart pop
 - **Bônus implementado:** Hermes/New Architecture do Expo
-- **Repo/fork:** [\[preencha a URL do seu fork\]](https://github.com/joaoabjr/puc-iec-mobile-multiplataforma/tree/exercicio-02)
+- **Repo/fork:** [\[preencha a URL do seu fork\]](https://github.com/joaoabjr/puc-iec-mobile-multiplataforma/tree/entrega/atividade-2-joao-almeida)
 
 ### O que foi implementado
 
