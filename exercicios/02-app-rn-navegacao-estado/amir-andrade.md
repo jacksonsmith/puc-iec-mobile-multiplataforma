@@ -93,7 +93,7 @@ src/
 - [ ] 2 das 3 opções Reanimated (A/B/C) — +1pt
 - [x] TanStack Query `staleTime` + `prefetchQuery` — +1pt
 - [x] Hermes habilitado (verificar `app.json`) — +0.5pt
-- [ ] CI GitHub Actions verde — +0.5pt
+- [x] CI GitHub Actions verde — +0.5pt
 
 ### Bottom Tabs
 
