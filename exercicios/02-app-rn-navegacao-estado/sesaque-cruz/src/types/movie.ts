@@ -11,6 +11,19 @@ export type Movie = {
   vote_average: number;
 };
 
+export type Genre = {
+  id: number;
+  name: string;
+};
+
+// GET /movie/{id} devolve os campos da lista + detalhes.
+export type MovieDetails = Movie & {
+  backdrop_path: string | null;
+  genres: Genre[];
+  runtime: number | null;
+  tagline: string | null;
+};
+
 export type MoviesResponse = {
   page: number;
   results: Movie[];

@@ -1,73 +1,155 @@
 // src/screens/MovieDetail.tsx
 //
-// ATIVIDADE 2 — tela de detalhe do filme.
+// ATIVIDADE 2: tela de detalhe do filme.
 // Demonstra TanStack Query em outra tela (já implementado).
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useMovieById } from '@/queries/movies/get-movie-by-id';
-import { posterUrl } from '@/utils/poster-url';
+import { backdropUrl, posterUrl } from '@/utils/poster-url';
+import { formatRuntime, releaseYear } from '@/utils/format';
 import { isTokenError } from '@/services/api';
 import TokenMissingScreen from '@/components/TokenMissingScreen';
+import HeartButton from '@/components/HeartButton';
+import RatingBadge from '@/components/RatingBadge';
+import StateView from '@/components/StateView';
+import { useFavoritesStore } from '@/store/favoritesStore';
 import type { RootStackParamList } from '@/routes/RootStack';
+import { colors, radius, shadow, spacing, typography } from '@/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
-export default function MovieDetail({ route, navigation }: Props) {
+export default function MovieDetail({ route }: Props) {
   const { id } = route.params;
-  const { data, isLoading, error } = useMovieById(id);
+  const { data, isLoading, error, refetch } = useMovieById(id);
+  const isFav = useFavoritesStore((s) => s.isFavorite(id));
+  const toggle = useFavoritesStore((s) => s.toggle);
 
   if (isTokenError(error)) return <TokenMissingScreen />;
-  if (isLoading) return <ActivityIndicator style={styles.center} />;
-  if (error || !data) return <Text style={styles.center}>Erro ao carregar</Text>;
+  if (isLoading) return <StateView loading />;
+  if (error || !data) {
+    return (
+      <StateView
+        icon="cloud-offline-outline"
+        title="Não foi possível carregar o filme"
+        message="Verifique sua conexão e tente novamente."
+        actionLabel="Tentar novamente"
+        onAction={() => refetch()}
+      />
+    );
+  }
 
-  const poster = posterUrl(data.poster_path, 'w500');
+  const backdrop = backdropUrl(data.backdrop_path);
+  const poster = posterUrl(data.poster_path, 'w342');
+  const meta = [releaseYear(data.release_date), formatRuntime(data.runtime)]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Botão voltar custom (fallback caso header não esteja visível) */}
-      <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Text style={styles.backText}>← Voltar</Text>
-      </Pressable>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+      {backdrop ? (
+        <Image source={{ uri: backdrop }} style={styles.backdrop} />
+      ) : (
+        <View style={[styles.backdrop, styles.backdropPlaceholder]} />
+      )}
 
-      {poster && <Image source={{ uri: poster }} style={styles.poster} />}
+      <View style={styles.headerCard}>
+        {poster ? (
+          <Image source={{ uri: poster }} style={styles.poster} />
+        ) : (
+          <View style={[styles.poster, styles.posterPlaceholder]}>
+            <Ionicons name="film-outline" size={28} color={colors.textMuted} />
+          </View>
+        )}
 
-      {/* Linha com título + slot pro HeartButton (TASK 8) */}
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>{data.title}</Text>
-        {/* TODO [TASK 8]: <HeartButton active={isFav} onPress={() => toggle(id)} /> */}
+        <View style={styles.headerInfo}>
+          <Text style={styles.title}>{data.title}</Text>
+          {!!meta && <Text style={styles.meta}>{meta}</Text>}
+          <View style={styles.ratingRow}>
+            <RatingBadge value={data.vote_average} />
+            <View style={styles.heartCircle}>
+              <HeartButton active={isFav} onPress={() => toggle(id)} size={26} />
+            </View>
+          </View>
+        </View>
       </View>
 
-      <Text style={styles.meta}>
-        ⭐ {data.vote_average.toFixed(1)} · {data.release_date}
-      </Text>
-      <Text style={styles.overview}>{data.overview}</Text>
+      {data.genres.length > 0 && (
+        <View style={styles.genres}>
+          {data.genres.map((genre) => (
+            <View key={genre.id} style={styles.chip}>
+              <Text style={styles.chipText}>{genre.name}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {!!data.tagline && <Text style={styles.tagline}>“{data.tagline}”</Text>}
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Sinopse</Text>
+        <Text style={styles.overview}>{data.overview || 'Sinopse indisponível em português.'}</Text>
+      </View>
     </ScrollView>
   );
 }
 
+const POSTER_WIDTH = 110;
+
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 12 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  backButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 6,
+  screen: { flex: 1, backgroundColor: colors.background },
+  content: { paddingBottom: spacing.xxl },
+  backdrop: { width: '100%', aspectRatio: 16 / 9, backgroundColor: colors.surfaceMuted },
+  backdropPlaceholder: { backgroundColor: colors.border },
+  headerCard: {
+    flexDirection: 'row',
+    gap: spacing.lg,
+    marginHorizontal: spacing.lg,
+    marginTop: -spacing.xxl * 1.5,
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+    ...shadow,
   },
-  backText: { fontSize: 15, color: '#0066cc', fontWeight: '500' },
-  poster: { width: 200, height: 300, alignSelf: 'center', borderRadius: 8 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: 'bold', flex: 1 },
-  meta: { color: '#666' },
-  overview: { fontSize: 14, lineHeight: 20 },
+  poster: {
+    width: POSTER_WIDTH,
+    height: POSTER_WIDTH * 1.5,
+    borderRadius: radius.md,
+    backgroundColor: colors.surfaceMuted,
+  },
+  posterPlaceholder: { alignItems: 'center', justifyContent: 'center' },
+  headerInfo: { flex: 1, gap: spacing.sm, justifyContent: 'center' },
+  title: { fontSize: 20, fontWeight: '800', color: colors.text },
+  meta: typography.caption,
+  ratingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  heartCircle: {
+    borderRadius: radius.pill,
+    backgroundColor: colors.primarySoft,
+  },
+  genres: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    marginTop: spacing.lg,
+  },
+  chip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  chipText: typography.label,
+  tagline: {
+    ...typography.caption,
+    fontStyle: 'italic',
+    paddingHorizontal: spacing.lg,
+    marginTop: spacing.lg,
+  },
+  section: { paddingHorizontal: spacing.lg, marginTop: spacing.lg, gap: spacing.sm },
+  sectionTitle: typography.heading,
+  overview: typography.body,
 });
