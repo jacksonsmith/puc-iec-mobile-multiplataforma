@@ -1,6 +1,6 @@
 // src/services/api.ts
 //
-// CAMADA SERVICES — somente comunicação HTTP.
+// CAMADA SERVICES: somente comunicação HTTP.
 // Não conhece cache, não conhece estado da aplicação.
 //
 // "Como falar com o backend"
@@ -43,7 +43,7 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${TOKEN}`;
     config.params = baseParams;
   } else {
-    // v3 API key — usa query param ?api_key=
+    // v3 API key: usa query param ?api_key=
     config.params = { ...baseParams, api_key: TOKEN };
   }
   return config;

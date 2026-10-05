@@ -1,6 +1,6 @@
 // src/queries/movies/search-movies.ts
 //
-// CAMADA QUERIES — busca de filmes (debounced).
+// CAMADA QUERIES: busca de filmes (debounced).
 //
 // Bonus pra Atividade 2: implementar tela de busca usando esse hook.
 

@@ -1,6 +1,6 @@
 // src/contexts/ThemeContext.tsx
 //
-// CAMADA CONTEXTS — estado GLOBAL da aplicação.
+// CAMADA CONTEXTS: estado GLOBAL da aplicação.
 // "Como compartilhar estado global da aplicação"
 //
 // Use Context API pra:
@@ -9,7 +9,7 @@
 // - idioma
 // - permissões
 //
-// NÃO use Context pra dados do servidor (filmes, posts) — isso é
+// NÃO use Context pra dados do servidor (filmes, posts): isso é
 // responsabilidade do TanStack Query (camada queries/).
 
 import { createContext, useContext, useState, ReactNode } from 'react';
