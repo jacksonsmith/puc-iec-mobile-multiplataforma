@@ -12,18 +12,31 @@
 // - queryFn = função pura que retorna Promise<dados>
 // - staleTime = quanto tempo cache fica fresco antes de refetch background
 
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import type { MoviesResponse } from '@/types/movie';
 
 const fetchPopularMovies = async (page = 1) => {
-  const res = await api.get<MoviesResponse>('/movie/popular', { params: { page } });
+  const res = await api.get<MoviesResponse>('/movie/popular', {
+    params: { page },
+  });
+
   return res.data;
 };
 
-export const usePopularMovies = (page = 1) =>
-  useQuery({
-    queryKey: ['movies', 'popular', page],
-    queryFn: () => fetchPopularMovies(page),
+export const usePopularMovies = () =>
+  useInfiniteQuery({
+    queryKey: ['movies', 'popular'],
+    queryFn: ({ pageParam = 1 }) => fetchPopularMovies(pageParam),
+    initialPageParam: 1,
+
+    getNextPageParam: (lastPage) => {
+      if (lastPage.page < lastPage.total_pages) {
+        return lastPage.page + 1;
+      }
+
+      return undefined;
+    },
+
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
