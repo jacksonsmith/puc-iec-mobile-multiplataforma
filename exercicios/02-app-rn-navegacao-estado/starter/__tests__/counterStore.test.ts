@@ -15,9 +15,29 @@ describe('counterStore', () => {
     expect(useCounterStore.getState().count).toBe(-1);
   });
 
+  test('decrement continua diminuindo quando count já é negativo', () => {
+    useCounterStore.setState({ count: -10 });
+    useCounterStore.getState().decrement();
+
+    expect(useCounterStore.getState().count).toBe(-11);
+  });
+
   test('reset volta count para 0 após mutações', () => {
     useCounterStore.getState().increment();
     useCounterStore.getState().increment();
+    useCounterStore.getState().reset();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
+
+  test('reset mantém count em 0 quando já está zerado', () => {
+    useCounterStore.getState().reset();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
+
+  test('reset volta count negativo para 0', () => {
+    useCounterStore.setState({ count: -5 });
     useCounterStore.getState().reset();
 
     expect(useCounterStore.getState().count).toBe(0);
