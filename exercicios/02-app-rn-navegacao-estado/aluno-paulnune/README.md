@@ -25,13 +25,9 @@ Lista filmes populares da TMDB (TanStack Query, com cache de 5 min). Cada filme 
 
 ![Lista com favoritos](./screenshot.png)
 
-> ⏳ Pendente: tirar o print no simulador e salvar como `screenshot.png` nesta pasta.
-
 ## Screencast da animação
 
 ![Animação Reanimated](./screencast.gif)
-
-> ⏳ Pendente: gravar 15–30s do heart pop e salvar como `screencast.gif` nesta pasta.
 
 ## Arquitetura
 
