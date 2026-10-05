@@ -4,6 +4,14 @@ App Expo + TypeScript com arquitetura profissional separando **services**, **que
 
 > Você vai usar esse starter no **hands-on da Aula 2** (em sala) e na **Atividade 2** (entrega 10/06, 15pts).
 
+## Atividade 2 — entrega final
+
+- Aluno: Rafael Corrêa Zart
+- Opção Reanimated escolhida: **B — Card swipe**
+- Estado da entrega: **pronta para push**
+- Screenshot: `./assets/screenshot.svg`
+- Screencast: `./assets/screencast.gif`
+
 ---
 
 ## Arquitetura

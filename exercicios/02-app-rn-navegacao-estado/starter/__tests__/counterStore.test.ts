@@ -2,7 +2,7 @@
 //
 // Exemplo de teste pra Zustand store.
 //
-// TODO [TASK 4]: expandir com mais 2 testes (decrement, reset, edge cases) usando IA.
+// TASK 4: testes de decrement, reset e caso de múltiplos incrementos.
 //
 // Prompt sugerido pra IA:
 //   "Adicione testes Jest pra useCounterStore cobrindo:
@@ -23,6 +23,26 @@ describe('counterStore', () => {
     expect(useCounterStore.getState().count).toBe(1);
   });
 
-  // TODO [TASK 4]: adicione testes pra decrement, reset, edge cases (use IA).
-  // Mínimo 3 testes verdes pra CI passar.
+  test('decrement diminui count em 1', () => {
+    useCounterStore.getState().decrement();
+    expect(useCounterStore.getState().count).toBe(-1);
+  });
+
+  test('reset volta count para 0 após mutações', () => {
+    useCounterStore.getState().increment();
+    useCounterStore.getState().increment();
+    useCounterStore.getState().decrement();
+
+    useCounterStore.getState().reset();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
+
+  test('100 incrementos resultam em count igual a 100', () => {
+    for (let index = 0; index < 100; index += 1) {
+      useCounterStore.getState().increment();
+    }
+
+    expect(useCounterStore.getState().count).toBe(100);
+  });
 });

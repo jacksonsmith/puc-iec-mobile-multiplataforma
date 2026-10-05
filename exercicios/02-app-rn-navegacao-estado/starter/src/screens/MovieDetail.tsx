@@ -6,24 +6,41 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useEffect } from 'react';
 import { useMovieById } from '@/queries/movies/get-movie-by-id';
 import { posterUrl } from '@/utils/poster-url';
 import { isTokenError } from '@/services/api';
 import TokenMissingScreen from '@/components/TokenMissingScreen';
 import type { RootStackParamList } from '@/routes/RootStack';
+import { useFavoritesStore } from '@/store/favoritesStore';
+import HeartButton from '@/components/HeartButton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 export default function MovieDetail({ route, navigation }: Props) {
   const { id } = route.params;
   const { data, isLoading, error } = useMovieById(id);
+  const isFav = useFavoritesStore((s) => s.isFavorite(id));
+  const toggle = useFavoritesStore((s) => s.toggle);
+  const posterScale = useSharedValue(0.9);
+
+  useEffect(() => {
+    posterScale.value = withSpring(1, {
+      damping: 12,
+      stiffness: 140,
+    });
+  }, [posterScale]);
+
+  const animatedPosterStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: posterScale.value }],
+  }));
 
   if (isTokenError(error)) return <TokenMissingScreen />;
   if (isLoading) return <ActivityIndicator style={styles.center} />;
@@ -38,12 +55,23 @@ export default function MovieDetail({ route, navigation }: Props) {
         <Text style={styles.backText}>← Voltar</Text>
       </Pressable>
 
-      {poster && <Image source={{ uri: poster }} style={styles.poster} />}
+      {poster && (
+        <Animated.Image
+          source={{ uri: poster }}
+          style={[styles.poster, animatedPosterStyle]}
+        />
+      )}
 
       {/* Linha com título + slot pro HeartButton (TASK 8) */}
       <View style={styles.headerRow}>
         <Text style={styles.title}>{data.title}</Text>
-        {/* TODO [TASK 8]: <HeartButton active={isFav} onPress={() => toggle(id)} /> */}
+        <HeartButton
+          active={isFav}
+          onPress={(event) => {
+            event.stopPropagation();
+            toggle(id);
+          }}
+        />
       </View>
 
       <Text style={styles.meta}>
