@@ -1,36 +1,33 @@
-# Filmes (Flutter) — pratica/ da Atividade 3
+# Filmes (Flutter) — Atividade 3
 
-App de catálogo de filmes em **Flutter**. Já roda; você completa os scaffolds (UI + estado) até `flutter test` ficar verde.
+Catálogo Flutter com Riverpod, Firebase (Firestore + Remote Config) e arquitetura offline-first.
 
-## Rodar
+## Rodar no Chrome
 ```bash
 flutter pub get
-flutter run -d chrome   # abre no navegador — sem emulador, sem rede/token
+flutter run -d chrome --web-port 5300
 ```
 
-## Testar (é o gate da Atividade 3)
+O app já abre sem credenciais Firebase; nesse caso favoritos ficam em memória e o banner usa o texto padrão. Para ativar cloud, configure um projeto Firebase próprio (plano Spark): instale `firebase-tools`, rode `firebase login` e `dart pub global activate flutterfire_cli`; depois `flutterfire configure` e selecione a plataforma Web. O comando substitui `lib/firebase_options.dart` por suas opções reais. No Console Firebase, crie Firestore em modo teste e Remote Config com o parâmetro string `banner_message` (publique a alteração). Conforme o enunciado, as opções de um projeto pessoal de aula podem ser incluídas no PR; não reutilize essa configuração em produção.
+
+## Testes e análise
 ```bash
-flutter test            # Ex1 (card) · Ex2 (favoritar/limpar) · Ex3 (seu teste) · checklist (auto-verificação)
-flutter analyze         # precisa ficar limpo
+flutter test
+flutter test test/offline_test.dart
+flutter analyze
 ```
-Comece com os testes **vermelhos**; deixe-os **verdes**.
 
-> `test/checklist_test.dart` é sua **auto-verificação** (não edite): tudo verde = você terminou.
+O botão de avião simula desconexão. Abra o app online pelo menos uma vez antes de testar o cache offline; mantenha a porta `5300` para reutilizar o armazenamento do navegador. O cache e a fila de sincronização usam SharedPreferences (localStorage na Web). Firestore guarda os favoritos no documento `favorites/meus-favoritos` e a persistência offline do SDK fica habilitada.
 
-## O que completar (🧑‍🏫 aula · 🧑‍💻 casa)
-| TASK | Arquivo | O quê | |
-|---|---|---|---|
-| 1 | `lib/widgets/movie_card.dart` | compor o card (título + ⭐ nota + ano) | 🧑‍🏫 |
-| 2 | `lib/state/favorites.dart` | `favoritesProvider` (`toggle` + `clear`) | 🧑‍🏫 |
-| 3 | `lib/widgets/movie_card.dart` | coração favoritando (`ConsumerWidget` + `ref`) | 🧑‍💻 |
-| 4 | `lib/screens/home_screen.dart` | contador `♥ N` no header | 🧑‍💻 |
-| 5 | `lib/screens/home_screen.dart` | botão **limpar** favoritos | 🧑‍💻 |
-| 6 | `test/favorites_test.dart` | **você escreve** um teste do provider | 🧑‍💻 |
+## Trade-offs: local, cloud e offline-first
 
-Veja o `guia-passo-a-passo.md` (na pasta do exercício) e o `enunciado.md` (rubrica).
+O estado local responde rápido e continua disponível sem rede, mas por si só fica restrito ao dispositivo e pode desaparecer ao limpar os dados. O Firestore persiste favoritos e os sincroniza entre dispositivos, porém depende de configuração, conexão e pode introduzir latência ou conflitos. A abordagem offline-first combina os dois: o app exibe primeiro o cache local e aceita mudanças durante a desconexão; ao voltar a rede, tenta sincronizar a fila, mantendo as operações pendentes em caso de falha. Assim a interface continua utilizável, ao custo de implementar validade do cache e regras de reconciliação.
+
+## Evidência: favorito persistido no Firestore
+
+Após atualizar a página, Matrix continuou favoritado (contador `1`) e o banner veio do Remote Config:
+
+![App com Matrix favoritado e banner do Remote Config](evidencia-favorito-firestore.png)
 
 ## Entrega
-Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** roda `flutter test` no seu PR.
-- ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`. O autograder roda `flutter test` nessa pasta.
-
-> **Não comite** `.dart_tool/`, `build/`, `pubspec.lock` (já no `.gitignore`).
+Edite os arquivos nesta pasta, sem criar `aluno-.../`; faça fork + Pull Request e envie o link pelo Canvas. Inclua na entrega um print/GIF do favorito sobrevivendo ao refresh após configurar o Firebase (opcional: captura da tela offline). Não comite `.dart_tool/`, `build/` nem `pubspec.lock`.
