@@ -102,6 +102,54 @@ CI roda automático em todo push pro `main` do seu fork. Mínimo: **6 testes ver
 
 ---
 
+## Atividade 2 — Favoritos + MMKV + Reanimated
+
+- **Aluno:** João Almeida Barbosa Júnior
+- **Opção Reanimated:** A — Heart pop
+- **Bônus implementado:** Hermes/New Architecture do Expo
+- **Repo/fork:** [\[preencha a URL do seu fork\]](https://github.com/joaoabjr/puc-iec-mobile-multiplataforma/tree/exercicio-02)
+
+### O que foi implementado
+
+O app lista filmes da TMDB e permite favoritar ou desfavoritar cada filme ao clicar no ícone de coração. Os IDs dos favoritos ficam em um store Zustand persistido com MMKV no iOS/Android, com fallback para `localStorage` na web e memória durante testes. O botão usa `useSharedValue`, `useAnimatedStyle`, `withTiming`, `withSequence` e `withSpring` para executar o efeito 'Heart pop'.
+
+### Arquitetura da Atividade 2
+
+```text
+src/
+├── components/
+│   ├── HeartButton.tsx       # animação Reanimated
+│   └── MovieCard.tsx         # integração com favoritos
+├── screens/
+│   └── MovieDetail.tsx       # favorito no detalhe
+├── storage/
+│   └── mmkv.ts               # adapter MMKV/localStorage
+└── store/
+  └── favoritesStore.ts     # Zustand + persist
+```
+
+### Testes
+
+```bash
+npm test
+```
+
+Resultado esperado: **8 testes verdes**, incluindo os testes do contador e os testes de `toggle`, `add`, `remove`, `isFavorite` e `clear` dos favoritos.
+
+### Evidências
+
+```text
+screenshot.png
+screencast.gif
+```
+
+```md
+![Lista com favoritos](./screenshot.png)
+![Animação Heart pop](./screencast.gif)
+```
+
+---
+
 ## Tasks guiadas
 
 10 tasks sequenciais. Lista completa em [`PASSOS.md`](./PASSOS.md).
