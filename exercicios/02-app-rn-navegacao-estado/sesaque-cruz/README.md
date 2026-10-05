@@ -1,165 +1,95 @@
-# Starter — Aula 2 (Arquitetura Mobile + Atividade 2)
+# Atividade 2: App de Feed com Favoritos, MMKV e Reanimated
 
-App Expo + TypeScript com arquitetura profissional separando **services**, **queries**, **contexts**, **screens**, **components**.
+## Identificação
 
-> Você vai usar esse starter no **hands-on da Aula 2** (em sala) e na **Atividade 2** (entrega ver Canvas, 15pts).
+- **Aluno:** Sesaque Cruz
+- **Opção Reanimated escolhida:** A (heart pop)
+- **Bônus implementado:** Bottom Tabs com aba Favoritos mostrando a lista persistida e paginação infinita na lista de filmes
+- **Repo (fork):** https://github.com/sesaquecruz/puc-iec-mobile-multiplataforma
 
----
+## Como rodar
+
+```bash
+npm install
+cp .env.example .env   # cole a API key ou o token da TMDB em EXPO_PUBLIC_TMDB_TOKEN
+npx expo start
+```
+
+O MMKV depende de módulo nativo, que não existe no Expo Go. Nele o app roda normalmente, mas os favoritos ficam só em memória. Para ver a persistência entre reloads no Android ou iOS, gere um development build:
+
+```bash
+npx expo run:android   # ou npx expo run:ios (macOS)
+```
+
+No navegador (`npx expo start --web`), o próprio `react-native-mmkv` usa `localStorage`, então a persistência também funciona.
+
+Testes:
+
+```bash
+npm test
+```
+
+## O que o app faz
+
+Lista os filmes populares da TMDB com TanStack Query, carregando a próxima página automaticamente ao chegar no fim da lista, e permite favoritar cada filme pelo coração, tanto na lista quanto na tela de detalhe. Os favoritos ficam num store Zustand, são salvos no MMKV a cada mudança e recarregados quando o app abre. O toque no coração dispara uma animação de escala e rotação feita com Reanimated, executada na UI thread. A aba Favoritos mostra os filmes salvos (os mais recentes primeiro), com contador no ícone e botão para limpar a lista com confirmação.
+
+## Screenshots
+
+| Lista | Detalhe | Favoritos |
+|---|---|---|
+| ![Lista de filmes](./docs/lista.jpg) | ![Detalhe do filme](./docs/detalhe.jpg) | ![Aba Favoritos](./docs/favoritos.jpg) |
+
+Capturas da versão web em viewport de celular (375 x 812).
 
 ## Arquitetura
 
 ```
 src/
-├── services/           ← HTTP (axios + interceptors)
-│   └── api.ts
-├── queries/            ← TanStack Query (server state)
-│   └── movies/
-│       ├── get-popular-movies.ts
-│       ├── get-movie-by-id.ts
-│       └── search-movies.ts
-├── contexts/           ← Estado global APP (theme, auth)
-│   └── ThemeContext.tsx
-├── store/              ← Zustand (client state local)
-│   ├── counterStore.ts
-│   └── favoritesStore.ts
-├── storage/            ← MMKV persistência
-│   └── mmkv.ts
-├── routes/             ← Navegação
-│   └── RootStack.tsx
-├── screens/            ← UI pura
+├── routes/
+│   ├── RootStack.tsx          ← Stack: Tabs + Detail
+│   └── HomeTabs.tsx           ← Bottom Tabs: Filmes | Favoritos (bônus)
+├── screens/
 │   ├── MovieList.tsx
-│   └── MovieDetail.tsx
-├── components/         ← Reutilizáveis
-│   └── MovieCard.tsx
-├── types/              ← Tipos TS
-│   └── movie.ts
-└── utils/              ← Helpers
-    └── poster-url.ts
-
-__tests__/              ← Jest + RTL
-├── counterStore.test.ts
-└── favoritesStore.test.ts
-
-.github/workflows/
-└── test.yml            ← CI valida ≥ 6 testes verdes
+│   ├── MovieDetail.tsx
+│   └── Favorites.tsx          ← lista persistida (bônus)
+├── components/
+│   ├── MovieCard.tsx
+│   ├── HeartButton.tsx        ← animação Reanimated (opção A)
+│   ├── RatingBadge.tsx
+│   └── StateView.tsx          ← carregando, erro e vazio
+├── store/
+│   ├── counterStore.ts
+│   └── favoritesStore.ts      ← Zustand + persistência via subscribe
+├── storage/
+│   └── mmkv.ts                ← MMKV com fallback em memória
+├── queries/movies/            ← TanStack Query
+├── services/api.ts            ← axios + TMDB
+├── theme/                     ← tokens de cor, espaçamento e tipografia
+└── utils/                     ← URLs de imagem e formatação
+__tests__/                     ← 17 testes Jest (counter, favoritos, persistência, paginação e formatação)
 ```
 
-**Regra arquitetural:**
-- `services/` = "como falar com backend"
-- `queries/` = "como gerenciar ciclo de vida dos dados (server state)"
-- `contexts/` = "como compartilhar estado global da aplicação (client state)"
-- `screens/` = "renderizar estados da UI"
+## Decisões técnicas
 
-> Screen **não** conhece axios, endpoint, cache, retry. Ela **só consome dados**.
-
----
-
-## Setup
-
-### 1. Clonar e instalar
-
-```bash
-git clone https://github.com/SEU-USUARIO/puc-iec-mobile-multiplataforma.git
-cd puc-iec-mobile-multiplataforma/exercicios/02-app-rn-navegacao-estado/starter
-npm install
-```
-
-### 2. Gerar TMDB API token
-
-1. Cria conta em <https://www.themoviedb.org/signup>
-2. Settings → **API** → Request API key (Developer, uso pessoal/educacional)
-3. Copia o **API Read Access Token** (formato `eyJhbGc...` longo)
-4. `cp .env.example .env` e cola o token:
-
-```bash
-EXPO_PUBLIC_TMDB_TOKEN=eyJhbGc...seu_token_aqui
-```
-
-> ⚠️ `.env` está no `.gitignore`. **Nunca comite tokens.**
-
-### 3. Rodar
-
-```bash
-npx expo start         # menu interativo
-# OU
-npx expo start --ios   # simulador iOS
-npx expo start --android  # emulador Android
-```
-
-> ⚠️ MMKV não roda em **web** (precisa JSI nativo). Use simulador iOS/Android pra Atividade 2.
-
-### 4. Rodar testes
-
-```bash
-npm test
-# ou em watch mode
-npm run test:watch
-# ou cobertura
-npm run test:coverage
-```
-
-CI roda automático em todo push pro `main` do seu fork. Mínimo: **6 testes verdes**.
-
----
-
-## Tasks guiadas
-
-9 tasks sequenciais + 1 bônus opcional. Lista completa em [`PASSOS.md`](./PASSOS.md).
-
-```bash
-grep -rn "TODO \[TASK" src/ __tests__/
-```
-
-| Tag | Hands-on aula | Atividade 2 |
-|---|---|---|
-| TASK 1 | Zustand counter store | — |
-| TASK 2 | TanStack Query | — |
-| TASK 3 | FlatList + MovieCard | — |
-| TASK 4 | Testes counter (IA) | — |
-| TASK 5 | — | Zustand favorites |
-| TASK 6 | — | Integrar favorites em MovieCard |
-| TASK 7 | — | MMKV persist |
-| TASK 8 | — | HeartButton Reanimated |
-| TASK 9 | — | Testes favorites (IA) |
-| TASK 10 🎁 | — | Paginação infinita (bônus, não vale ponto) |
-
-Entrega: push pro fork → PR → CI valida automático. Sem README/screencast obrigatório.
-
----
-
-## Endpoints TMDB usados
-
-```bash
-# Filmes populares
-curl 'https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1' \
-  -H "Authorization: Bearer $TOKEN"
-
-# Detalhes
-curl 'https://api.themoviedb.org/3/movie/603?language=pt-BR' \
-  -H "Authorization: Bearer $TOKEN"
-
-# Buscar
-curl 'https://api.themoviedb.org/3/search/movie?language=pt-BR&query=matrix' \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-Service em `src/services/api.ts` encapsula essas chamadas. Queries em `src/queries/movies/` adicionam cache+ciclo de vida via TanStack Query.
-
----
-
-## Dicas
-
-- **Path alias:** import com `@/` → resolve pra `src/`. Ex: `import { api } from '@/services/api'`.
-- **Reanimated:** plugin Babel já configurado (`babel.config.js`). Restart Metro se mudar config.
-- **Hermes:** habilitado por padrão no Expo SDK 54+.
-
----
+- **Stack:** React Native com Expo, coerente com o ADR-0001 que entreguei na Atividade 1, que escolheu essa stack por aproveitar o conhecimento de React e TypeScript do time.
+- **Opção A (heart pop):** é o gesto mais frequente do app, então o retorno visual imediato tem mais valor que um swipe ou uma transição. A animação usa só `useSharedValue`, `useAnimatedStyle`, `withSequence`, `withTiming` e `withSpring`, sem dependência extra de gestos.
+- **MMKV em vez de AsyncStorage:** o MMKV é síncrono (JSI, sem bridge), então o store já nasce com os favoritos salvos. Não existe estado de carregamento nem os corações aparecendo vazios por um instante, como aconteceria com a leitura assíncrona do AsyncStorage.
+- **Persistência via `subscribe`:** segue a orientação do starter, porque o middleware do Zustand usa `import.meta.env`, que quebra no bundler web do Metro. O save só acontece quando a lista de ids muda.
+- **Reanimated 4.1 + react-native-worklets:** o starter trazia o Reanimated 3.16, mas o Expo SDK 54 (e o Expo Go 54) usa o 4.1. Alinhei as versões com `npx expo install --fix` para evitar erro de incompatibilidade entre a parte JS e a nativa.
+- **Favoritos guardam só ids:** a aba Favoritos busca os dados de cada filme pelo mesmo `queryKey` da tela de detalhe, então reaproveita o cache do TanStack Query em vez de duplicar dados do servidor no store.
+- **Design:** cores, espaçamentos e tipografia vêm de tokens em `src/theme`, e os ícones são do `@expo/vector-icons` para renderizar igual em Android, iOS e web. Toda tela trata carregamento, erro (com "Tentar novamente") e vazio pelo mesmo componente. No card, o coração e a área que abre o detalhe são botões separados, o que evita botão aninhado no web e dá dois alvos claros ao leitor de tela.
+- **Paginação infinita:** `useInfiniteQuery` com `onEndReached` na `FlatList`. A próxima página respeita `total_pages` e o limite de 500 páginas da TMDB, e filmes repetidos entre páginas (a ordem de popularidade muda entre requisições) são removidos para não duplicar itens. Se uma página falhar, a lista já carregada continua na tela e o rodapé oferece "Tentar novamente".
+- **Contador do hands-on:** o `counterStore` e seus testes continuam no projeto (TASKs 1 e 4), mas saiu da tela de filmes porque não faz parte do produto.
 
 ## Referências
 
-- [Zustand](https://github.com/pmndrs/zustand)
-- [TanStack Query](https://tanstack.com/query/latest)
-- [React Navigation v7](https://reactnavigation.org/docs/getting-started)
-- [React Native MMKV](https://github.com/mrousavy/react-native-mmkv)
-- [Reanimated](https://docs.swmansion.com/react-native-reanimated/)
-- [TMDB API docs](https://developer.themoviedb.org/reference/intro/getting-started)
+- Reanimated: https://docs.swmansion.com/react-native-reanimated/
+- react-native-mmkv: https://github.com/mrousavy/react-native-mmkv
+- Zustand: https://github.com/pmndrs/zustand
+- React Navigation, Bottom Tabs: https://reactnavigation.org/docs/bottom-tab-navigator
+
+## Bônus
+
+- [x] **Bottom Tabs com aba Favoritos** (`src/routes/HomeTabs.tsx` e `src/screens/Favorites.tsx`)
+- [x] **Paginação infinita** (`src/queries/movies/get-popular-movies.ts` e `src/screens/MovieList.tsx`)
+- [x] Hermes habilitado (padrão do Expo SDK 54; o bundle exportado sai em bytecode `.hbc`)
