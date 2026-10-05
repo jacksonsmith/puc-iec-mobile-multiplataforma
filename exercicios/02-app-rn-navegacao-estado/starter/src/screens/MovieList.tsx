@@ -7,18 +7,31 @@
 // ATIVIDADE 2 — usar MovieCard com favoritar
 
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
-import { usePopularMovies } from '@/queries/movies/get-popular-movies';
+import { usePopularMoviesInfinite } from '@/queries/movies/get-popular-movies';
 import { useCounterStore } from '@/store/counterStore';
 import { isTokenError, isTokenMissing } from '@/services/api';
 import TokenMissingScreen from '@/components/TokenMissingScreen';
-// TODO [TASK 3]: descomentar quando renderizar MovieCard
-// import MovieCard from '@/components/MovieCard';
+import MovieCard from '@/components/MovieCard';
 
 export default function MovieList() {
-  const { data, isLoading, error, refetch } = usePopularMovies();
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = usePopularMoviesInfinite();
   const count = useCounterStore((s) => s.count);
+  const movies = data?.pages.flatMap((page) => page.results) ?? [];
 
-  // Tela amigável quando token TMDB não foi configurado ou está inválido.
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      void fetchNextPage();
+    }
+  };
+
   if (isTokenMissing || isTokenError(error)) {
     return <TokenMissingScreen />;
   }
@@ -39,21 +52,17 @@ export default function MovieList() {
     );
   }
 
-  // TODO [TASK 3]: substituir o stub abaixo por FlatList
-  //
-  //   <FlatList
-  //     data={data?.results ?? []}
-  //     keyExtractor={(item) => String(item.id)}
-  //     renderItem={({ item }) => <MovieCard movie={item} />}
-  //     onRefresh={refetch}
-  //     refreshing={isLoading}
-  //   />
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Counter: {count}</Text>
-      <Text>TODO [TASK 3]: renderizar FlatList aqui</Text>
-      <Text style={styles.hint}>{data?.results?.length ?? 0} filmes carregados</Text>
-    </View>
+    <FlatList
+      data={movies}
+      keyExtractor={(item) => String(item.id)}
+      renderItem={({ item }) => <MovieCard movie={item} />}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={isFetchingNextPage ? <ActivityIndicator style={styles.footer} /> : null}
+      onRefresh={() => void refetch()}
+      refreshing={isLoading}
+    />
   );
 }
 
@@ -62,4 +71,5 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 24, fontWeight: 'bold' },
   hint: { color: '#666', fontSize: 12 },
+  footer: { padding: 16 },
 });

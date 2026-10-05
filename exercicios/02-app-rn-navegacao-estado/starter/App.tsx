@@ -6,11 +6,29 @@
 // 3. NavigationContainer
 // 4. RootStack (screens)
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, type LinkingOptions } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import RootStack from '@/routes/RootStack';
+import RootStack, { type RootStackParamList } from '@/routes/RootStack';
+
+const linking: LinkingOptions<RootStackParamList> = {
+  prefixes: ['expo://'],
+  config: {
+    screens: {
+      MainTabs: {
+        screens: {
+          Movies: '',
+          Favorites: 'favorites',
+        },
+      },
+      Detail: {
+        path: 'detail/:id',
+        parse: { id: Number },
+      },
+    },
+  },
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +43,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <RootStack />
           <StatusBar style="auto" />
         </NavigationContainer>
