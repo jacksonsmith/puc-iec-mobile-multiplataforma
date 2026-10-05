@@ -2,6 +2,15 @@
 
 App Expo + TypeScript com arquitetura profissional separando **services**, **queries**, **contexts**, **screens**, **components**.
 
+## Atividade 2 — Favoritos + MMKV + Reanimated
+
+- **Nome:** [preencher com seu nome]
+- **Animação:** Opção A — Heart pop, com escala e rotação usando Reanimated.
+- **Executar:** `npm install` e `npx expo start` (use simulador iOS/Android para validar MMKV nativo).
+- **Screenshot da MovieList com favorito ativo:** adicionar `assets/movie-list-favorite.png`.
+- **Screencast de 15–30s da animação:** adicionar `assets/heart-pop.gif` ou vídeo equivalente.
+- **Referência:** [Reanimated — Getting started](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/).
+
 > Você vai usar esse starter no **hands-on da Aula 2** (em sala) e na **Atividade 2** (entrega 10/06, 15pts).
 
 ---

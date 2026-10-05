@@ -11,7 +11,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
 } from 'react-native';
 import { useMovieById } from '@/queries/movies/get-movie-by-id';
 import { posterUrl } from '@/utils/poster-url';
@@ -40,11 +39,7 @@ export default function MovieDetail({ route, navigation }: Props) {
 
       {poster && <Image source={{ uri: poster }} style={styles.poster} />}
 
-      {/* Linha com título + slot pro HeartButton (TASK 8) */}
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>{data.title}</Text>
-        {/* TODO [TASK 8]: <HeartButton active={isFav} onPress={() => toggle(id)} /> */}
-      </View>
+      <Text style={styles.title}>{data.title}</Text>
 
       <Text style={styles.meta}>
         ⭐ {data.vote_average.toFixed(1)} · {data.release_date}
@@ -66,7 +61,6 @@ const styles = StyleSheet.create({
   },
   backText: { fontSize: 15, color: '#0066cc', fontWeight: '500' },
   poster: { width: 200, height: 300, alignSelf: 'center', borderRadius: 8 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   title: { fontSize: 22, fontWeight: 'bold', flex: 1 },
   meta: { color: '#666' },
   overview: { fontSize: 14, lineHeight: 20 },
