@@ -6,17 +6,22 @@
 // HANDS-ON AULA 2 — Passo 5 (FlatList + usePopularMovies)
 // ATIVIDADE 2 — usar MovieCard com favoritar
 
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
-import { usePopularMovies } from '@/queries/movies/get-popular-movies';
-import { useCounterStore } from '@/store/counterStore';
-import { isTokenError, isTokenMissing } from '@/services/api';
-import TokenMissingScreen from '@/components/TokenMissingScreen';
-// TODO [TASK 3]: descomentar quando renderizar MovieCard
-// import MovieCard from '@/components/MovieCard';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import { usePopularMovies } from "@/queries/movies/get-popular-movies";
+import { useFavoritesStore } from "@/store/favoritesStore";
+import { isTokenError, isTokenMissing } from "@/services/api";
+import TokenMissingScreen from "@/components/TokenMissingScreen";
+import MovieCard from "@/components/MovieCard";
 
-export default function MovieList() {
-  const { data, isLoading, error, refetch } = usePopularMovies();
-  const count = useCounterStore((s) => s.count);
+type Props = {
+  favoritesOnly?: boolean;
+};
+
+export default function MovieList({ favoritesOnly = false }: Props) {
+  const { data, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } = usePopularMovies();
+  const favoriteIds = useFavoritesStore((state) => state.ids);
+  const movies = data?.pages.flatMap((page) => page.results) ?? [];
+  const visibleMovies = favoritesOnly ? movies.filter((movie) => favoriteIds.includes(movie.id)) : movies;
 
   // Tela amigável quando token TMDB não foi configurado ou está inválido.
   if (isTokenMissing || isTokenError(error)) {
@@ -39,27 +44,28 @@ export default function MovieList() {
     );
   }
 
-  // TODO [TASK 3]: substituir o stub abaixo por FlatList
-  //
-  //   <FlatList
-  //     data={data?.results ?? []}
-  //     keyExtractor={(item) => String(item.id)}
-  //     renderItem={({ item }) => <MovieCard movie={item} />}
-  //     onRefresh={refetch}
-  //     refreshing={isLoading}
-  //   />
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Counter: {count}</Text>
-      <Text>TODO [TASK 3]: renderizar FlatList aqui</Text>
-      <Text style={styles.hint}>{data?.results?.length ?? 0} filmes carregados</Text>
-    </View>
+    <FlatList
+      data={visibleMovies}
+      keyExtractor={(item) => String(item.id)}
+      renderItem={({ item }) => <MovieCard movie={item} />}
+      ListEmptyComponent={favoritesOnly ? <Text style={styles.empty}>Nenhum filme favorito.</Text> : null}
+      onRefresh={refetch}
+      refreshing={isLoading}
+      onEndReached={() => {
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }}
+      onEndReachedThreshold={0.5}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, gap: 12 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 24, fontWeight: 'bold' },
-  hint: { color: '#666', fontSize: 12 },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  title: { fontSize: 24, fontWeight: "bold" },
+  hint: { color: "#666", fontSize: 12 },
+  empty: { padding: 24, textAlign: "center", color: "#666" },
 });

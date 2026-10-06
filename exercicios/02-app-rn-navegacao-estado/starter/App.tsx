@@ -6,16 +6,16 @@
 // 3. NavigationContainer
 // 4. RootStack (screens)
 
-import { NavigationContainer } from '@react-navigation/native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { StatusBar } from 'expo-status-bar';
-import { ThemeProvider } from '@/contexts/ThemeContext';
-import RootStack from '@/routes/RootStack';
+import { NavigationContainer } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import RootStack from "@/routes/RootStack";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60,
+      staleTime: 1000 * 60 * 5,
       retry: 1,
     },
   },
