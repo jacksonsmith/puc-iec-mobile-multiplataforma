@@ -1,6 +1,6 @@
 // lib/models/movie.dart — modelo de domínio.
 //
-// TASK 12 (🧑‍💻 EM CASA · fácil): implemente toJson() e Movie.fromJson().
+// TASK 12: toJson() e Movie.fromJson().
 // O cache offline guarda cada filme como JSON — sem isso nada é salvo.
 
 class Movie {
@@ -18,14 +18,26 @@ class Movie {
     this.posterPath,
   });
 
-  // ── TASK 12 — serialização · fácil ───────────────────────────────────────────────
-  // toJson: devolva {'id': ..., 'title': ..., 'rating': ..., 'year': ...}
-  // fromJson: faça o caminho de volta. Dica: `(json['rating'] as num).toDouble()`
-  // (o JSON pode trazer 8 em vez de 8.0).
-  // Extra (opcional): se `posterPath != null`, inclua também 'posterPath' no toJson e leia no
-  // fromJson (`json['posterPath'] as String?`) — assim o pôster dos dados reais sobrevive offline.
-  Map<String, dynamic> toJson() => throw UnimplementedError('TASK 12: implemente toJson()');
+  // ── TASK 12 — serialização ───────────────────────────────────────────────────────
+  // O cache offline (TASK 13) guarda a lista como texto JSON: toJson vira Map → jsonEncode,
+  // e o caminho de volta é jsonDecode → Map → fromJson.
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'rating': rating,
+        'year': year,
+        // extra: o pôster dos dados reais (TMDB) sobrevive offline. O `if` dentro do Map só
+        // inclui a chave quando há valor — a lista simulada continua com exatamente 4 campos.
+        if (posterPath != null) 'posterPath': posterPath,
+      };
 
-  factory Movie.fromJson(Map<String, dynamic> json) =>
-      throw UnimplementedError('TASK 12: implemente Movie.fromJson()');
+  factory Movie.fromJson(Map<String, dynamic> json) => Movie(
+        // `as num` + conversão: no JSON, 8 e 8.0 são o mesmo número, mas no Dart 8 é int —
+        // `json['rating'] as double` quebraria com uma nota inteira.
+        id: (json['id'] as num).toInt(),
+        title: json['title'] as String,
+        rating: (json['rating'] as num).toDouble(),
+        year: json['year'] as String,
+        posterPath: json['posterPath'] as String?,
+      );
 }
