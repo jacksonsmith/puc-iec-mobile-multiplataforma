@@ -1,4 +1,4 @@
-name: Grade — Atividade 3 (Flutter UI + Estado)
+name: Grade — Atividade 3 (Flutter UI + Estado + Firebase + Offline-first)
 
 # Roda em PR de FORK a cada commit (pull_request_target → comenta sem aprovação manual).
 # ESTRUTURAL: o validator só LÊ os .dart da entrega — nunca executa código do fork.
@@ -15,7 +15,7 @@ permissions:
 env:
   EXERCISE: exercicios/03-flutter-ui-estado
   VALIDATOR: flutter-ui-estado.ts
-  ATIVIDADE: 'Atividade 3 — App Flutter: UI + Estado + Testes'
+  ATIVIDADE: 'Atividade 3 — App Flutter: UI + Estado + Firebase + Offline-first'
 
 jobs:
   grade:
@@ -30,6 +30,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           path: _pr
+          persist-credentials: false
+          allow-unsafe-pr-checkout: true
 
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
@@ -105,7 +107,7 @@ jobs:
             if (!fs.existsSync('/tmp/grade.json')) {
               await github.rest.issues.createComment({
                 ...context.repo, issue_number: context.issue.number,
-                body: head + `❌ Não consegui avaliar. Confira se o projeto Flutter (com \`pubspec.yaml\`) está dentro de \`${process.env.EXERCISE}/\`.`,
+                body: head + `❌ Não consegui avaliar. Confira se o projeto Flutter (com \`pubspec.yaml\`) está dentro de \`${process.env.EXERCISE}/\`. Se a estrutura estiver certa, **pode ser uma falha do avaliador (não sua)** — avise o professor no Teams.`,
               });
               return;
             }
