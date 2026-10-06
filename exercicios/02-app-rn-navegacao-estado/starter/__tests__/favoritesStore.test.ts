@@ -2,18 +2,6 @@
 //
 // ATIVIDADE 2 — testar useFavoritesStore.
 //
-// TODO [TASK 9]: gerar testes pra favoritesStore usando IA.
-//
-// Prompt sugerido:
-//   "Gere testes Jest pra useFavoritesStore (Zustand) cobrindo:
-//    - toggle adiciona id se não existe
-//    - toggle remove id se existe
-//    - isFavorite retorna true após add
-//    - clear esvazia ids
-//    Use describe + beforeEach pra resetar state."
-//
-// Mínimo 3 testes verdes pra CI passar (somados aos 3 de counterStore = 6 total).
-
 import { useFavoritesStore } from '../src/store/favoritesStore';
 
 describe('favoritesStore', () => {
@@ -21,8 +9,37 @@ describe('favoritesStore', () => {
     useFavoritesStore.setState({ ids: [] });
   });
 
-  // TODO [TASK 9]: adicione 3+ testes aqui (use IA).
-  test.skip('placeholder — remova quando implementar', () => {
-    expect(true).toBe(true);
+  test('toggle adiciona e remove um favorito', () => {
+    useFavoritesStore.getState().toggle(10);
+    expect(useFavoritesStore.getState().ids).toEqual([10]);
+
+    useFavoritesStore.getState().toggle(10);
+
+    expect(useFavoritesStore.getState().ids).toEqual([]);
+  });
+
+  test('isFavorite retorna true depois de adicionar um filme', () => {
+    useFavoritesStore.getState().add(20);
+
+    expect(useFavoritesStore.getState().isFavorite(20)).toBe(true);
+    expect(useFavoritesStore.getState().isFavorite(21)).toBe(false);
+  });
+
+  test('add não duplica IDs e remove exclui somente o ID informado', () => {
+    useFavoritesStore.getState().add(30);
+    useFavoritesStore.getState().add(30);
+    useFavoritesStore.getState().add(31);
+
+    useFavoritesStore.getState().remove(30);
+
+    expect(useFavoritesStore.getState().ids).toEqual([31]);
+  });
+
+  test('clear remove todos os favoritos', () => {
+    useFavoritesStore.setState({ ids: [40, 41] });
+
+    useFavoritesStore.getState().clear();
+
+    expect(useFavoritesStore.getState().ids).toEqual([]);
   });
 });
