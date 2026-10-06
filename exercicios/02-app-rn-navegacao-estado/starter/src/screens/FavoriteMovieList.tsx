@@ -8,14 +8,27 @@
 
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { usePopularMovies } from '@/queries/movies/get-popular-movies';
-import { useCounterStore } from '@/store/counterStore';
 import { isTokenError, isTokenMissing } from '@/services/api';
 import TokenMissingScreen from '@/components/TokenMissingScreen';
 import MovieCard from '@/components/MovieCard';
+import { useFavoritesStore } from '@/store/favoritesStore';
+import { MoviesResponse } from '@/types/movie';
+import { useMemo } from 'react';
 
 export default function MovieList() {
   const { data, isLoading, error, refetch } = usePopularMovies();
-  const count = useCounterStore((s) => s.count);
+  const favoriteMoviesIds = useFavoritesStore((s) => s.ids);
+
+  const favoriteMoviesData: MoviesResponse = useMemo(() => {
+    if (!data) return { page: 1, results: [], total_pages: 0, total_results: 0 };
+
+    const favoriteResults = data.results.filter((movie) => favoriteMoviesIds.includes(movie.id));
+
+    return {
+      ...data,
+      results: favoriteResults,
+    };
+  }, [data, favoriteMoviesIds]);
 
   // Tela amigável quando token TMDB não foi configurado ou está inválido.
   if (isTokenMissing || isTokenError(error)) {
@@ -41,13 +54,13 @@ export default function MovieList() {
   return (
     <View style={styles.container}>
       <FlatList
-        data={data?.results ?? []}
+        data={favoriteMoviesData?.results ?? []}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => <MovieCard movie={item} />}
         onRefresh={refetch}
         refreshing={isLoading}
       />
-      <Text style={styles.hint}>{data?.results?.length ?? 0} filmes carregados</Text>
+      <Text style={styles.hint}>{favoriteMoviesData?.results?.length ?? 0} filmes carregados</Text>
     </View>
   );
 }

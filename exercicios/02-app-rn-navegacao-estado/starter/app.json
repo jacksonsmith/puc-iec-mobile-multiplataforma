@@ -1,5 +1,6 @@
 {
   "expo": {
+    "jsEngine": "hermes",
     "name": "aula-02",
     "slug": "aula-02",
     "version": "1.0.0",
