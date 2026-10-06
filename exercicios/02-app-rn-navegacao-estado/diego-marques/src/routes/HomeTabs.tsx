@@ -1,12 +1,4 @@
-// src/routes/HomeTabs.tsx
-//
-// BONUS — Bottom Tabs: Filmes + Favoritos.
-// Fica DENTRO do RootStack (tela "Home"), então o Detail empilha por cima
-// das abas e o botão voltar retorna pra aba de origem.
-//
-// Doc: https://reactnavigation.org/docs/bottom-tab-navigator
-
-import { Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MovieList from '@/screens/MovieList';
 import Favorites from '@/screens/Favorites';
@@ -19,9 +11,9 @@ export type HomeTabParamList = {
 
 const Tab = createBottomTabNavigator<HomeTabParamList>();
 
-const tabIcon = (emoji: string) =>
-  function TabIcon({ focused }: { focused: boolean }) {
-    return <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>{emoji}</Text>;
+const tabIcon = (name: keyof typeof Ionicons.glyphMap) =>
+  function TabIcon({ color, size }: { color: string; size: number }) {
+    return <Ionicons name={name} size={size} color={color} />;
   };
 
 export default function HomeTabs() {
@@ -32,14 +24,14 @@ export default function HomeTabs() {
       <Tab.Screen
         name="Movies"
         component={MovieList}
-        options={{ title: 'Filmes', tabBarIcon: tabIcon('🎬') }}
+        options={{ title: 'Filmes', tabBarIcon: tabIcon('film-outline') }}
       />
       <Tab.Screen
         name="Favorites"
         component={Favorites}
         options={{
           title: 'Favoritos',
-          tabBarIcon: tabIcon('❤️'),
+          tabBarIcon: tabIcon('heart-outline'),
           tabBarBadge: favCount > 0 ? favCount : undefined,
         }}
       />

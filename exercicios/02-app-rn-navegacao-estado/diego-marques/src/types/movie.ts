@@ -1,7 +1,3 @@
-// src/types/movie.ts
-//
-// Tipos do domínio "Movie" (TMDB API).
-
 export type Movie = {
   id: number;
   title: string;

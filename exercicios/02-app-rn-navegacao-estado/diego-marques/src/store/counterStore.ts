@@ -1,14 +1,3 @@
-// src/store/counterStore.ts
-//
-// HANDS-ON AULA 2 — Passo 3 (Zustand counter)
-//
-// Doc Zustand: https://github.com/pmndrs/zustand
-//
-// Conceitos:
-// - Store = singleton fora da árvore React
-// - Hook gerado pelo create() consumido direto em componentes
-// - Sem Provider, sem configureStore (diferente do Redux)
-
 import { create } from 'zustand';
 
 type CounterState = {

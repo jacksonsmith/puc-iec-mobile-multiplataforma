@@ -1,8 +1,3 @@
-// __tests__/counterStore.test.ts
-//
-// Testes da Zustand store do contador (TASK 4 — gerados com auxílio de IA,
-// revisados manualmente).
-
 import { useCounterStore } from '../src/store/counterStore';
 
 describe('counterStore', () => {

@@ -1,10 +1,5 @@
-// src/screens/Favorites.tsx
-//
-// BONUS — aba Favoritos: lista persistida (MMKV) dos filmes favoritados.
-// O store guarda só os ids; os dados de cada filme vêm do cache do
-// TanStack Query (mesma queryKey ['movie', id] do detalhe/prefetch).
-
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useMoviesByIds } from '@/queries/movies/get-movie-by-id';
 import { isTokenError, isTokenMissing } from '@/services/api';
@@ -24,7 +19,7 @@ export default function Favorites() {
   if (ids.length === 0) {
     return (
       <View style={styles.center}>
-        <Text style={styles.emptyIcon}>🤍</Text>
+        <Ionicons name="heart-outline" size={48} color="#888" />
         <Text style={styles.empty}>Nenhum favorito ainda.</Text>
         <Text style={styles.hint}>Toque no coração de um filme na aba Filmes.</Text>
       </View>
@@ -42,7 +37,7 @@ export default function Favorites() {
       ListHeaderComponent={
         <View style={styles.header}>
           <Text style={styles.hint}>
-            {ids.length} favorito{ids.length > 1 ? 's' : ''} · salvos com MMKV
+            {ids.length} favorito{ids.length > 1 ? 's' : ''}
           </Text>
           <Pressable onPress={clear} hitSlop={8}>
             <Text style={styles.clear}>Limpar</Text>
@@ -56,7 +51,6 @@ export default function Favorites() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 8, padding: 24 },
-  emptyIcon: { fontSize: 48 },
   empty: { fontSize: 18, fontWeight: '600' },
   hint: { color: '#666', fontSize: 12, textAlign: 'center' },
   header: {

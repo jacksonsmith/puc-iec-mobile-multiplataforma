@@ -1,14 +1,10 @@
-// src/components/TokenMissingScreen.tsx
-//
-// Tela de erro amigável quando TMDB API token não está configurado.
-// Aparece automaticamente quando service detecta erro 401 ou token ausente.
-
+import { Ionicons } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function TokenMissingScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.emoji}>🔑</Text>
+      <Ionicons name="key-outline" size={64} color="#003366" style={styles.icon} />
       <Text style={styles.title}>TMDB Token ausente ou inválido</Text>
       <Text style={styles.subtitle}>
         Esse app precisa de uma API key da TMDB pra carregar filmes.
@@ -65,7 +61,7 @@ export default function TokenMissingScreen() {
       </View>
 
       <Text style={styles.warning}>
-        ⚠️ Nunca comite <Text style={styles.code}>.env</Text>. Já está no{' '}
+        Nunca comite <Text style={styles.code}>.env</Text>. Já está no{' '}
         <Text style={styles.code}>.gitignore</Text>.
       </Text>
     </ScrollView>
@@ -74,7 +70,7 @@ export default function TokenMissingScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: 24, gap: 16, maxWidth: 600, alignSelf: 'center' },
-  emoji: { fontSize: 64, textAlign: 'center' },
+  icon: { alignSelf: 'center' },
   title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', color: '#003366' },
   subtitle: { fontSize: 16, textAlign: 'center', color: '#555', marginBottom: 8 },
   steps: { gap: 12, marginTop: 8 },

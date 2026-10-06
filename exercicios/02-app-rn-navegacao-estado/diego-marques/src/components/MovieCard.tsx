@@ -1,8 +1,3 @@
-// src/components/MovieCard.tsx
-//
-// CAMADA COMPONENTS — componente reutilizável de card de filme.
-// ATIVIDADE 2 — integrar com useFavoritesStore + HeartButton
-
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,12 +16,11 @@ export default function MovieCard({ movie }: Props) {
   const queryClient = useQueryClient();
   const poster = posterUrl(movie.poster_path, 'w185');
 
-  // Seletor retorna boolean → card só re-renderiza quando o SEU estado muda.
   const isFav = useFavoritesStore((s) => s.isFavorite(movie.id));
   const toggle = useFavoritesStore((s) => s.toggle);
 
   const openDetail = () => {
-    prefetchMovieById(queryClient, movie.id); // não aguarda: navega já
+    prefetchMovieById(queryClient, movie.id);
     navigation.navigate('Detail', { id: movie.id, title: movie.title });
   };
 
@@ -37,7 +31,7 @@ export default function MovieCard({ movie }: Props) {
         <Text style={styles.title} numberOfLines={2}>
           {movie.title}
         </Text>
-        <Text style={styles.meta}>⭐ {movie.vote_average.toFixed(1)}</Text>
+        <Text style={styles.meta}>Nota {movie.vote_average.toFixed(1)}</Text>
       </View>
 
       <HeartButton active={isFav} onPress={() => toggle(movie.id)} />

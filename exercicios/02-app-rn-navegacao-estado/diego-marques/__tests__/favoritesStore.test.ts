@@ -1,9 +1,3 @@
-// __tests__/favoritesStore.test.ts
-//
-// Testes da useFavoritesStore + persistência (TASK 9 — gerados com auxílio
-// de IA, revisados manualmente). Em Jest o react-native-mmkv usa um mock em
-// memória automaticamente (detecta JEST_WORKER_ID).
-
 import { useFavoritesStore, STORAGE_KEY } from '../src/store/favoritesStore';
 import { mmkvStorage } from '../src/storage/mmkv';
 
@@ -71,7 +65,6 @@ describe('favoritesStore — persistência MMKV', () => {
     state().add(99);
     state().add(100);
 
-    // Recarrega os módulos do zero, mantendo o mesmo storage em memória.
     jest.isolateModules(() => {
       jest.doMock('../src/storage/mmkv', () => ({ mmkvStorage }));
       const { useFavoritesStore: reloaded } = require('../src/store/favoritesStore');

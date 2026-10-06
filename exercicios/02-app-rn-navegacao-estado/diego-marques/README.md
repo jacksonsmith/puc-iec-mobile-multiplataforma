@@ -1,82 +1,97 @@
-# README — Atividade 2 — Diego Cardoso Marques
+# Filmes Favoritos — Diego Cardoso Marques
 
-## Identificação
+App React Native (Expo SDK 54) que lista os filmes populares da TMDB, permite favoritar com uma animação feita em Reanimated e mantém os favoritos salvos entre aberturas do app.
 
 - **Aluno:** Diego Cardoso Marques
-- **Opção Reanimated escolhida:** A — Heart pop
-- **Bonus implementado:** Bottom Tabs com aba Favoritos · TanStack Query `staleTime` + `prefetchQuery` · Hermes (padrão do SDK 54)
-- **Repo (seu fork):** https://github.com/D2Diego/puc-iec-mobile-multiplataforma/tree/entrega/atividade-2-diego-marques/exercicios/02-app-rn-navegacao-estado/diego-marques
+- **Animação Reanimated:** opção A, heart pop
+- **Extras:** Bottom Tabs com aba Favoritos, `staleTime` + `prefetchQuery` no TanStack Query, Hermes (padrão do SDK 54)
 
 ## Como rodar
 
 ```bash
 npm install
-cp .env.example .env   # colar o token TMDB em EXPO_PUBLIC_TMDB_TOKEN
+cp .env.example .env
 npx expo start
 ```
 
+No `.env`, preencha `EXPO_PUBLIC_TMDB_TOKEN` com a API Key (v3) ou o API Read Access Token (v4) da TMDB.
+
 ```bash
-npm test               # 14 testes Jest (counter + favorites + persistência)
+npm test
 ```
 
-> ⚠️ **MMKV precisa de módulo nativo.** No **Expo Go** ele não existe: o app roda normalmente, mas os favoritos ficam só em memória (aviso no console). Para persistir de verdade entre reloads, use um development build: `npx expo run:android` (ou `run:ios`). Na **web**, o storage cai automaticamente para `localStorage`.
+O MMKV depende de módulo nativo. No Expo Go o app funciona, mas os favoritos ficam apenas em memória. Para persistência real use um development build (`npx expo run:android` ou `npx expo run:ios`). Na web o armazenamento usa `localStorage`.
 
-## O que o app faz
+## Funcionalidades
 
-Lista os filmes populares da TMDB (TanStack Query, cache de 5 min) e permite favoritar cada filme com um ❤️ que faz um "pop" animado com Reanimated (escala + rotação com mola, rodando na UI thread). Os favoritos ficam numa store Zustand persistida com MMKV e aparecem na aba **Favoritos**, que continua preenchida depois de fechar e reabrir o app.
+- Lista de filmes populares com pull-to-refresh e cache de 5 minutos.
+- Favoritar e desfavoritar pela lista ou pela tela de detalhe, com animação de escala e rotação executada na UI thread.
+- Aba Favoritos com contador na tab bar e ação para limpar a lista.
+- Favoritos persistidos com MMKV e restaurados de forma síncrona ao abrir o app.
+- Prefetch do detalhe do filme no toque, antes da navegação.
+- Telas de erro com ação de tentar novamente.
 
 ## Arquitetura
 
 ```
+App.tsx
 src/
 ├── routes/
-│   ├── RootStack.tsx          ← Stack: Home (tabs) + Detail
-│   └── HomeTabs.tsx           ← bonus: Bottom Tabs Filmes / Favoritos
+│   ├── RootStack.tsx
+│   └── HomeTabs.tsx
 ├── screens/
 │   ├── MovieList.tsx
 │   ├── MovieDetail.tsx
-│   └── Favorites.tsx          ← bonus: lista persistida
+│   └── Favorites.tsx
 ├── components/
-│   ├── MovieCard.tsx          ← prefetch do detalhe antes de navegar
-│   ├── HeartButton.tsx        ← animação Reanimated (opção A)
+│   ├── MovieCard.tsx
+│   ├── HeartButton.tsx
+│   ├── ErrorState.tsx
 │   └── TokenMissingScreen.tsx
+├── queries/movies/
+│   ├── get-popular-movies.ts
+│   └── get-movie-by-id.ts
 ├── store/
-│   ├── counterStore.ts
-│   └── favoritesStore.ts      ← Zustand + persist via subscribe + MMKV
-├── queries/movies/            ← TanStack Query (popular, by-id, search)
-├── services/api.ts            ← axios + token TMDB
-└── storage/
-    └── mmkv.ts                ← MMKV (nativo) / localStorage (web) / memória (Expo Go)
+│   ├── favoritesStore.ts
+│   └── counterStore.ts
+├── storage/
+│   └── mmkv.ts
+├── services/
+│   ├── api.ts
+│   └── query-client.ts
+├── types/
+│   └── movie.ts
+└── utils/
+    └── poster-url.ts
+__tests__/
+├── favoritesStore.test.ts
+└── counterStore.test.ts
 ```
+
+| Camada | Responsabilidade |
+|---|---|
+| `services` | HTTP (axios + token TMDB) e configuração do `QueryClient` |
+| `queries` | Estado do servidor: chaves de cache, `useQuery`, `useQueries`, prefetch |
+| `store` | Estado do cliente com Zustand |
+| `storage` | Adapter de armazenamento: MMKV no nativo, `localStorage` na web, memória como fallback |
+| `components` / `screens` | UI; screens consomem queries e stores, não fazem HTTP |
+| `routes` | Stack (Home + Detail) com Bottom Tabs (Filmes + Favoritos) dentro da Home |
 
 ## Decisões técnicas
 
-- **Opção A (heart pop):** o feedback fica no próprio elemento que o usuário tocou. `withSequence(withTiming(1.4), withSpring(1))` dá o "estouro" rápido e o assentamento elástico; a rotação em paralelo usa um segundo `useSharedValue`. O estilo é um worklet (`useAnimatedStyle`), então a animação não depende da JS thread.
-- **MMKV em vez de AsyncStorage:** a leitura é **síncrona** via JSI. Por isso a store já nasce hidratada (`ids: loadInitial()`), sem lista vazia piscando na primeira renderização. Com AsyncStorage (ou o middleware `persist`) a hidratação seria assíncrona.
-- **Persistência via `subscribe` em vez do middleware `persist`:** segue o starter e deixa explícito quando o save acontece. O listener compara `state.ids === prev.ids` para só gravar quando os favoritos mudam.
-- **Store guarda só ids:** a aba Favoritos busca os filmes com `useQueries` usando a mesma `queryKey` (`['movie', id]`) do detalhe e do prefetch, então tudo compartilha um único cache.
-- **Versões alinhadas ao Expo SDK 54** (`npx expo install --fix`): o starter vinha com Reanimated 3.16, incompatível com RN 0.81 / Expo Go SDK 54, que traz Reanimated 4.1 + `react-native-worklets`.
+- **Heart pop (opção A):** o feedback acontece no próprio elemento tocado. `withSequence(withTiming(1.4), withSpring(1))` controla a escala e um segundo shared value controla a rotação. O estilo é calculado em `useAnimatedStyle`, um worklet que roda na UI thread.
+- **MMKV em vez de AsyncStorage:** leitura síncrona via JSI. A store nasce com `ids: loadInitial()`, sem estado vazio intermediário nem lógica de hidratação assíncrona.
+- **Persistência via `subscribe`:** o save é explícito e só ocorre quando `ids` muda (`state.ids !== prev.ids`).
+- **Store guarda apenas ids:** os dados dos filmes vêm do TanStack Query com a mesma chave (`['movie', id]`) usada no detalhe, nos favoritos e no prefetch, compartilhando um único cache.
+- **Dependências alinhadas ao Expo SDK 54** com `npx expo install --fix` (Reanimated 4.1 + `react-native-worklets`).
 
-## Referência
+## Testes
 
-- Reanimated — *Your first animation* / `useSharedValue`, `useAnimatedStyle`, `withSpring`: https://docs.swmansion.com/react-native-reanimated/
-- MMKV: https://github.com/mrousavy/react-native-mmkv · Zustand: https://github.com/pmndrs/zustand · TanStack Query (prefetching): https://tanstack.com/query/latest/docs/framework/react/guides/prefetching
+14 testes Jest cobrindo `counterStore` (increment, decrement, reset, sequência longa) e `favoritesStore` (add, remove, toggle, clear, isFavorite, idempotência, gravação no storage, restauração após recriar a store e storage corrompido).
 
----
+## Referências
 
-## 🎁 Bonus implementado
-
-- [x] **Bottom Tabs com aba Favoritos filtrada — +2pt** — `src/routes/HomeTabs.tsx`, `src/screens/Favorites.tsx` (badge com a contagem, botão "Limpar")
-- [ ] Deep link `expo://detail/<id>` — +1pt
-- [ ] 2 das 3 opções Reanimated (A/B/C) — +1pt
-- [x] TanStack Query `staleTime` + `prefetchQuery` — +1pt — `staleTime` 5 min global em `App.tsx`, 10 min no detalhe; `prefetchMovieById` chamado no `onPress` do `MovieCard`
-- [x] Hermes habilitado — padrão no Expo SDK 54 (o `expo export` gera bytecode `.hbc`)
-- [x] Testes Jest verdes — 14 testes (`npm test`)
-
-```ts
-// src/components/MovieCard.tsx
-const openDetail = () => {
-  prefetchMovieById(queryClient, movie.id); // não aguarda: navega já
-  navigation.navigate('Detail', { id: movie.id, title: movie.title });
-};
-```
+- Reanimated: https://docs.swmansion.com/react-native-reanimated/
+- MMKV: https://github.com/mrousavy/react-native-mmkv
+- Zustand: https://github.com/pmndrs/zustand
+- TanStack Query (prefetching): https://tanstack.com/query/latest/docs/framework/react/guides/prefetching
