@@ -1,56 +1,52 @@
-# Filmes (Flutter) — pratica/ da Atividade 3
+# README — Atividade 3 — Henrique Miguel de Jesus
 
-App de catálogo de filmes em **Flutter**. Já roda; você completa os scaffolds (UI, estado, Firebase e offline-first) até `flutter test` ficar **verde**.
+## Identificação
 
-## Rodar
-```bash
-cd exercicios/03-flutter-ui-estado/pratica   # confirme: ls lib
-flutter pub get
-flutter run -d chrome --web-port 5300   # PORTA FIXA (o cache offline fica no navegador, por porta)
-# 💡 Atalho no VS Code: aperte F5 (o .vscode/launch.json já fixa a porta 5300)
-#    ou Ctrl/Cmd+Shift+B (terminal integrado: r = hot reload) · ./rodar.sh (Mac/Linux) · rodar.bat (Windows)
-```
+- **Aluno:** Henrique Miguel de Jesus
+- **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma (PUC Minas - IEC)
+- **Atividade:** 03 — App Flutter: UI + Estado + Firebase + Offline-first
 
-## Testar (é o seu checklist)
-```bash
-flutter test                         # tudo: Ex1–Ex3 (UI/estado) + offline (TASKs 11–15) + checklist
-flutter test test/offline_test.dart  # só offline-first — cada grupo = 1 TASK
-flutter analyze                      # precisa ficar limpo
-```
-Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.dart` e `test/offline_test.dart` são a **spec** (não edite).
+---
 
-## O que completar (🧑‍🏫 aula · 🧑‍💻 casa)
-| TASK | Arquivo | O quê | |
-|---|---|---|---|
-| 1 | `lib/widgets/movie_card.dart` | compor o card (título + ⭐ nota + ano) | 🧑‍🏫 |
-| 2 | `lib/state/favorites.dart` | `favoritesProvider` (`toggle` + `clear`) | 🧑‍🏫 |
-| 3 | `lib/main.dart` | projeto Firebase + `flutterfire configure` | 🧑‍🏫 |
-| 10 | `lib/main.dart` | persistência offline do Firestore (1 linha) | 🧑‍🏫 fácil |
-| 4 | `lib/widgets/movie_card.dart` | coração favoritando (`ConsumerWidget` + `ref`) | 🧑‍💻 |
-| 5 | `lib/screens/home_screen.dart` | contador `♥ N` no header | 🧑‍💻 |
-| 6 | `lib/screens/home_screen.dart` | botão **limpar** favoritos | 🧑‍💻 |
-| 7 | `lib/state/favorites.dart` | persistir favoritos no **Firestore** | 🧑‍💻 médio |
-| 8 | `lib/services/remote_config.dart` + home | banner via **Remote Config** | 🧑‍💻 médio |
-| 9 | `test/favorites_test.dart` | **você escreve** um teste do provider | 🧑‍💻 |
-| 11 | `lib/widgets/offline_banner.dart` | aviso "você está offline" | 🧑‍💻 fácil |
-| 12 | `lib/models/movie.dart` | `toJson` / `fromJson` | 🧑‍💻 fácil |
-| 13 | `lib/data/movie_repository.dart` | repositório **cache-first** | 🧑‍💻 médio |
-| 14 | `lib/data/movie_repository.dart` | validade do cache (**TTL**) | 🧑‍💻 médio |
-| 15 | `lib/data/sync_queue.dart` | **fila de sincronização** (conflitos + flush) | 🧑‍💻 🔴 difícil |
+## Como rodar o projeto
 
-✈️ O botão de **avião** na barra do topo simula o modo offline. Veja o `guia-passo-a-passo.md` e o `enunciado.md` (rubrica).
+1. Entre na pasta do projeto Flutter:
+   ```bash
+   cd exercicios/03-flutter-ui-estado/pratica
+   ```
 
-## Entrega
-Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código (estrutural) e posta uma nota **mínima**; a final sai no Canvas.
-- ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`.
+2. Obtenha as dependências:
+   ```bash
+   flutter pub get
+   ```
 
-> **CI no seu fork (opcional):** habilite o *Actions* do fork — o workflow *Flutter test — Atividade 3* roda `flutter analyze` + `flutter test` a cada push.
-> **Versões:** precisa de Flutter **3.27+** (o `pubspec` já avisa se for mais antigo).
+3. Execute os testes automatizados da aplicação:
+   ```bash
+   flutter test
+   ```
 
-> **Não comite** `.dart_tool/`, `build/`, `pubspec.lock` (já no `.gitignore`).
+4. Inicie a aplicação na Web com a porta fixa recomendada:
+   ```bash
+   flutter run -d chrome --web-port 5300
+   ```
 
-## Dados reais do TMDB (opcional)
+---
 
-Sem chave, o app usa a lista simulada (5 filmes). Para filmes reais: copie `.env.local.example` → `.env.local`,
-cole sua chave do TMDB (`TMDB_KEY=...`) e rode `./rodar.sh` / `rodar.bat` (ou F5 → "dados reais TMDB").
-O `.env.local` não vai pro git. Os testes (`flutter test`) nunca usam a chave.
+## O que foi implementado
+
+- **Ex1 (TASK 1):** Composição da widget `MovieCard` combinando `PosterArt`, `Column`, título (20, bold), nota com estrela (`Icons.star`), e ano do filme.
+- **Ex2 (TASK 2, 4, 5, 6):** Gestão de estado dos favoritos via Riverpod com `favoritesProvider` (`Notifier<Set<int>>`). Atualização dinâmica e sincronizada no card, no contador do header (`♥ count`) e ação no botão de limpar (`Icons.delete_outline`).
+- **Ex3 (TASK 9):** Suíte de teste unitário isolado do `favoritesProvider` utilizando `ProviderContainer` em `test/favorites_test.dart`.
+- **Ex4 (TASK 3, 7, 10):** Integração com **Firebase Firestore** para sincronização cloud e persistência de favoritos via documento remoto com `persistenceEnabled: true`.
+- **Ex5 (TASK 8):** Integração com **Firebase Remote Config** em `remote_config.dart` e exibição dinâmica da mensagem remota no topo da `HomeScreen`.
+- **Ex6 (TASK 11–15):** Arquitetura **Offline-first**:
+  - `OfflineBanner` com aviso em tempo real quando sem conexão (`TASK 11`).
+  - Serialização `Movie.toJson()` e `Movie.fromJson()` (`TASK 12`).
+  - `MovieRepository` com estratégia **Cache-First (Stale-while-revalidate)** e controle de validade **TTL** (`TASK 13` e `TASK 14`).
+  - `SyncQueue` com resolução automática de conflitos (operações opostas se anulam) e `flush` seguro e ordenado (`TASK 15`).
+
+---
+
+## Análise de Trade-offs: Estado Local vs. Cloud vs. Offline-First (1 Parágrafo)
+
+> O estado **local em memória** (Riverpod) oferece resposta instantânea e latência zero para a interface sem dependência de rede, porém é um estado volátil que não sobrevive ao encerramento do app ou reload da página. A integração com **Cloud** (Firestore) resolve a persistência e permite a sincronização síncrona entre múltiplos dispositivos, contudo introduz dependência de conexão, latência de rede e potenciais falhas de I/O em ambientes de alta oscilação de sinal. A arquitetura **Offline-First** (Cache-First + Fila de Sincronização) unifica as vantagens de ambas abordagens: o usuário interage sempre com o cache local persistido no dispositivo com latência imperceptível, enquanto a `SyncQueue` gerencia as gravações remotas e a resolução de conflitos em segundo plano assim que a conectividade é reestabelecida, garantindo um produto altamente resiliente, performático e confiável.
