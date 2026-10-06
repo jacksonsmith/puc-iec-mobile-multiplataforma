@@ -12,7 +12,7 @@
 // - queryFn = função pura que retorna Promise<dados>
 // - staleTime = quanto tempo cache fica fresco antes de refetch background
 
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import type { MoviesResponse } from '@/types/movie';
 
@@ -30,9 +30,23 @@ const fetchPopularMovies = async (page = 1) => {
 //     staleTime: 1000 * 60 * 5, // 5 minutos
 //   });
 
-export const usePopularMovies = (page = 1) => ({
-  data: undefined as MoviesResponse | undefined,
-  isLoading: false,
-  error: null,
-  refetch: () => {},
+export const usePopularMovies = (page = 1) => 
+  useQuery({
+    queryKey: ['movies', 'popular', page],
+    queryFn: () => fetchPopularMovies(page),
+    staleTime: 1000 * 60 * 5, // 5 minutos
 });
+
+// TASK 10 (bônus) — paginação infinita
+// - initialPageParam = primeira página buscada
+// - getNextPageParam lê page/total_pages da resposta TMDB;
+//   retornar undefined sinaliza que não há mais páginas (hasNextPage = false)
+export const useInfinitePopularMovies = () =>
+  useInfiniteQuery({
+    queryKey: ['movies', 'popular', 'infinite'],
+    queryFn: ({ pageParam }) => fetchPopularMovies(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
