@@ -19,10 +19,45 @@ describe('counterStore', () => {
   });
 
   test('increment aumenta count em 1', () => {
-    useCounterStore.getState().increment?.();
+    useCounterStore.getState().increment();
+
     expect(useCounterStore.getState().count).toBe(1);
   });
 
-  // TODO [TASK 4]: adicione testes pra decrement, reset, edge cases (use IA).
-  // Mínimo 3 testes verdes pra CI passar.
+  test('decrement diminui count em 1', () => {
+    useCounterStore.getState().decrement();
+
+    expect(useCounterStore.getState().count).toBe(-1);
+  });
+
+  test('reset volta count para 0 após mutações', () => {
+    useCounterStore.getState().increment();
+    useCounterStore.getState().increment();
+    useCounterStore.getState().increment();
+
+    useCounterStore.getState().reset();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
+
+  test('100 increments seguidos resultam em count igual a 100', () => {
+    for (let i = 0; i < 100; i++) {
+      useCounterStore.getState().increment();
+    }
+
+    expect(useCounterStore.getState().count).toBe(100);
+  });
+
+  test('increment seguido de decrement volta count para 0', () => {
+    useCounterStore.getState().increment();
+    useCounterStore.getState().decrement();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
+
+  test('reset mantém count em 0 quando estado já está zerado', () => {
+    useCounterStore.getState().reset();
+
+    expect(useCounterStore.getState().count).toBe(0);
+  });
 });
