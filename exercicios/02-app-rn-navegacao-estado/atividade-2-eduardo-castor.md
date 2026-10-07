@@ -5,7 +5,7 @@
 - **Aluno:** Eduardo Castor
 - **Opção Reanimated escolhida:** A — Heart pop
 - **Bonus implementado:** Bottom Tabs com aba Favoritos (lista persistida), Hermes explícito no `app.json`
-- **Repo (seu fork):** https://github.com/SEU-USUARIO/puc-iec-mobile-multiplataforma
+- **Repo (seu fork):** https://github.com/castorEdu/puc-iec-mobile-multiplataforma
 - **Branch:** `entrega/atividade-2-eduardo-castor`
 - **App:** `exercicios/02-app-rn-navegacao-estado/starter/` (editado in-place)
 
