@@ -11,6 +11,28 @@ flutter run -d chrome --web-port 5300   # PORTA FIXA (o cache offline fica no na
 #    ou Ctrl/Cmd+Shift+B (terminal integrado: r = hot reload) · ./rodar.sh (Mac/Linux) · rodar.bat (Windows)
 ```
 
+### Firebase (favoritos entre recargas)
+
+Crie um app Web e o Firestore no plano Spark. Configure as regras do documento
+`favorites/meus-favoritos` conforme o enunciado e inicie o app passando os valores
+da configuração Web do Firebase:
+
+```bash
+flutter run -d chrome --web-port 5300 \
+  --dart-define=FIREBASE_API_KEY=... \
+  --dart-define=FIREBASE_APP_ID=... \
+  --dart-define=FIREBASE_MESSAGING_SENDER_ID=... \
+  --dart-define=FIREBASE_PROJECT_ID=... \
+  --dart-define=FIREBASE_AUTH_DOMAIN=... \
+  --dart-define=FIREBASE_STORAGE_BUCKET=...
+```
+
+Sem esses valores, o app usa favoritos locais para permitir executar e testar sem
+uma conta Firebase. Com Firebase configurado, os favoritos são lidos e gravados no
+Firestore; recarregue a página para confirmar a persistência. Também é possível
+gerar `firebase_options.dart` com `flutterfire configure`; `main.dart` usa
+`DefaultFirebaseOptions.currentPlatform`.
+
 ## Testar (é o seu checklist)
 ```bash
 flutter test                         # tudo: Ex1–Ex3 (UI/estado) + offline (TASKs 11–15) + checklist
@@ -43,6 +65,35 @@ Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.da
 ## Entrega
 Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código (estrutural) e posta uma nota **mínima**; a final sai no Canvas.
 - ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`.
+
+## Decisões de estado
+
+O estado local responde rápido e continua disponível offline, mas fica restrito ao
+aparelho. O Firestore sincroniza favoritos entre dispositivos e mantém os dados após
+recarregar, com custo de latência e dependência de configuração/rede. O fluxo
+offline-first mostra primeiro o cache local e revalida quando há conexão; isso mantém
+a tela útil sem internet, embora os dados possam ficar desatualizados até a próxima
+sincronização.
+
+## Evidência do Firestore
+
+Projeto Firebase Spark: `filmes-flutter-a3---luiz-lima` (Firestore em
+`southamerica-east1`). O documento `favorites/meus-favoritos` contém o array `ids`.
+Validação feita no app Web: favoritei Matrix, recarreguei a página e o coração e o
+contador foram restaurados após a leitura do Firestore. O documento pode ser
+conferido no [console do Firestore](https://console.firebase.google.com/u/0/project/filmes-flutter-a3---luiz-lima/firestore/databases/-default-/data/~2Ffavorites~2Fmeus-favoritos).
+
+Regra publicada para permitir a demonstração (limitada ao documento do app):
+
+```text
+match /favorites/meus-favoritos {
+  allow read, write: if true;
+}
+```
+
+Essa regra permite que qualquer cliente com a configuração do Firebase leia e
+altere esse documento. Para uso fora da atividade, restrinja o acesso com
+autenticação e regras por usuário.
 
 > **CI no seu fork (opcional):** habilite o *Actions* do fork — o workflow *Flutter test — Atividade 3* roda `flutter analyze` + `flutter test` a cada push.
 > **Versões:** precisa de Flutter **3.27+** (o `pubspec` já avisa se for mais antigo).
