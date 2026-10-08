@@ -7,36 +7,59 @@
 //
 // Doc: https://github.com/mrousavy/react-native-mmkv
 
-// TODO [TASK 7]: implementar storage com polyfill web
-//
-// Estrutura esperada:
-//
-// const isWeb = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-//
-// let getString: (k: string) => string | undefined;
-// let setItem: (k: string, v: string) => void;
-// let deleteItem: (k: string) => void;
-//
-// if (isWeb) {
-//   getString = (k) => window.localStorage.getItem(k) ?? undefined;
-//   setItem = (k, v) => window.localStorage.setItem(k, v);
-//   deleteItem = (k) => window.localStorage.removeItem(k);
-// } else {
-//   const { MMKV } = require('react-native-mmkv');
-//   const storage = new MMKV({ id: 'favorites-store' });
-//   getString = (k) => storage.getString(k);
-//   setItem = (k, v) => storage.set(k, v);
-//   deleteItem = (k) => storage.delete(k);
-// }
-//
-// export const mmkvStorage = {
-//   getItem: (name: string) => getString(name) ?? null,
-//   setItem: (name: string, value: string) => setItem(name, value),
-//   removeItem: (name: string) => deleteItem(name),
-// };
+type KeyValueStore = {
+  getString: (key: string) => string | undefined;
+  set: (key: string, value: string) => void;
+  delete: (key: string) => void;
+};
 
+const STORE_ID = 'favorites-store';
+
+const isWeb = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+
+function createStore(): KeyValueStore {
+  // Web: MMKV não roda no navegador -> localStorage (também síncrono).
+  if (isWeb) {
+    const ls = window.localStorage;
+    return {
+      getString: (key) => ls.getItem(key) ?? undefined,
+      set: (key, value) => ls.setItem(key, value),
+      delete: (key) => ls.removeItem(key),
+    };
+  }
+
+  // Nativo: MMKV. O require fica dentro do try pra que, se o módulo nativo
+  // não estiver disponível (ex.: Expo Go), o app NÃO quebre — só perde a persistência.
+  // No Jest, o react-native-mmkv v3 usa um mock em memória automaticamente.
+  try {
+    const { MMKV } = require('react-native-mmkv') as typeof import('react-native-mmkv');
+    const mmkv = new MMKV({ id: STORE_ID });
+    return {
+      getString: (key) => mmkv.getString(key),
+      set: (key, value) => mmkv.set(key, value),
+      delete: (key) => mmkv.delete(key),
+    };
+  } catch {
+    if (process.env.NODE_ENV !== 'test') {
+      console.warn(
+        '[storage] MMKV indisponível — usando memória (favoritos NÃO persistem). ' +
+          'Use um dev build: npx expo run:android | run:ios.'
+      );
+    }
+    const memory = new Map<string, string>();
+    return {
+      getString: (key) => memory.get(key),
+      set: (key, value) => void memory.set(key, value),
+      delete: (key) => void memory.delete(key),
+    };
+  }
+}
+
+export const storage = createStore();
+
+// Adapter no formato esperado pelo store: tudo síncrono, getItem devolve string | null.
 export const mmkvStorage = {
-  getItem: (_name: string) => null,
-  setItem: (_name: string, _value: string) => {},
-  removeItem: (_name: string) => {},
+  getItem: (name: string): string | null => storage.getString(name) ?? null,
+  setItem: (name: string, value: string): void => storage.set(name, value),
+  removeItem: (name: string): void => storage.delete(name),
 };
