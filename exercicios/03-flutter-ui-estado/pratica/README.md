@@ -77,8 +77,23 @@ sincronização.
 
 ## Evidência do Firestore
 
-Inclua aqui um print ou GIF curto depois de configurar o Firebase: favorite um filme,
-recarregue a página e mostre o mesmo favorito ainda selecionado.
+Projeto Firebase Spark: `filmes-flutter-a3---luiz-lima` (Firestore em
+`southamerica-east1`). O documento `favorites/meus-favoritos` contém o array `ids`.
+Validação feita no app Web: favoritei Matrix, recarreguei a página e o coração e o
+contador foram restaurados após a leitura do Firestore. O documento pode ser
+conferido no [console do Firestore](https://console.firebase.google.com/u/0/project/filmes-flutter-a3---luiz-lima/firestore/databases/-default-/data/~2Ffavorites~2Fmeus-favoritos).
+
+Regra publicada para permitir a demonstração (limitada ao documento do app):
+
+```text
+match /favorites/meus-favoritos {
+  allow read, write: if true;
+}
+```
+
+Essa regra permite que qualquer cliente com a configuração do Firebase leia e
+altere esse documento. Para uso fora da atividade, restrinja o acesso com
+autenticação e regras por usuário.
 
 > **CI no seu fork (opcional):** habilite o *Actions* do fork — o workflow *Flutter test — Atividade 3* roda `flutter analyze` + `flutter test` a cada push.
 > **Versões:** precisa de Flutter **3.27+** (o `pubspec` já avisa se for mais antigo).
