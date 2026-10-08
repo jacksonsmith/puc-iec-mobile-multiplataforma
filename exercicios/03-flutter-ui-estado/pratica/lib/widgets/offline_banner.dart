@@ -10,12 +10,24 @@
 //
 // O teste está em test/offline_test.dart (NÃO edite).
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../state/network.dart';
 
-class OfflineBanner extends StatelessWidget {
+class OfflineBanner extends ConsumerWidget {
   const OfflineBanner({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const SizedBox.shrink(); // 👈 implemente (TASK 11)
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(onlineProvider)) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      color: Theme.of(context).colorScheme.errorContainer,
+      child: Text(
+        'Você está offline — mostrando dados salvos',
+        style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
+      ),
+    );
   }
 }

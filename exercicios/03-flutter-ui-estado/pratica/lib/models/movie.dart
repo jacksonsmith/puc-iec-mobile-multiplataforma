@@ -8,7 +8,8 @@ class Movie {
   final String title;
   final double rating;
   final String year;
-  final String? posterPath; // só vem preenchido com dados reais do TMDB (opcional)
+  final String?
+      posterPath; // só vem preenchido com dados reais do TMDB (opcional)
 
   const Movie({
     required this.id,
@@ -24,8 +25,17 @@ class Movie {
   // (o JSON pode trazer 8 em vez de 8.0).
   // Extra (opcional): se `posterPath != null`, inclua também 'posterPath' no toJson e leia no
   // fromJson (`json['posterPath'] as String?`) — assim o pôster dos dados reais sobrevive offline.
-  Map<String, dynamic> toJson() => throw UnimplementedError('TASK 12: implemente toJson()');
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'rating': rating,
+        'year': year,
+      };
 
-  factory Movie.fromJson(Map<String, dynamic> json) =>
-      throw UnimplementedError('TASK 12: implemente Movie.fromJson()');
+  factory Movie.fromJson(Map<String, dynamic> json) => Movie(
+        id: json['id'] as int,
+        title: json['title'] as String,
+        rating: (json['rating'] as num).toDouble(),
+        year: json['year'] as String,
+      );
 }
