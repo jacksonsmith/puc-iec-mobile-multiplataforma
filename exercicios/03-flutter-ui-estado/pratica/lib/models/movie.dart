@@ -8,12 +8,14 @@ class Movie {
   final String title;
   final double rating;
   final String year;
+  final String? posterPath; // só vem preenchido com dados reais do TMDB (opcional)
 
   const Movie({
     required this.id,
     required this.title,
     required this.rating,
     required this.year,
+    this.posterPath,
   });
 
   // ── TASK 12 — serialização · fácil ───────────────────────────────────────────────

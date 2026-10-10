@@ -7,6 +7,8 @@ App de catálogo de filmes em **Flutter**. Já roda; você completa os scaffolds
 cd exercicios/03-flutter-ui-estado/pratica   # confirme: ls lib
 flutter pub get
 flutter run -d chrome --web-port 5300   # PORTA FIXA (o cache offline fica no navegador, por porta)
+# 💡 Atalho no VS Code: aperte F5 (o .vscode/launch.json já fixa a porta 5300)
+#    ou Ctrl/Cmd+Shift+B (terminal integrado: r = hot reload) · ./rodar.sh (Mac/Linux) · rodar.bat (Windows)
 ```
 
 ## Testar (é o seu checklist)
@@ -28,7 +30,7 @@ Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.da
 | 5 | `lib/screens/home_screen.dart` | contador `♥ N` no header | 🧑‍💻 |
 | 6 | `lib/screens/home_screen.dart` | botão **limpar** favoritos | 🧑‍💻 |
 | 7 | `lib/state/favorites.dart` | persistir favoritos no **Firestore** | 🧑‍💻 médio |
-| 8 | `lib/services/remote_config.dart` + home | banner via **Remote Config** | 🧑‍💻 médio |
+| 8 | `lib/services/remote_config.dart` + home | ⏸ **ADIADA** (Remote Config) — não faz parte desta atividade, pule | — |
 | 9 | `test/favorites_test.dart` | **você escreve** um teste do provider | 🧑‍💻 |
 | 11 | `lib/widgets/offline_banner.dart` | aviso "você está offline" | 🧑‍💻 fácil |
 | 12 | `lib/models/movie.dart` | `toJson` / `fromJson` | 🧑‍💻 fácil |
@@ -46,3 +48,9 @@ Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código
 > **Versões:** precisa de Flutter **3.27+** (o `pubspec` já avisa se for mais antigo).
 
 > **Não comite** `.dart_tool/`, `build/`, `pubspec.lock` (já no `.gitignore`).
+
+## Dados reais do TMDB (opcional)
+
+Sem chave, o app usa a lista simulada (5 filmes). Para filmes reais: copie `.env.local.example` → `.env.local`,
+cole sua chave do TMDB (`TMDB_KEY=...`) e rode `./rodar.sh` / `rodar.bat` (ou F5 → "dados reais TMDB").
+O `.env.local` não vai pro git. Os testes (`flutter test`) nunca usam a chave.
