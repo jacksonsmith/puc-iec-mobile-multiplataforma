@@ -89,7 +89,7 @@ class MovieRepository {
     if (cache != null) {
       yield cache.movies;
 
-      if (now().difference(cache.savedAt) < ttl) {
+      if (await cacheStatus() == CacheStatus.fresh) {
         return;
       }
     }
