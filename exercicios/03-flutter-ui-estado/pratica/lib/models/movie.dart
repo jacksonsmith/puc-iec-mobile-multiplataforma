@@ -20,8 +20,17 @@ class Movie {
   // toJson: devolva {'id': ..., 'title': ..., 'rating': ..., 'year': ...}
   // fromJson: faça o caminho de volta. Dica: `(json['rating'] as num).toDouble()`
   // (o JSON pode trazer 8 em vez de 8.0).
-  Map<String, dynamic> toJson() => throw UnimplementedError('TASK 12: implemente toJson()');
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'rating': rating,
+        'year': year,
+      };
 
-  factory Movie.fromJson(Map<String, dynamic> json) =>
-      throw UnimplementedError('TASK 12: implemente Movie.fromJson()');
+  factory Movie.fromJson(Map<String, dynamic> json) => Movie(
+        id: json['id'] as int,
+        title: json['title'] as String,
+        rating: (json['rating'] as num).toDouble(),
+        year: json['year'] as String,
+      );
 }
