@@ -11,6 +11,30 @@ flutter run -d chrome --web-port 5300   # PORTA FIXA (o cache offline fica no na
 #    ou Ctrl/Cmd+Shift+B (terminal integrado: r = hot reload) · ./rodar.sh (Mac/Linux) · rodar.bat (Windows)
 ```
 
+## Como rodar (passo a passo)
+
+1. **Pré-requisitos:** Flutter 3.27+, navegador Chrome instalado.
+2. Clone o repositório e entre na pasta do projeto:
+   ```bash
+   git clone <url-do-fork>
+   cd exercicios/03-flutter-ui-estado/pratica
+   ```
+3. Baixe as dependências:
+   ```bash
+   flutter pub get
+   ```
+4. Suba o app no Chrome na porta fixa (necessária para o cache offline funcionar corretamente):
+   ```bash
+   flutter run -d chrome --web-port 5300
+   ```
+   No VS Code, basta pressionar **F5** — o `launch.json` já configura a porta 5300 automaticamente.
+5. No app, use o **botão de avião** (✈️) na barra do topo para simular modo offline e ver o `OfflineBanner` e o cache em ação.
+6. Para dados reais do TMDB (opcional): copie `.env.local.example` → `.env.local`, insira sua `TMDB_KEY` e rode `./rodar.sh` (Linux/Mac) ou `rodar.bat` (Windows).
+
+## Local vs Cloud vs Offline-first — trade-offs
+
+**Estado local** (Riverpod puro, sem persistência) é o mais simples: tudo vive na memória, operações são síncronas e instantâneas, mas os dados somem a cada reload — adequado para estado efêmero como filtros e seleções de UI. **Cloud** (Firestore) resolve a durabilidade e o compartilhamento entre dispositivos/usuários, mas introduz latência de rede, custo por leitura/escrita e dependência de conexão — uma queda de rede quebra a UX se não houver fallback. **Offline-first** combina os dois: o app lê do cache local imediatamente (resposta instantânea), revalida com a nuvem em segundo plano (stale-while-revalidate) e enfileira escritas feitas sem rede para sincronizar depois; o custo é a complexidade extra — TTL, fila de conflitos, serialização JSON e lógica de merge — mas o resultado é uma UX fluida independente da qualidade da conexão.
+
 ## Testar (é o seu checklist)
 ```bash
 flutter test                         # tudo: Ex1–Ex3 (UI/estado) + offline (TASKs 11–15) + checklist
