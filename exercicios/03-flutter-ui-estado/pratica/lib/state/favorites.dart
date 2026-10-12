@@ -2,6 +2,8 @@
 //
 // Ex2 (TASK 2): estado compartilhado de favoritos com Riverpod.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // ── Ex2 · TASK 2 — implemente o provider de favoritos · 🧑‍🏫 EM AULA (juntos) ──────────────────
@@ -21,5 +23,43 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //   final favoritesProvider =
 //       NotifierProvider<FavoritesNotifier, Set<int>>(FavoritesNotifier.new);
 //
-// 👇 Apague o stub abaixo e implemente o provider acima.
-final favoritesProvider = Provider<Set<int>>((ref) => const <int>{});
+class FavoritesNotifier extends Notifier<Set<int>> {
+  static const _path = 'favorites/meus-favoritos';
+
+  @override
+  Set<int> build() {
+    _load();
+    return <int>{};
+  }
+
+  Future<void> _load() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.doc(_path).get();
+      final ids = snapshot.data()?['ids'] as List<dynamic>?;
+      if (ids != null) state = ids.map((value) => (value as num).toInt()).toSet();
+    } catch (error) {
+      debugPrint('Favoritos indisponíveis: $error');
+    }
+  }
+
+  Future<void> _persist(Set<int> ids) async {
+    try {
+      await FirebaseFirestore.instance.doc(_path).set({'ids': ids.toList()});
+    } catch (error) {
+      debugPrint('Favoritos não sincronizados: $error');
+    }
+  }
+
+  void toggle(int id) {
+    final next = state.contains(id) ? ({...state}..remove(id)) : {...state, id};
+    state = next;
+    _persist(next);
+  }
+
+  void clear() {
+    state = <int>{};
+    _persist(state);
+  }
+}
+
+final favoritesProvider = NotifierProvider<FavoritesNotifier, Set<int>>(FavoritesNotifier.new);
