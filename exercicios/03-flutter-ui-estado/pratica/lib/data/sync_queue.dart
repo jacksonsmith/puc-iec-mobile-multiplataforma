@@ -1,68 +1,127 @@
+
 // lib/data/sync_queue.dart
 //
-// FILA DE SINCRONIZAÇÃO — escritas feitas offline ficam guardadas e são enviadas na volta da rede.
-//
-// TASK 15 (🧑‍💻 EM CASA · 🔴 DIFÍCIL): complete as regras de conflito do enqueue() e o flush().
-// A persistência e a idempotência já estão prontas — o desafio é o RACIOCÍNIO (conflitos e falha no meio).
-// Os testes estão em test/offline_test.dart (NÃO edite).
+// TASK 15 — Fila de sincronização offline.
+// Implementação das regras de conflito e envio das operações.
+
 import 'dart:convert';
 import 'key_value_store.dart';
 
-/// Uma operação pendente: "favoritar" (add=true) ou "desfavoritar" (add=false) um filme.
+/// Operação pendente: favoritar ou desfavoritar um filme.
 class PendingOp {
-  final String id; // único por operação (ex.: timestamp + movieId)
+  final String id;
   final int movieId;
   final bool add;
-  const PendingOp({required this.id, required this.movieId, required this.add});
 
-  Map<String, dynamic> toJson() => {'id': id, 'movieId': movieId, 'add': add};
-  factory PendingOp.fromJson(Map<String, dynamic> j) =>
-      PendingOp(id: j['id'] as String, movieId: j['movieId'] as int, add: j['add'] as bool);
+  const PendingOp({
+    required this.id,
+    required this.movieId,
+    required this.add,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'movieId': movieId,
+        'add': add,
+      };
+
+  factory PendingOp.fromJson(Map<String, dynamic> j) => PendingOp(
+        id: j['id'] as String,
+        movieId: j['movieId'] as int,
+        add: j['add'] as bool,
+      );
 }
 
 class SyncQueue {
   static const queueKey = 'sync_queue_v1';
+
   final KeyValueStore store;
+
   SyncQueue(this.store);
 
-  // ── PRONTO: ler e gravar a fila no armário ───────────────────────────────────────────
+  // Recupera as operações pendentes.
   Future<List<PendingOp>> pending() async {
     final raw = await store.read(queueKey);
+
     if (raw == null) return [];
+
     return (json.decode(raw) as List)
-        .map((e) => PendingOp.fromJson(e as Map<String, dynamic>))
+        .map(
+          (e) => PendingOp.fromJson(
+            e as Map<String, dynamic>,
+          ),
+        )
         .toList();
   }
 
-  Future<void> _save(List<PendingOp> ops) =>
-      store.write(queueKey, json.encode(ops.map((o) => o.toJson()).toList()));
+  // Persiste a fila no armazenamento local.
+  Future<void> _save(List<PendingOp> ops) {
+    return store.write(
+      queueKey,
+      json.encode(
+        ops.map((o) => o.toJson()).toList(),
+      ),
+    );
+  }
 
-  // ── PRONTO: enfileirar + idempotência. VOCÊ completa as REGRAS DE CONFLITO (TASK 15a) ─────
+  // TASK 15a — Enfileiramento e regras de conflito.
   Future<void> enqueue(PendingOp op) async {
     final ops = await pending();
 
-    // (pronto) idempotente: o mesmo id nunca entra duas vezes.
+    // Idempotência: o mesmo ID não entra duas vezes.
     if (ops.any((o) => o.id == op.id)) return;
 
-    // ── TASK 15a · REGRAS DE CONFLITO (🧑‍💻 EM CASA · difícil, parte 1) ──────────────────────
-    // Procure na fila uma operação PENDENTE do MESMO filme (`o.movieId == op.movieId`):
-    //   • se for a MESMA ação (ambas add, ou ambas remove) → não enfileire `op` (já está lá);
-    //   • se for a AÇÃO OPOSTA (add × remove) → as duas se CANCELAM: remova a antiga da fila,
-    //     salve, e NÃO enfileire `op` (o servidor nem precisa saber).
-    // Em qualquer desses casos: `await _save(...)` quando mudar a fila, e dê `return`.
-    // 👇 escreva aqui
+    // Procura uma operação pendente para o mesmo filme.
+    final index = ops.indexWhere(
+      (o) => o.movieId == op.movieId,
+    );
 
-    ops.add(op); // (pronto) sem conflito: vai pro fim da fila
+    if (index != -1) {
+      final existing = ops[index];
+
+      // Mesma ação: não duplica.
+      if (existing.add == op.add) {
+        return;
+      }
+
+      // Ações opostas: cancelam uma à outra.
+      ops.removeAt(index);
+      await _save(ops);
+      return;
+    }
+
+    // Sem conflito: adiciona ao final da fila.
+    ops.add(op);
     await _save(ops);
   }
 
-  // ── TASK 15b — flush (🧑‍💻 EM CASA · difícil, parte 2) ─────────────────────────────────
-  // Envie as operações na ORDEM da fila chamando `send(op)` (que pode lançar erro/offline).
-  //   - a cada sucesso: remova a operação da fila E persista (se o app fechar no meio, não reenvia);
-  //   - no PRIMEIRO erro: PARE (as restantes continuam na fila, na mesma ordem) e NÃO propague o erro;
-  //   - devolva quantas operações foram enviadas com sucesso.
-  // Dica: `final ops = await pending();` → percorra com for → try { await send(op); ... } catch (_) { break; }
-  Future<int> flush(Future<void> Function(PendingOp op) send) async {
-    return 0; // 👈 implemente
+  // TASK 15b — Envia as operações pendentes na ordem.
+  Future<int> flush(
+    Future<void> Function(PendingOp op) send,
+  ) async {
+    final ops = await pending();
+    var sentCount = 0;
+
+    // Percorre uma cópia da fila para manter a ordem.
+    for (final op in List<PendingOp>.from(ops)) {
+      try {
+        // Envia a operação ao servidor.
+        await send(op);
+
+        // Remove somente depois do envio bem-sucedido.
+        ops.removeWhere((pending) => pending.id == op.id);
+
+        // Persiste imediatamente a fila atualizada.
+        await _save(ops);
+
+        sentCount++;
+      } catch (_) {
+        // Para no primeiro erro sem descartar o restante.
+        break;
+      }
+    }
+
+    // Quantidade enviada com sucesso.
+    return sentCount;
   }
 }
