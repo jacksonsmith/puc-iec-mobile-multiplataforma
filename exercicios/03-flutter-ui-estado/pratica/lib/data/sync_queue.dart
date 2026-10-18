@@ -51,6 +51,15 @@ class SyncQueue {
     //     salve, e NÃO enfileire `op` (o servidor nem precisa saber).
     // Em qualquer desses casos: `await _save(...)` quando mudar a fila, e dê `return`.
     // 👇 escreva aqui
+    if(ops.any((o) => o.movieId == op.movieId && o.add == op.add)) {
+      return; // mesma ação já está na fila
+    }
+
+    if(ops.any((o) => o.movieId == op.movieId && o.add != op.add)) {
+      ops.removeWhere((o) => o.movieId == op.movieId && o.add != op.add); // ação oposta cancela a anterior
+      await _save(ops);
+      return;
+    }
 
     ops.add(op); // (pronto) sem conflito: vai pro fim da fila
     await _save(ops);
@@ -63,6 +72,19 @@ class SyncQueue {
   //   - devolva quantas operações foram enviadas com sucesso.
   // Dica: `final ops = await pending();` → percorra com for → try { await send(op); ... } catch (_) { break; }
   Future<int> flush(Future<void> Function(PendingOp op) send) async {
-    return 0; // 👈 implemente
+    // return 0; // 👈 implemente
+    final ops = await pending();
+    int successCount = 0;
+    for (final op in List.of(ops)) {
+      try {
+        await send(op);
+      } catch (_) {
+        break; 
+      }
+      ops.remove(op); 
+      await _save(ops);
+      successCount++;
+    }
+    return successCount;
   }
 }

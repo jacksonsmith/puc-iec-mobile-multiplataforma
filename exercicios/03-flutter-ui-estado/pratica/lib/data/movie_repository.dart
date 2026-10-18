@@ -66,7 +66,17 @@ class MovieRepository {
   //   CacheStatus.stale → o cache é mais velho que `ttl`.
   // Use `now()` (NÃO DateTime.now()) — é o que deixa o teste controlar o relógio.
   Future<CacheStatus> cacheStatus() async {
-    return CacheStatus.none; // 👈 apague e implemente (TASK 14)
+    // return CacheStatus.none; // 👈 apague e implemente (TASK 14)
+    final cache = await readCache();
+    if (cache == null) {
+      return CacheStatus.none;
+    }
+    final age = now().difference(cache.savedAt);
+    if (age < ttl) {
+      return CacheStatus.fresh;
+    } else {
+      return CacheStatus.stale;
+    }
   }
 
   // ── TASK 13 — cache-first (stale-while-revalidate) · médio ──────────────────────────
@@ -78,6 +88,24 @@ class MovieRepository {
   //
   // Depois (TASK 14): se cacheStatus() == fresh, NÃO busque na API (já está atualizado).
   Stream<List<Movie>> watchMovies() async* {
-    yield await remote.fetchMovies(); // 👈 substitua pelo fluxo acima
+    // yield await remote.fetchMovies(); // 👈 substitua pelo fluxo acima
+    final cache = await readCache();
+    if (cache != null) {
+      yield cache.movies;
+    }
+
+    try {
+      final status = await cacheStatus();
+      if (status != CacheStatus.fresh) {
+        final freshMovies = await remote.fetchMovies();
+        await writeCache(freshMovies);
+        yield freshMovies;
+      }
+    } on OfflineException {
+      if (cache == null) {
+        rethrow; // sem cache → propaga o erro
+      }
+      // com cache → engole o erro (a tela segue com o cache)
+    }
   }
 }
