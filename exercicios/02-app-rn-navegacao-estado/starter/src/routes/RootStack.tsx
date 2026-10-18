@@ -9,7 +9,7 @@ import MovieDetail from '@/screens/MovieDetail';
 
 export type RootStackParamList = {
   Home: undefined;
-  Detail: { id: number; title: string };
+  Detail: { id: number; title?: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -19,17 +19,16 @@ export default function RootStack() {
     <Stack.Navigator
       screenOptions={{
         // Garante header back button visível em web e nativo
-        headerBackVisible: true,
-        headerBackTitle: 'Voltar',
+        headerShown: false,
       }}
     >
-      <Stack.Screen name="Home" component={MovieList} options={{ title: 'Filmes' }} />
+      <Stack.Screen name="Home" component={MovieList} />
       <Stack.Screen
         name="Detail"
         component={MovieDetail}
         options={({ route }) => ({
           title: route.params.title,
-          headerBackTitle: 'Voltar',
+          headerShown: false,
         })}
       />
     </Stack.Navigator>

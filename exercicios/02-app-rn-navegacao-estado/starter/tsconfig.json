@@ -4,9 +4,12 @@
     "strict": true,
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ]
-    }
+    },
+    "types": [
+      "jest",
+    ],
   },
   "include": [
     "**/*.ts",
