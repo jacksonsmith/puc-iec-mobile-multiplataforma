@@ -1,30 +1,51 @@
-// Ex3 · TASK 9 — VOCÊ escreve este teste 🧑‍💻 EM CASA
-// (faça DEPOIS do TASK 2 — o provider precisa existir).
-//
-// Teste o `favoritesProvider` ISOLADO (sem UI) com ProviderContainer:
-//   - começa vazio
-//   - toggle(1) adiciona; toggle(1) de novo remove
-//   - clear() esvazia
-//
-// Modelo — descomente e COMPLETE os TODOs:
-//
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:filmes_flutter/state/favorites.dart';
-//
-// void main() {
-//   test('favoritos: toggle e clear', () {
-//     final c = ProviderContainer();
-//     addTearDown(c.dispose);
-//
-//     expect(c.read(favoritesProvider), isEmpty);
-//
-//     c.read(favoritesProvider.notifier).toggle(1);
-//     expect(c.read(favoritesProvider).contains(1), isTrue);
-//
-//     // TODO: toggle(1) de novo → NÃO contém mais o 1
-//     // TODO: clear() → volta a ficar vazio
-//   });
-// }
+// Ex3 · TASK 9: teste unitário do favoritesProvider, isolado da UI (ProviderContainer).
 
-void main() {} // 👈 escreva seu teste aqui (substitua pelo modelo acima, completo)
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:filmes_flutter/state/favorites.dart';
+
+void main() {
+  late ProviderContainer container;
+  FavoritesNotifier notifier() => container.read(favoritesProvider.notifier);
+  Set<int> favorites() => container.read(favoritesProvider);
+
+  setUp(() {
+    container = ProviderContainer();
+    addTearDown(container.dispose);
+  });
+
+  test('começa vazio', () {
+    expect(favorites(), isEmpty);
+  });
+
+  test('toggle adiciona e, chamado de novo, remove', () {
+    notifier().toggle(1);
+    expect(favorites(), {1});
+
+    notifier().toggle(1);
+    expect(favorites(), isEmpty);
+  });
+
+  test('toggle mantém os outros favoritos', () {
+    notifier()
+      ..toggle(1)
+      ..toggle(2)
+      ..toggle(1);
+    expect(favorites(), {2});
+  });
+
+  test('clear esvazia todos os favoritos', () {
+    notifier()
+      ..toggle(1)
+      ..toggle(2);
+    notifier().clear();
+    expect(favorites(), isEmpty);
+  });
+
+  test('cada mudança gera um novo Set (estado imutável)', () {
+    final before = favorites();
+    notifier().toggle(1);
+    expect(identical(before, favorites()), isFalse);
+    expect(before, isEmpty, reason: 'o Set anterior não pode ser mutado');
+  });
+}
