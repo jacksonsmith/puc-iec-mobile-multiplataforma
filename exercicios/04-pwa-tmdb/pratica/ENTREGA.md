@@ -35,3 +35,5 @@ Abra `https://pwa-tmdb-aula4.vercel.app` e compare com um site comum (ex.: themo
 Usei IA? Onde e como? (uso transparente é incentivado)
 
 <sua resposta>
+
+smoke negativo
