@@ -85,7 +85,7 @@ class MovieRepository {
     final cache = await readCache();
     if (cache != null) {
       yield cache.movies;
-      if (now().difference(cache.savedAt) < ttl) return; // fresco: não busca
+      if (await cacheStatus() == CacheStatus.fresh) return; // fresco: não busca na API
     }
     try {
       final fresh = await remote.fetchMovies();
