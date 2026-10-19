@@ -69,15 +69,20 @@ class MovieRepository {
     return CacheStatus.none; // 👈 apague e implemente (TASK 14)
   }
 
-  // ── TASK 13 — cache-first (stale-while-revalidate) · médio ──────────────────────────
-  // Hoje busca direto na API (e some offline). Faça assim:
-  //   1. leia o cache (readCache) e, se existir, `yield` os filmes dele NA HORA;
-  //   2. tente buscar na API (remote.fetchMovies()); se der certo: writeCache(...) e `yield` os frescos;
-  //   3. se der OfflineException E já emitiu cache → engula o erro (a tela segue com o cache);
-  //      se não havia cache → deixe o erro subir (a tela mostra "sem dados");
-  //
-  // Depois (TASK 14): se cacheStatus() == fresh, NÃO busque na API (já está atualizado).
+  // ── TASK 13: cache-first (stale-while-revalidate) ───────────────────────────────────
+  // 1. emite o cache na hora (a tela nunca espera a rede para mostrar algo);
+  // 2. revalida na API, grava o resultado e emite os dados frescos;
+  // 3. se a revalidação falhar e havia cache, a tela segue com ele; sem cache, o erro sobe.
   Stream<List<Movie>> watchMovies() async* {
-    yield await remote.fetchMovies(); // 👈 substitua pelo fluxo acima
+    final cached = await readCache();
+    if (cached != null) yield cached.movies;
+
+    try {
+      final fresh = await remote.fetchMovies();
+      await writeCache(fresh);
+      yield fresh;
+    } on OfflineException {
+      if (cached == null) rethrow;
+    }
   }
 }
