@@ -2,6 +2,7 @@
 //
 // ProviderScope = a "raiz" do Riverpod (deixa qualquer widget ler providers).
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +20,10 @@ Future<void> main() async {
 
   // TASK 3 + TASK 7: conecta ao projeto Firebase (lib/firebase_options.dart).
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // TASK 10: no web a persistência offline do Firestore vem desligada. Ligada, as leituras
+  // saem do cache local e as escritas feitas sem rede sincronizam sozinhas na volta.
+  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
 
   runApp(ProviderScope(
     overrides: [storeProvider.overrideWithValue(SharedPrefsStore(prefs))],
