@@ -18,13 +18,16 @@ class OfflineBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(onlineProvider)) return const SizedBox.shrink();
+    final online = ref.watch(onlineProvider);
+    if (!online) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        color: Colors.amber.shade100,
+        child: const Text('Você está offline — mostrando dados salvos'),
+      );
+    }
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      color: Colors.amber.shade100,
-      child: const Text('Você está offline — mostrando dados salvos'),
-    );
+    return const SizedBox.shrink();
   }
 }

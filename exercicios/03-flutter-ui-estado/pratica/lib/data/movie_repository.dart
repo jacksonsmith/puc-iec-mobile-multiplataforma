@@ -83,22 +83,20 @@ class MovieRepository {
   // Depois (TASK 14): se cacheStatus() == fresh, NÃO busque na API (já está atualizado).
   Stream<List<Movie>> watchMovies() async* {
     final cache = await readCache();
-    if (cache == null) {
-      final fresh = await remote.fetchMovies();
-      await writeCache(fresh);
-      yield fresh;
-      return;
-    }
 
-    yield cache.movies;
-    if (now().difference(cache.savedAt) < ttl) return;
+    if (cache != null) {
+      yield cache.movies;
+      final status = await cacheStatus();
+      if (status == CacheStatus.fresh) return;
+    }
 
     try {
       final fresh = await remote.fetchMovies();
       await writeCache(fresh);
       yield fresh;
     } on OfflineException {
-      return;
+      if (cache != null) return;
+      rethrow;
     }
   }
 }
