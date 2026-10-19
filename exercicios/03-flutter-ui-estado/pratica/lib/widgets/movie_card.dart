@@ -4,16 +4,20 @@
 // Ex2 (TASK 4): ligue o coração ao estado de favoritos.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/movie.dart';
+import '../state/favorites.dart';
 import '../theme/app_theme.dart';
 import 'poster_art.dart';
 
-class MovieCard extends StatelessWidget {
+class MovieCard extends ConsumerWidget {
   final Movie movie;
   const MovieCard({super.key, required this.movie});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFav = ref.watch(favoritesProvider).contains(movie.id);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -46,6 +50,14 @@ class MovieCard extends StatelessWidget {
                   Text(movie.year, style: const TextStyle(color: AppColors.textDim)),
                 ],
               ),
+            ),
+            IconButton(
+              tooltip: isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos',
+              icon: Icon(
+                isFav ? Icons.favorite : Icons.favorite_border,
+                color: isFav ? AppColors.rose : AppColors.textDim,
+              ),
+              onPressed: () => ref.read(favoritesProvider.notifier).toggle(movie.id),
             ),
           ],
         ),
