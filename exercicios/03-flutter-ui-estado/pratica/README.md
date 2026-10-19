@@ -1,56 +1,56 @@
-# Filmes (Flutter) — pratica/ da Atividade 3
+# CineFav (Flutter): Atividade 3
 
-App de catálogo de filmes em **Flutter**. Já roda; você completa os scaffolds (UI, estado, Firebase e offline-first) até `flutter test` ficar **verde**.
+**Aluno:** Sesaque Cruz
 
-## Rodar
+Catálogo de filmes em Flutter com estado compartilhado em Riverpod, favoritos sincronizados no Firestore e arquitetura offline-first (cache com TTL, banner de conexão e fila de sincronização).
+
+## Como rodar
+
+Requer Flutter 3.27 ou mais novo (testado com 3.35.7).
+
 ```bash
-cd exercicios/03-flutter-ui-estado/pratica   # confirme: ls lib
+cd exercicios/03-flutter-ui-estado/pratica
 flutter pub get
-flutter run -d chrome --web-port 5300   # PORTA FIXA (o cache offline fica no navegador, por porta)
-# 💡 Atalho no VS Code: aperte F5 (o .vscode/launch.json já fixa a porta 5300)
-#    ou Ctrl/Cmd+Shift+B (terminal integrado: r = hot reload) · ./rodar.sh (Mac/Linux) · rodar.bat (Windows)
+flutter run -d chrome --web-port 5300   # porta fixa: o cache offline fica no navegador, por porta
 ```
 
-## Testar (é o seu checklist)
+Verificação:
+
 ```bash
-flutter test                         # tudo: Ex1–Ex3 (UI/estado) + offline (TASKs 11–15) + checklist
-flutter test test/offline_test.dart  # só offline-first — cada grupo = 1 TASK
-flutter analyze                      # precisa ficar limpo
+flutter analyze   # sem issues
+flutter test      # 36 testes verdes
 ```
-Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.dart` e `test/offline_test.dart` são a **spec** (não edite).
 
-## O que completar (🧑‍🏫 aula · 🧑‍💻 casa)
-| TASK | Arquivo | O quê | |
-|---|---|---|---|
-| 1 | `lib/widgets/movie_card.dart` | compor o card (título + ⭐ nota + ano) | 🧑‍🏫 |
-| 2 | `lib/state/favorites.dart` | `favoritesProvider` (`toggle` + `clear`) | 🧑‍🏫 |
-| 3 | `lib/main.dart` | projeto Firebase + `flutterfire configure` | 🧑‍🏫 |
-| 10 | `lib/main.dart` | persistência offline do Firestore (1 linha) | 🧑‍🏫 fácil |
-| 4 | `lib/widgets/movie_card.dart` | coração favoritando (`ConsumerWidget` + `ref`) | 🧑‍💻 |
-| 5 | `lib/screens/home_screen.dart` | contador `♥ N` no header | 🧑‍💻 |
-| 6 | `lib/screens/home_screen.dart` | botão **limpar** favoritos | 🧑‍💻 |
-| 7 | `lib/state/favorites.dart` | persistir favoritos no **Firestore** | 🧑‍💻 médio |
-| 8 | `lib/services/remote_config.dart` + home | ⏸ **ADIADA** (Remote Config) — não faz parte desta atividade, pule | — |
-| 9 | `test/favorites_test.dart` | **você escreve** um teste do provider | 🧑‍💻 |
-| 11 | `lib/widgets/offline_banner.dart` | aviso "você está offline" | 🧑‍💻 fácil |
-| 12 | `lib/models/movie.dart` | `toJson` / `fromJson` | 🧑‍💻 fácil |
-| 13 | `lib/data/movie_repository.dart` | repositório **cache-first** | 🧑‍💻 médio |
-| 14 | `lib/data/movie_repository.dart` | validade do cache (**TTL**) | 🧑‍💻 médio |
-| 15 | `lib/data/sync_queue.dart` | **fila de sincronização** (conflitos + flush) | 🧑‍💻 🔴 difícil |
+O app usa o projeto Firebase pessoal `cinefav-atividade3` (plano Spark), configurado em `lib/firebase_options.dart`. As regras do Firestore liberam apenas o documento `favorites/meus-favoritos`. Dados reais do TMDB são opcionais: crie `.env.local` a partir de `.env.local.example` e rode `./rodar.sh`.
 
-✈️ O botão de **avião** na barra do topo simula o modo offline. Veja o `guia-passo-a-passo.md` e o `enunciado.md` (rubrica).
+## Evidências
 
-## Entrega
-Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código (estrutural) e posta uma nota **mínima**; a final sai no Canvas.
-- ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`.
+| Favoritos antes do F5 | Depois do F5 (vieram do Firestore) | Offline (✈️ ligado) |
+|---|---|---|
+| ![Antes do F5](./docs/favoritos-antes-f5.jpg) | ![Depois do F5](./docs/favoritos-depois-f5.jpg) | ![Offline](./docs/offline.jpg) |
 
-> **CI no seu fork (opcional):** habilite o *Actions* do fork — o workflow *Flutter test — Atividade 3* roda `flutter analyze` + `flutter test` a cada push.
-> **Versões:** precisa de Flutter **3.27+** (o `pubspec` já avisa se for mais antigo).
+## O que foi implementado
 
-> **Não comite** `.dart_tool/`, `build/`, `pubspec.lock` (já no `.gitignore`).
+| TASK | Entrega |
+|---|---|
+| 1 | `MovieCard` com pôster, título, nota (⭐) e ano |
+| 2, 4, 5, 6 | `favoritesProvider` único lido pelo card, pelo contador `♥ N` e pelo botão limpar |
+| 3, 7 | Firebase inicializado no `main.dart`; favoritos gravados e observados em tempo real no Firestore |
+| 9 | `test/favorites_test.dart`: toggle, clear e imutabilidade do estado com `ProviderContainer` |
+| 10 | Persistência offline do Firestore ligada no web |
+| 11 | `OfflineBanner` visível só sem conexão |
+| 12 | `Movie.toJson` / `Movie.fromJson`, incluindo `posterPath` e rating inteiro |
+| 13, 14 | Repositório cache-first: emite o cache, revalida na API e não busca enquanto o cache está fresco |
+| 15 | `SyncQueue`: no máximo uma operação por filme (mesma ação não duplica, ação oposta cancela) e `flush` em ordem, persistindo a cada envio e parando no primeiro erro |
 
-## Dados reais do TMDB (opcional)
+A TASK 8 (Remote Config) foi adiada pelo professor e não faz parte desta entrega.
 
-Sem chave, o app usa a lista simulada (5 filmes). Para filmes reais: copie `.env.local.example` → `.env.local`,
-cole sua chave do TMDB (`TMDB_KEY=...`) e rode `./rodar.sh` / `rodar.bat` (ou F5 → "dados reais TMDB").
-O `.env.local` não vai pro git. Os testes (`flutter test`) nunca usam a chave.
+## Decisões técnicas
+
+- **Firestore em tempo real:** em vez de ler o documento uma vez no `build()`, o provider observa `snapshots()`. Isso evita a corrida em que uma leitura atrasada sobrescreve um toque feito logo após abrir o app, e propaga a mudança para outras abas e aparelhos sem recarregar.
+- **Atualização otimista:** `toggle` e `clear` atualizam o estado na hora e gravam no Firestore em segundo plano. Falhas de gravação aparecem no console (`permission-denied` indica regras erradas).
+- **Firestore injetável:** o `firestoreProvider` devolve `null` quando o Firebase não foi inicializado, então os testes de UI rodam só em memória e `test/favorites_firestore_test.dart` valida a sincronização com um Firestore falso (`fake_cloud_firestore`).
+
+## Local vs cloud vs offline-first
+
+Estado **local** (o `Set<int>` do Riverpod) é instantâneo e não depende de rede, mas morre no F5 e fica preso a um aparelho. Estado **cloud** (Firestore) sobrevive ao reload e sincroniza entre abas e aparelhos, mas cada leitura e escrita depende de rede e tem latência, e sem conexão o usuário fica sem dados. **Offline-first** combina os dois: a tela sempre lê primeiro o que está no aparelho (cache da lista, cache local do Firestore) e trata a rede como sincronização em segundo plano, com TTL para não buscar à toa e fila para reenviar escritas feitas offline. O custo é complexidade: o app passa a conviver com dados possivelmente desatualizados e precisa de regras de conflito, como as da `SyncQueue`, para decidir o que vale quando a rede volta.
