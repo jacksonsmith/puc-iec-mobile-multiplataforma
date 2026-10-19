@@ -49,6 +49,16 @@ Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código
 
 > **Não comite** `.dart_tool/`, `build/`, `pubspec.lock` (já no `.gitignore`).
 
+## Local vs cloud vs offline-first (trade-offs)
+
+Estado **local** (Riverpod em memória) é rápido, funciona sem rede e não tem custo, mas fica preso ao aparelho e morre com o reload: o favorito some no F5 e não aparece em outro dispositivo. Estado **cloud** (Firestore) persiste e sincroniza entre abas e dispositivos, porém depende de rede, adiciona latência e exige regras de segurança e um projeto Firebase. A abordagem **offline-first** combina os dois: a UI lê primeiro o que está no aparelho (cache com TTL), revalida na API quando a rede deixa e enfileira escritas feitas offline (`SyncQueue`, com resolução de conflitos) para enviar na volta. O preço é mais complexidade (invalidação de cache, conflitos, ordem de envio) e dados que podem estar levemente desatualizados.
+
+## Prova do Firestore
+
+![Favorito sobrevivendo ao refresh (F5)](docs/favorito-apos-refresh.png)
+
+![App offline (banner + lista)](docs/offline.png)
+
 ## Dados reais do TMDB (opcional)
 
 Sem chave, o app usa a lista simulada (5 filmes). Para filmes reais: copie `.env.local.example` → `.env.local`,
