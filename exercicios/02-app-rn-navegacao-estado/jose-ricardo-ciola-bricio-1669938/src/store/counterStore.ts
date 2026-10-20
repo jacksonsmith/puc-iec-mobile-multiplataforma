@@ -13,19 +13,14 @@ import { create } from 'zustand';
 
 type CounterState = {
   count: number;
-    increment: () => void;
-    decrement: () => void;
-    reset: () => void;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
 };
 
-// TODO [TASK 1]: implementar store com create<CounterState>((set) => ({...}))
-// - count inicial = 0
-// - increment: set((s) => ({ count: s.count + 1 }))
-// - decrement: set((s) => ({ count: s.count - 1 }))
-// - reset: set({ count: 0 })
 export const useCounterStore = create<CounterState>((set) => ({
   count: 0,
-  increment: () => set((s: { count: number; }) => ({ count: s.count + 1 })),
-  decrement: () => set((s: { count: number; }) => ({ count: s.count - 1 })),
+  increment: () => set((s) => ({ count: s.count + 1 })),
+  decrement: () => set((s) => ({ count: s.count - 1 })),
   reset: () => set({ count: 0 }),
 }));

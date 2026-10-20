@@ -34,7 +34,6 @@ export default function MovieCard({ movie }: Props) {
         <Text style={styles.meta}>⭐ {movie.vote_average.toFixed(1)}</Text>
       </View>
 
-      {/* TODO [TASK 8]: substituir por <HeartButton active={isFav} onPress={() => toggle(movie.id)} /> */}
       <HeartButton active={isFav} onPress={() => toggle(movie.id)} />
     </Pressable>
   );

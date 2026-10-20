@@ -1,4 +1,10 @@
-# Starter — Aula 2 (Arquitetura Mobile + Atividade 2)
+# Atividade 2 — Filmes e favoritos
+
+Aluno: José Ricardo Ciola Bricio — matrícula 1669938.
+
+Tasks 1–9 implementadas: contador, consultas TMDB, navegação, favoritos,
+persistência e coração animado. Task 10 implementada como bônus: paginação
+infinita com `useInfiniteQuery` e `onEndReached`, mostrando filmes e páginas carregados.
 
 App Expo + TypeScript com arquitetura profissional separando **services**, **queries**, **contexts**, **screens**, **components**.
 
@@ -60,8 +66,8 @@ __tests__/              ← Jest + RTL
 
 ```bash
 git clone https://github.com/SEU-USUARIO/puc-iec-mobile-multiplataforma.git
-cd puc-iec-mobile-multiplataforma/exercicios/02-app-rn-navegacao-estado/starter
-npm install
+cd puc-iec-mobile-multiplataforma/exercicios/02-app-rn-navegacao-estado/jose-ricardo-ciola-bricio-1669938
+npm ci
 ```
 
 ### 2. Gerar TMDB API token
@@ -86,7 +92,15 @@ npx expo start --ios   # simulador iOS
 npx expo start --android  # emulador Android
 ```
 
-> ⚠️ MMKV não roda em **web** (precisa JSI nativo). Use simulador iOS/Android pra Atividade 2.
+Na web, o adapter utiliza `localStorage`; Android/iOS utilizam MMKV.
+Para verificar MMKV e a animação na UI thread, utilize um development build
+nativo com os módulos instalados (MMKV não está disponível no Expo Go).
+
+```bash
+npx expo run:android
+# ou, em macOS com Xcode:
+npx expo run:ios
+```
 
 ### 4. Rodar testes
 
@@ -98,7 +112,21 @@ npm run test:watch
 npm run test:coverage
 ```
 
-CI roda automático em todo push pro `main` do seu fork. Mínimo: **6 testes verdes**.
+Mínimo: **6 testes verdes**. O workflow do repositório avalia a entrega ao abrir
+ou atualizar o PR. Execute os testes localmente antes do push.
+
+### 5. Conferência manual
+
+1. Abra a lista com um token TMDB válido e navegue para o detalhe de um filme.
+2. Toque no coração: ele deve animar e atualizar o favorito sem abrir o detalhe.
+3. Confira que lista e detalhe mostram o mesmo estado do favorito.
+4. Recarregue o app e confira que o favorito continua marcado; remova-o e repita.
+5. Role até o final da lista: filmes e páginas carregados devem aumentar.
+
+```bash
+npx tsc --noEmit
+npm test -- --runInBand
+```
 
 ---
 
