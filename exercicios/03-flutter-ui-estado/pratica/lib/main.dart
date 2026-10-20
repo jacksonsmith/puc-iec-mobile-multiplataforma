@@ -14,6 +14,7 @@ import 'theme/app_theme.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding
@@ -23,10 +24,8 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // TODO [TASK 10 · 🧑‍🏫 EM AULA · fácil]: ligue a persistência OFFLINE do Firestore (logo depois do initializeApp):
-  //   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
-  // (precisa de: import 'package:cloud_firestore/cloud_firestore.dart';)
-  // Efeito: escritas feitas sem rede ficam numa fila local do Firestore e sincronizam sozinhas na volta.
+  FirebaseFirestore.instance.settings =
+      const Settings(persistenceEnabled: true);
 
   runApp(ProviderScope(
     overrides: [storeProvider.overrideWithValue(SharedPrefsStore(prefs))],
