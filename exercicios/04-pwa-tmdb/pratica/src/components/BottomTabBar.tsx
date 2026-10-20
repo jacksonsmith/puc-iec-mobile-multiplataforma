@@ -1,5 +1,5 @@
 // src/components/BottomTabBar.tsx
-// Tab bar fixa no rodapé — visível só no mobile (max-width: 768px via CSS).
+// Tab bar fixa no rodapé — disponível no desktop e no mobile.
 
 import { styles } from './BottomTabBar.styles';
 

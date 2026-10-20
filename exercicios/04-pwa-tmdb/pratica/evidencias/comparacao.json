@@ -1,0 +1,18 @@
+[
+  {
+    "name": "site-comum",
+    "url": "https://example.com",
+    "manifest": false,
+    "display": null,
+    "serviceWorkers": 0,
+    "offlineReload": false
+  },
+  {
+    "name": "pwa-professor",
+    "url": "https://pwa-tmdb-aula4.vercel.app",
+    "manifest": true,
+    "display": "standalone",
+    "serviceWorkers": 1,
+    "offlineReload": true
+  }
+]

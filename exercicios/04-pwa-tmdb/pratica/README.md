@@ -2,6 +2,22 @@
 
 **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma — PUC Minas IEC
 
+**Entrega de Rafael Corrêa Zart (1665760):** TODOs 1–5 implementados conforme
+o enunciado atual. Validação: 20 testes unitários, 10 testes reais no Edge,
+build de produção e 12/12 pontos no validador estrutural.
+Evidências e reflexão: [ENTREGA.md](ENTREGA.md).
+
+Para os testes no Edge instalado no Windows:
+
+```powershell
+$env:PLAYWRIGHT_CHANNEL = 'msedge'
+npm.cmd run test:e2e -- --workers=1
+```
+
+Os testes de navegador exigem o build de produção e o token TMDB configurado.
+O Playwright inicia o preview automaticamente. A navegação funciona no desktop
+e no mobile; o aviso de atualização só recarrega quando o usuário confirma.
+
 ---
 
 ## Antes de começar

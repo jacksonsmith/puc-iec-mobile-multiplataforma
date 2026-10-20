@@ -1,7 +1,7 @@
 import type React from 'react';
 
 export const styles: Record<string, React.CSSProperties> = {
-  main: { maxWidth: 720, margin: '0 auto', padding: '0 16px 40px' },
+  main: { maxWidth: 720, margin: '0 auto', padding: '0 16px 80px' },
   searchInput: {
     width: '100%',
     boxSizing: 'border-box',

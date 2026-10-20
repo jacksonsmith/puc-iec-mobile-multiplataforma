@@ -1,0 +1,18 @@
+{
+  "tmdb-api": [
+    "https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1"
+  ],
+  "tmdb-images": [
+    "https://image.tmdb.org/t/p/w342/x0nvYzQpyJc5pdT9lMnkMuYAg0O.jpg",
+    "https://image.tmdb.org/t/p/w342/qViPTpcsGyqUNeLVZTrlIQCNnxn.jpg",
+    "https://image.tmdb.org/t/p/w342/muMwJAiMtReEHLKpKMWt2rMkYF7.jpg",
+    "https://image.tmdb.org/t/p/w342/6gWmrC2GyDbUM1ET5EBg9lxBi7S.jpg",
+    "https://image.tmdb.org/t/p/w342/yDiw6WUpAdlidbQDtI09rWVvGtu.jpg",
+    "https://image.tmdb.org/t/p/w342/j6eXMsykSZnXJT20YTdsdS9PXPj.jpg",
+    "https://image.tmdb.org/t/p/w342/hgPJA0NTmXYpPA3cgh4ZrI1PubL.jpg",
+    "https://image.tmdb.org/t/p/w342/66fDoNVCtPrP6jIqMpV1sUEcciw.jpg",
+    "https://image.tmdb.org/t/p/w342/8IEzyoBOCbKIvJ9DMwHgceJkNsP.jpg",
+    "https://image.tmdb.org/t/p/w342/3t3NNw4h7Y8QATqzBSo6tdZrxfy.jpg",
+    "https://image.tmdb.org/t/p/w342/xtxEvJACNnbz3WYmJ5mYT1a0KGk.jpg"
+  ]
+}
