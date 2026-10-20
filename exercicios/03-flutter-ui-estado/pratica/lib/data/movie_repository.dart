@@ -67,14 +67,19 @@ class MovieRepository {
   //   CacheStatus.none  → não há cache;
   //   CacheStatus.fresh → o cache foi salvo há MENOS que `ttl`;
   //   CacheStatus.stale → o cache é mais velho que `ttl`.
-  // Use `now()` (NÃO DateTime.now()) — é o que deixa o teste controlar o relógio.
   Future<CacheStatus> cacheStatus() async {
-    return CacheStatus.none; // 👈 apague e implemente (TASK 14)
+    final cached = await readCache();
+    if (cached == null) return CacheStatus.none;
+    final age = now().difference(cached.savedAt);
+    return age < ttl ? CacheStatus.fresh : CacheStatus.stale;
   }
 
   Stream<List<Movie>> watchMovies() async* {
     final cached = await readCache();
-    if (cached != null) yield cached.movies;
+    if (cached != null) {
+      yield cached.movies;
+      if (await cacheStatus() == CacheStatus.fresh) return;
+    }
 
     try {
       final fresh = await remote.fetchMovies();
