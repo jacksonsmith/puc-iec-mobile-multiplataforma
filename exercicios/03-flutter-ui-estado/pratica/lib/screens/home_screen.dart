@@ -26,9 +26,10 @@ class HomeScreen extends ConsumerWidget {
         title: const Text('Filmes'),
         actions: [
           const OfflineToggle(), // modo avião simulado (pronto)
-          // ── Ex2 · TASK 6 — botão "limpar" favoritos · 🧑‍💻 EM CASA (sozinho) ──
-          // adicione um IconButton(icon: Icon(Icons.delete_outline)) que chama
-          //   ref.read(favoritesProvider.notifier).clear()
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            onPressed: () => ref.read(favoritesProvider.notifier).clear(),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Center(child: Text('♥ $count')),
