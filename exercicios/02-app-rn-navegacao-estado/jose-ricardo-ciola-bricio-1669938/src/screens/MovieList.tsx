@@ -8,14 +8,22 @@
 
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { usePopularMovies } from '@/queries/movies/get-popular-movies';
-import { useCounterStore } from '@/store/counterStore';
 import { isTokenError, isTokenMissing } from '@/services/api';
 import TokenMissingScreen from '@/components/TokenMissingScreen';
 import MovieCard from '@/components/MovieCard';
 
 export default function MovieList() {
-  const { data, isLoading, error, refetch } = usePopularMovies();
-  const count = useCounterStore((s) => s.count);
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isRefetching,
+  } = usePopularMovies();
+  const movies = data?.pages.flatMap((page) => page.results) ?? [];
 
   // Tela amigável quando token TMDB não foi configurado ou está inválido.
   if (isTokenMissing || isTokenError(error)) {
@@ -40,15 +48,30 @@ export default function MovieList() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Counter: {count}</Text>
+      <Text style={styles.title}>Filmes carregados: {movies.length}</Text>
       <FlatList
-        data={data?.results ?? []}
+        data={movies}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => <MovieCard movie={item} />}
-        onRefresh={refetch}
-        refreshing={isLoading}
+        onRefresh={() => {
+          void refetch();
+        }}
+        refreshing={isRefetching}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            void fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage
+            ? <ActivityIndicator size="small" />
+            : null
+        }
       />
-      <Text style={styles.hint}>{data?.results?.length ?? 0} filmes carregados</Text>
+      <Text style={styles.hint}>
+        {data?.pages.length ?? 0} página(s) carregada(s)
+      </Text>
     </View>
   );
 }
