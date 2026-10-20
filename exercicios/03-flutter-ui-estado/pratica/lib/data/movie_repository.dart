@@ -27,7 +27,8 @@ class MovieRepository {
   final MovieSource remote;
   final KeyValueStore store;
   final Duration ttl; // quanto tempo o cache é considerado "fresco"
-  final DateTime Function() now; // relógio injetável (os testes usam um relógio falso)
+  final DateTime Function()
+      now; // relógio injetável (os testes usam um relógio falso)
 
   MovieRepository({
     required this.remote,
@@ -44,7 +45,9 @@ class MovieRepository {
       final j = json.decode(raw) as Map<String, dynamic>;
       return CacheEntry(
         DateTime.parse(j['savedAt'] as String),
-        (j['movies'] as List).map((m) => Movie.fromJson(m as Map<String, dynamic>)).toList(),
+        (j['movies'] as List)
+            .map((m) => Movie.fromJson(m as Map<String, dynamic>))
+            .toList(),
       );
     } catch (_) {
       return null; // cache corrompido = como se não existisse
@@ -66,7 +69,11 @@ class MovieRepository {
   //   CacheStatus.stale → o cache é mais velho que `ttl`.
   // Use `now()` (NÃO DateTime.now()) — é o que deixa o teste controlar o relógio.
   Future<CacheStatus> cacheStatus() async {
-    return CacheStatus.none; // 👈 apague e implemente (TASK 14)
+    final cache = await readCache();
+    if (cache == null) return CacheStatus.none;
+    return now().difference(cache.savedAt) < ttl
+        ? CacheStatus.fresh
+        : CacheStatus.stale;
   }
 
   // ── TASK 13 — cache-first (stale-while-revalidate) · médio ──────────────────────────
@@ -78,6 +85,18 @@ class MovieRepository {
   //
   // Depois (TASK 14): se cacheStatus() == fresh, NÃO busque na API (já está atualizado).
   Stream<List<Movie>> watchMovies() async* {
-    yield await remote.fetchMovies(); // 👈 substitua pelo fluxo acima
+    final cache = await readCache();
+    if (cache != null) {
+      yield cache.movies;
+      if (await cacheStatus() == CacheStatus.fresh) return;
+    }
+
+    try {
+      final freshMovies = await remote.fetchMovies();
+      await writeCache(freshMovies);
+      yield freshMovies;
+    } on OfflineException {
+      if (cache == null) rethrow;
+    }
   }
 }
