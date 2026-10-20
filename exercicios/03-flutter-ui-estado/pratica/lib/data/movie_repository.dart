@@ -3,8 +3,8 @@
 // O REPOSITÓRIO é a "fonte da verdade" da lista de filmes: a UI nunca fala com a API direto.
 // Offline-first = a tela mostra o que tem NO APARELHO primeiro e atualiza quando a rede deixa.
 //
-// TASK 13 (🧑‍💻 EM CASA · médio): cache-first — emitir o cache e, em seguida, o dado fresco.
-// TASK 14 (🧑‍💻 EM CASA · médio): validade do cache (TTL) — não buscar de novo se ainda está fresco.
+// TASK 13: cache-first — emite o cache e, em seguida, o dado fresco.
+// TASK 14: validade do cache (TTL) — não busca de novo enquanto o cache está fresco.
 //
 // Os testes estão em test/offline_test.dart (NÃO edite). Rode: flutter test test/offline_test.dart
 import 'dart:convert';
@@ -59,25 +59,34 @@ class MovieRepository {
         }),
       );
 
-  // ── TASK 14 — validade do cache · médio ─────────────────────────────────────────────
-  // Devolva:
-  //   CacheStatus.none  → não há cache;
-  //   CacheStatus.fresh → o cache foi salvo há MENOS que `ttl`;
-  //   CacheStatus.stale → o cache é mais velho que `ttl`.
-  // Use `now()` (NÃO DateTime.now()) — é o que deixa o teste controlar o relógio.
+  // ── TASK 14 — validade do cache ─────────────────────────────────────────────────────
+  //   none  → não há cache · fresh → salvo há MENOS que `ttl` · stale → mais velho que `ttl`.
+  // Usa `now()` (relógio injetado), não DateTime.now(): é o que deixa o teste controlar o tempo.
   Future<CacheStatus> cacheStatus() async {
-    return CacheStatus.none; // 👈 apague e implemente (TASK 14)
+    final cache = await readCache();
+    if (cache == null) return CacheStatus.none;
+    final age = now().difference(cache.savedAt);
+    return age < ttl ? CacheStatus.fresh : CacheStatus.stale;
   }
 
-  // ── TASK 13 — cache-first (stale-while-revalidate) · médio ──────────────────────────
-  // Hoje busca direto na API (e some offline). Faça assim:
-  //   1. leia o cache (readCache) e, se existir, `yield` os filmes dele NA HORA;
-  //   2. tente buscar na API (remote.fetchMovies()); se der certo: writeCache(...) e `yield` os frescos;
-  //   3. se der OfflineException E já emitiu cache → engula o erro (a tela segue com o cache);
-  //      se não havia cache → deixe o erro subir (a tela mostra "sem dados");
-  //
-  // Depois (TASK 14): se cacheStatus() == fresh, NÃO busque na API (já está atualizado).
+  // ── TASK 13 — cache-first (stale-while-revalidate) ──────────────────────────────────
   Stream<List<Movie>> watchMovies() async* {
-    yield await remote.fetchMovies(); // 👈 substitua pelo fluxo acima
+    // 1. o que está NO APARELHO vai pra tela na hora (inclusive offline)
+    final cached = await readCache();
+    if (cached != null) yield cached.movies;
+
+    // 2. TASK 14: cache ainda fresco → nem chama a API
+    if (await cacheStatus() == CacheStatus.fresh) return;
+
+    // 3. revalida na API e grava o fresco pra próxima abertura
+    try {
+      final fresh = await remote.fetchMovies();
+      await writeCache(fresh);
+      yield fresh;
+    } on OfflineException {
+      // offline COM cache: a tela segue com o que já foi emitido.
+      // offline SEM cache: não há o que mostrar → o erro sobe e a tela mostra "sem dados".
+      if (cached == null) rethrow;
+    }
   }
 }

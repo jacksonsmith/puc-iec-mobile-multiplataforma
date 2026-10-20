@@ -1,78 +1,70 @@
 // lib/state/favorites.dart
 //
 // Ex2 (TASK 2): estado compartilhado de favoritos com Riverpod (local).
-// Ex4 (TASK 7): mesmo provider, mas sincronizado com Firestore (cloud).
+// Ex4 (TASK 7): mesmo provider, sincronizado com Firestore (cloud).
+//
+// A interface não mudou da TASK 2 para a TASK 7 (Set<int> + toggle/clear): card, contador e
+// "limpar" continuam idênticos — só a fonte de verdade passou a ser um documento remoto.
 
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart'; // debugPrint, setEquals
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// TODO [TASK 7]: descomente quando for fazer a persistência Firestore
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/foundation.dart'; // debugPrint
 
-// ── Ex2 · TASK 2 — implemente o provider de favoritos · 🧑‍🏫 EM AULA (juntos) ──────────────────
-// Guarde os ids favoritados (um Set<int>) e exponha toggle(id) e clear():
-//
-//   class FavoritesNotifier extends Notifier<Set<int>> {
-//     @override
-//     Set<int> build() => {};
-//     void toggle(int id) {
-//       state = state.contains(id)
-//           ? ({...state}..remove(id))
-//           : {...state, id};
-//     }
-//     void clear() => state = {};          // usado pelo botão "limpar" (TASK 6)
-//   }
-//
-//   final favoritesProvider =
-//       NotifierProvider<FavoritesNotifier, Set<int>>(FavoritesNotifier.new);
-//
-// 👇 Apague o stub abaixo e implemente o provider acima primeiro (TASK 2).
-final favoritesProvider = Provider<Set<int>>((ref) => const <int>{});
+const _favDoc = 'favorites/meus-favoritos'; // 1 documento por aluno (meu projeto = meu Firestore)
 
-// ── Ex4 · TASK 7 — persista no Firestore · 🧑‍💻 SOLO (depois do TASK 2 funcionando) ────────────
-// Troque o Notifier acima por essa versão (mesma interface — toggle/clear — mas grava/lê Firestore):
-//
-//   const _favDoc = 'favorites/meus-favoritos'; // 1 documento por aluno (seu projeto = seu Firestore)
-//
-//   class FavoritesNotifier extends Notifier<Set<int>> {
-//     @override
-//     Set<int> build() {
-//       _load(); // dispara leitura async; state começa vazio até o Firestore responder
-//       return {};
-//     }
-//
-//     Future<void> _load() async {
-//       try {
-//         final doc = await FirebaseFirestore.instance.doc(_favDoc).get();
-//         final ids = (doc.data()?['ids'] as List<dynamic>?)?.cast<int>() ?? <int>[];
-//         state = ids.toSet();
-//       } catch (e) {
-//         // offline, ou `flutter test` — mantém vazio (mesmo comportamento do TASK 2).
-//         // O erro aparece no console: `permission-denied` = revise as REGRAS do Firestore.
-//         // (no `flutter test` aparece "No Firebase App" — é esperado, o Firebase não sobe em teste)
-//         debugPrint('Firestore (ler): $e');
-//       }
-//     }
-//
-//     Future<void> _persist(Set<int> next) async {
-//       try {
-//         await FirebaseFirestore.instance.doc(_favDoc).set({'ids': next.toList()});
-//       } catch (e) {
-//         // offline, ou `flutter test` (Firebase não inicializado em widget test) — tudo bem,
-//         // o estado local (otimista) já refletiu a mudança na UI.
-//         debugPrint('Firestore (gravar): $e'); // `permission-denied` = regras
-//       }
-//     }
-//
-//     void toggle(int id) {
-//       final next = state.contains(id) ? ({...state}..remove(id)) : {...state, id};
-//       state = next;       // UI reage na hora (otimista)
-//       _persist(next);     // grava no Firestore em paralelo
-//     }
-//
-//     void clear() {
-//       state = {};
-//       _persist({});
-//     }
-//   }
-//
-// 👉 Teste você mesmo: favorita um filme, dá F5 na página — o favorito sobrevive (antes, sumia).
+class FavoritesNotifier extends Notifier<Set<int>> {
+  /// Documento dos favoritos — null sem Firebase inicializado (ex.: `flutter test`):
+  /// aí o provider funciona só em memória, exatamente como na TASK 2.
+  DocumentReference<Map<String, dynamic>>? get _doc =>
+      Firebase.apps.isEmpty ? null : FirebaseFirestore.instance.doc(_favDoc);
+
+  @override
+  Set<int> build() {
+    // snapshots() em vez de um get() único: traz o que estava salvo ao abrir (sobrevive ao F5)
+    // E as mudanças feitas em outra aba/dispositivo, em tempo real. Com a persistência offline
+    // (TASK 10), o primeiro snapshot sai do cache local — funciona até sem rede.
+    final sub = _doc?.snapshots().listen(
+          (snap) => state = _idsFrom(snap.data()),
+          onError: (Object e) => debugPrint('Firestore (ler): $e'), // permission-denied = regras
+        );
+    ref.onDispose(() => sub?.cancel());
+    return {}; // vazio até o Firestore responder
+  }
+
+  void toggle(int id) {
+    final add = !state.contains(id);
+    state = add ? {...state, id} : ({...state}..remove(id)); // otimista: a UI reage na hora
+    // grava só o DELTA (arrayUnion/arrayRemove), não a lista inteira: duas abas mexendo ao
+    // mesmo tempo não apagam o favorito uma da outra (sem "lost update").
+    _write((doc) => doc.set(
+          {'ids': add ? FieldValue.arrayUnion([id]) : FieldValue.arrayRemove([id])},
+          SetOptions(merge: true),
+        ));
+  }
+
+  void clear() {
+    state = {};
+    _write((doc) => doc.set({'ids': <int>[]}));
+  }
+
+  /// Grava em segundo plano. Offline, o SDK guarda a escrita na fila local e envia na volta.
+  void _write(Future<void> Function(DocumentReference<Map<String, dynamic>> doc) op) {
+    final doc = _doc;
+    if (doc == null) return;
+    unawaited(op(doc).catchError((Object e) => debugPrint('Firestore (gravar): $e')));
+  }
+
+  static Set<int> _idsFrom(Map<String, dynamic>? data) =>
+      ((data?['ids'] as List<dynamic>?) ?? const []).map((id) => (id as num).toInt()).toSet();
+
+  /// Set novo com o mesmo conteúdo (ex.: o snapshot que "ecoa" a própria escrita) não notifica
+  /// ninguém — evita redesenhar a tela à toa.
+  @override
+  bool updateShouldNotify(Set<int> previous, Set<int> next) => !setEquals(previous, next);
+}
+
+final favoritesProvider =
+    NotifierProvider<FavoritesNotifier, Set<int>>(FavoritesNotifier.new);
