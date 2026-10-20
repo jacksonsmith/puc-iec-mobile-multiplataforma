@@ -8,25 +8,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:flutter/foundation.dart'; // debugPrint
 
-// ── Ex2 · TASK 2 — implemente o provider de favoritos · 🧑‍🏫 EM AULA (juntos) ──────────────────
-// Guarde os ids favoritados (um Set<int>) e exponha toggle(id) e clear():
-//
-//   class FavoritesNotifier extends Notifier<Set<int>> {
-//     @override
-//     Set<int> build() => {};
-//     void toggle(int id) {
-//       state = state.contains(id)
-//           ? ({...state}..remove(id))
-//           : {...state, id};
-//     }
-//     void clear() => state = {};          // usado pelo botão "limpar" (TASK 6)
-//   }
-//
-//   final favoritesProvider =
-//       NotifierProvider<FavoritesNotifier, Set<int>>(FavoritesNotifier.new);
-//
-// 👇 Apague o stub abaixo e implemente o provider acima primeiro (TASK 2).
-final favoritesProvider = Provider<Set<int>>((ref) => const <int>{});
+class FavoritesNotifier extends Notifier<Set<int>> {
+  @override
+  Set<int> build() => {};
+
+  void toggle(int id) {
+    state = state.contains(id) ? ({...state}..remove(id)) : {...state, id};
+  }
+
+  void clear() => state = {};
+}
+
+final favoritesProvider =
+    NotifierProvider<FavoritesNotifier, Set<int>>(FavoritesNotifier.new);
 
 // ── Ex4 · TASK 7 — persista no Firestore · 🧑‍💻 SOLO (depois do TASK 2 funcionando) ────────────
 // Troque o Notifier acima por essa versão (mesma interface — toggle/clear — mas grava/lê Firestore):
