@@ -35,5 +35,16 @@ describe('fetchPopularMovies', () => {
     await expect(fetchPopularMovies()).rejects.toThrow('401');
   });
 
-  it.todo('3. inclui param page=1 na chamada');
+  it('3. inclui param page=1 na chamada', async () => {
+    vi.spyOn(tmdbClient, 'get').mockResolvedValue({
+      data: { results: fakeMovies, page: 1, total_pages: 5, total_results: 100 },
+    });
+
+    await fetchPopularMovies();
+
+    expect(tmdbClient.get).toHaveBeenCalledWith(
+      '/movie/popular',
+      expect.objectContaining({ params: expect.objectContaining({ page: 1 }) }),
+    );
+  });
 });
