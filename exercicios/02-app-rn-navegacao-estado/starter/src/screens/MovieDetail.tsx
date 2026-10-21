@@ -1,7 +1,4 @@
 // src/screens/MovieDetail.tsx
-//
-// ATIVIDADE 2 — tela de detalhe do filme.
-// Demonstra TanStack Query em outra tela (já implementado).
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
@@ -17,6 +14,7 @@ import { useMovieById } from '@/queries/movies/get-movie-by-id';
 import { posterUrl } from '@/utils/poster-url';
 import { isTokenError } from '@/services/api';
 import TokenMissingScreen from '@/components/TokenMissingScreen';
+import { HeartButton } from '@/components/HeartButton';
 import type { RootStackParamList } from '@/routes/RootStack';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
@@ -33,22 +31,21 @@ export default function MovieDetail({ route, navigation }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Botão voltar custom (fallback caso header não esteja visível) */}
       <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
         <Text style={styles.backText}>← Voltar</Text>
       </Pressable>
 
       {poster && <Image source={{ uri: poster }} style={styles.poster} />}
 
-      {/* Linha com título + slot pro HeartButton (TASK 8) */}
       <View style={styles.headerRow}>
         <Text style={styles.title}>{data.title}</Text>
-        {/* TODO [TASK 8]: <HeartButton active={isFav} onPress={() => toggle(id)} /> */}
+        <HeartButton id={id} />
       </View>
 
       <Text style={styles.meta}>
         ⭐ {data.vote_average.toFixed(1)} · {data.release_date}
       </Text>
+
       <Text style={styles.overview}>{data.overview}</Text>
     </ScrollView>
   );
@@ -65,9 +62,25 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   backText: { fontSize: 15, color: '#0066cc', fontWeight: '500' },
-  poster: { width: 200, height: 300, alignSelf: 'center', borderRadius: 8 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: 'bold', flex: 1 },
+  poster: {
+    width: 200,
+    height: 300,
+    alignSelf: 'center',
+    borderRadius: 8,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    flex: 1,
+  },
   meta: { color: '#666' },
-  overview: { fontSize: 14, lineHeight: 20 },
+  overview: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
 });
