@@ -1,3 +1,117 @@
+# Atividade 3 — Flutter: UI + Estado + Firebase + Offline-first
+
+**Aluna:** Maria Luisa Lacerda  
+**Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
+
+## Como rodar
+
+### Pré-requisitos
+
+- Flutter instalado
+- Chrome ou outro navegador compatível
+- Projeto Firebase configurado
+- Arquivo `lib/firebase_options.dart` gerado pelo FlutterFire
+
+### Instalar as dependências
+
+Na pasta:
+
+```text
+exercicios/03-flutter-ui-estado/pratica
+```
+
+execute:
+
+```bash
+flutter pub get
+```
+
+### Executar os testes
+
+```bash
+flutter test
+```
+
+Todos os testes da atividade devem passar.
+
+### Executar o aplicativo
+
+A aplicação pode ser executada no Chrome:
+
+```bash
+flutter run -d chrome --web-port 5300
+```
+
+Caso o Flutter não consiga iniciar o Chrome automaticamente:
+
+```bash
+flutter run -d web-server --web-port 5300
+```
+
+Depois, abra manualmente:
+
+```text
+http://localhost:5300
+```
+
+## Estado local e estado na nuvem
+
+O aplicativo utiliza **Riverpod** para controlar o estado local da interface. Ao favoritar ou desfavoritar um filme, o estado é atualizado imediatamente no `favoritesProvider`, fazendo com que os widgets que observam esse provider sejam reconstruídos.
+
+O **Cloud Firestore** é utilizado para persistir os favoritos na nuvem. Dessa forma, o Riverpod é responsável pelo estado utilizado pela interface durante a execução do aplicativo, enquanto o Firestore mantém os dados persistidos entre diferentes execuções e recarregamentos da página.
+
+Esse comportamento pode ser observado ao favoritar um filme e pressionar `F5`: o estado local é recriado, mas os favoritos são carregados novamente a partir do Firestore.
+
+Além disso, o Firestore está configurado com persistência offline:
+
+```dart
+FirebaseFirestore.instance.settings =
+    const Settings(persistenceEnabled: true);
+```
+
+A aplicação também implementa uma estratégia **offline-first** para a lista de filmes. O `MovieRepository` consulta primeiro o cache local e, quando necessário, busca dados atualizados da fonte remota. O cache possui um tempo de validade (TTL), evitando chamadas desnecessárias quando os dados ainda estão atualizados.
+
+Quando o aplicativo está offline e existe cache disponível, os dados salvos continuam sendo exibidos ao usuário.
+
+## Funcionalidades implementadas
+
+- Exibição dos filmes em `MovieCard`
+- Favoritar e desfavoritar filmes
+- Contador de favoritos no cabeçalho
+- Limpeza da lista de favoritos
+- Estado compartilhado com Riverpod
+- Persistência dos favoritos no Cloud Firestore
+- Persistência offline do Firestore
+- Banner de modo offline
+- Serialização e desserialização de `Movie`
+- Estratégia cache-first
+- Controle de validade do cache com TTL
+- Fila de sincronização de operações offline
+- Tratamento de conflitos na fila
+- Persistência da fila após cada operação sincronizada
+
+## Evidência do Firestore
+
+A imagem abaixo demonstra os favoritos persistidos no Cloud Firestore.
+
+![Favoritos persistidos no Firestore](docs/firestore-favoritos.gif)
+
+Na coleção `favorites`, o documento `meus-favoritos` mantém os identificadores dos filmes selecionados. Após atualizar a página com `F5`, esses dados são carregados novamente e os respectivos filmes continuam marcados como favoritos.
+
+## Testes
+
+Para executar toda a suíte:
+
+```bash
+flutter test --reporter=compact
+```
+
+A implementação foi validada pelos testes automatizados fornecidos na atividade, incluindo os cenários de UI, estado compartilhado, cache offline, TTL e fila de sincronização.
+
+---
+
+> Orientações do professor. 
+
 # Filmes (Flutter) — pratica/ da Atividade 3
 
 App de catálogo de filmes em **Flutter**. Já roda; você completa os scaffolds (UI, estado, Firebase e offline-first) até `flutter test` ficar **verde**.
