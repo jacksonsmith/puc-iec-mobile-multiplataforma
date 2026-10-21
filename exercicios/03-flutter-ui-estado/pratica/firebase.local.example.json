@@ -1,0 +1,7 @@
+{
+  "FIRESTORE_EMULATOR": "false",
+  "FIREBASE_PROJECT_ID": "seu-projeto",
+  "FIREBASE_API_KEY": "sua-api-key-web",
+  "FIREBASE_APP_ID": "seu-app-id-web",
+  "FIREBASE_SENDER_ID": "seu-messaging-sender-id"
+}

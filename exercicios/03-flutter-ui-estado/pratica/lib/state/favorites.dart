@@ -1,78 +1,63 @@
 // lib/state/favorites.dart
 //
-// Ex2 (TASK 2): estado compartilhado de favoritos com Riverpod (local).
-// Ex4 (TASK 7): mesmo provider, mas sincronizado com Firestore (cloud).
+// Ex2 (TASK 2): estado compartilhado de favoritos com Riverpod.
+//
+// O provider é a ÚNICA fonte de verdade do app: o MovieCard, o contador do
+// header e o botão "limpar" leem/escrevem exatamente este mesmo estado —
+// nada é passado por parâmetro (prop drilling).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// TODO [TASK 7]: descomente quando for fazer a persistência Firestore
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/foundation.dart'; // debugPrint
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
-// ── Ex2 · TASK 2 — implemente o provider de favoritos · 🧑‍🏫 EM AULA (juntos) ──────────────────
-// Guarde os ids favoritados (um Set<int>) e exponha toggle(id) e clear():
-//
-//   class FavoritesNotifier extends Notifier<Set<int>> {
-//     @override
-//     Set<int> build() => {};
-//     void toggle(int id) {
-//       state = state.contains(id)
-//           ? ({...state}..remove(id))
-//           : {...state, id};
-//     }
-//     void clear() => state = {};          // usado pelo botão "limpar" (TASK 6)
-//   }
-//
-//   final favoritesProvider =
-//       NotifierProvider<FavoritesNotifier, Set<int>>(FavoritesNotifier.new);
-//
-// 👇 Apague o stub abaixo e implemente o provider acima primeiro (TASK 2).
-final favoritesProvider = Provider<Set<int>>((ref) => const <int>{});
+/// Notifier que guarda os ids favoritados como um `Set<int>`.
+///
+/// O estado é imutável: cada `toggle`/`clear` cria um **novo** Set, o que faz
+/// o Riverpod avisar todos os `ref.watch(favoritesProvider)` e redesenhar só
+/// quem depende dele.
+class FavoritesNotifier extends Notifier<Set<int>> {
+  @override
+  Set<int> build() {
+    // Testes locais exercitam o mesmo provider sem iniciar o Firebase.
+    if (Firebase.apps.isNotEmpty) {
+      final subscription = FirebaseFirestore.instance
+          .doc('favorites/meus-favoritos')
+          .snapshots()
+          .listen((doc) {
+        final ids = (doc.data()?['ids'] as List<dynamic>?) ?? [];
+        state = ids.cast<int>().toSet();
+      }, onError: (Object error) {
+        debugPrint('Firestore (ler): $error');
+      });
+      ref.onDispose(subscription.cancel);
+    }
+    return <int>{};
+  }
 
-// ── Ex4 · TASK 7 — persista no Firestore · 🧑‍💻 SOLO (depois do TASK 2 funcionando) ────────────
-// Troque o Notifier acima por essa versão (mesma interface — toggle/clear — mas grava/lê Firestore):
-//
-//   const _favDoc = 'favorites/meus-favoritos'; // 1 documento por aluno (seu projeto = seu Firestore)
-//
-//   class FavoritesNotifier extends Notifier<Set<int>> {
-//     @override
-//     Set<int> build() {
-//       _load(); // dispara leitura async; state começa vazio até o Firestore responder
-//       return {};
-//     }
-//
-//     Future<void> _load() async {
-//       try {
-//         final doc = await FirebaseFirestore.instance.doc(_favDoc).get();
-//         final ids = (doc.data()?['ids'] as List<dynamic>?)?.cast<int>() ?? <int>[];
-//         state = ids.toSet();
-//       } catch (e) {
-//         // offline, ou `flutter test` — mantém vazio (mesmo comportamento do TASK 2).
-//         // O erro aparece no console: `permission-denied` = revise as REGRAS do Firestore.
-//         // (no `flutter test` aparece "No Firebase App" — é esperado, o Firebase não sobe em teste)
-//         debugPrint('Firestore (ler): $e');
-//       }
-//     }
-//
-//     Future<void> _persist(Set<int> next) async {
-//       try {
-//         await FirebaseFirestore.instance.doc(_favDoc).set({'ids': next.toList()});
-//       } catch (e) {
-//         // offline, ou `flutter test` (Firebase não inicializado em widget test) — tudo bem,
-//         // o estado local (otimista) já refletiu a mudança na UI.
-//         debugPrint('Firestore (gravar): $e'); // `permission-denied` = regras
-//       }
-//     }
-//
-//     void toggle(int id) {
-//       final next = state.contains(id) ? ({...state}..remove(id)) : {...state, id};
-//       state = next;       // UI reage na hora (otimista)
-//       _persist(next);     // grava no Firestore em paralelo
-//     }
-//
-//     void clear() {
-//       state = {};
-//       _persist({});
-//     }
-//   }
-//
-// 👉 Teste você mesmo: favorita um filme, dá F5 na página — o favorito sobrevive (antes, sumia).
+  Future<void> _persist(Set<int> next) async {
+    if (Firebase.apps.isEmpty) return;
+    try {
+      await FirebaseFirestore.instance
+          .doc('favorites/meus-favoritos')
+          .set({'ids': next.toList()});
+    } catch (error) {
+      debugPrint('Firestore (gravar): $error');
+    }
+  }
+
+  /// Adiciona o id aos favoritos se ainda não estiver lá; remove se estiver.
+  void toggle(int id) {
+    state = state.contains(id) ? ({...state}..remove(id)) : {...state, id};
+    _persist(state);
+  }
+
+  /// Esvazia todos os favoritos (usado pelo botão "limpar" — TASK 5).
+  void clear() {
+    state = <int>{};
+    _persist(state);
+  }
+}
+
+final favoritesProvider =
+    NotifierProvider<FavoritesNotifier, Set<int>>(FavoritesNotifier.new);
