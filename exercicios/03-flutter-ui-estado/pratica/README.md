@@ -54,3 +54,19 @@ Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código
 Sem chave, o app usa a lista simulada (5 filmes). Para filmes reais: copie `.env.local.example` → `.env.local`,
 cole sua chave do TMDB (`TMDB_KEY=...`) e rode `./rodar.sh` / `rodar.bat` (ou F5 → "dados reais TMDB").
 O `.env.local` não vai pro git. Os testes (`flutter test`) nunca usam a chave.
+
+## Trade-offs
+
+O estado local é rápido e funciona sem rede, mas fica limitado ao dispositivo. O Firestore permite sincronizar favoritos entre sessões e dispositivos, porém depende de rede, latência e regras de acesso. A estratégia offline-first combina os dois: mostra primeiro o cache local e sincroniza os dados quando a conexão retorna.
+
+## Evidência
+
+Os prints abaixo mostram a persistência do favorito no Firestore:
+
+1. Nenhum filme favoritado.
+2. Modo avião ativado e filme favoritado.
+3. Após o refresh, o filme continua favoritado.
+
+![Passo 1 — nenhum favorito](./1.png)
+![Passo 2 — favorito criado no modo avião](./2.png)
+![Passo 3 — favorito preservado após refresh](./3.png)
