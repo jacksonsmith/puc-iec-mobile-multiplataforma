@@ -18,7 +18,7 @@ Abra `https://pwa-tmdb-aula4.vercel.app` e compare com um site comum (ex.: themo
 
 ## 2. Prova do offline no SEU build
 
-- [ ] Print do **DevTools → Application → Cache Storage** com `tmdb-api` e `tmdb-images` (com itens)
+- [x] Print do **DevTools → Application → Cache Storage** com `tmdb-api` e `tmdb-images` (com itens)
 - [x] Print do app em **modo avião** carregando a lista
 - [x] Print do aviso **"Nova versão disponível"** (ou explique por que não conseguiu reproduzir)
       ![Cache Files](./evidencias/cache-files.png)

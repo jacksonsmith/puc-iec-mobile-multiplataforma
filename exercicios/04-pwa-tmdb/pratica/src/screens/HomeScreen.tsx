@@ -47,7 +47,7 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
   if (error) return <ErrorScreen error={error} />;
 
   const isEmpty = !loading && movies.length === 0;
-  const FavoritesMovies = movies.filter((m) => isFavorite(m.id));
+  const favMovies = movies.filter((m) => isFavorite(m.id));
   // ─── tab: favorites — TODO 4 (Passos 1 e 2) e TODO 5 (banner) ───────────────
   // Passo 1: filtre `movies` por isFavorite(m.id) → `favMovies`
   //   Renderize um <MovieCard key={m.id} movie={m} isFavorite={true} onToggleFavorite={toggleFavorite} />
@@ -80,7 +80,7 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
             📡 Offline — exibindo dados do cache
           </div>
         )}
-        {FavoritesMovies.length === 0 && (
+        {favMovies.length === 0 && (
           <p
             style={{
               color: "#90a4ae",
@@ -95,9 +95,9 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
           </p>
         )}
 
-        {FavoritesMovies.length > 0 && (
+        {favMovies.length > 0 && (
           <section>
-            {FavoritesMovies.map((item) => (
+            {favMovies.map((item) => (
               <MovieCard
                 onToggleFavorite={toggleFavorite}
                 movie={item}
