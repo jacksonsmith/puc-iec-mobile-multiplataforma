@@ -6,9 +6,11 @@
 // Ex5 (TASK 8): banner com Remote Config.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../state/favorites.dart';
+// TASK 5/6 — vire `ConsumerWidget` (build(context, ref)) e descomente:
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import '../state/favorites.dart';
+// ⏸ [TASK 8 — ADIADA, pule]: descomente quando o remote_config.dart estiver pronto
+// import '../services/remote_config.dart';
 import '../widgets/movie_list.dart';
 import '../widgets/offline_banner.dart';
 import '../widgets/offline_toggle.dart';

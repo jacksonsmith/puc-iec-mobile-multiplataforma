@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useFavorites } from './hooks/useFavorites';
 import { HomeScreen } from './screens/HomeScreen';
 import { BottomTabBar, type Tab } from './components/BottomTabBar';
+import { UpdatePrompt } from './components/UpdatePrompt';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -11,6 +12,7 @@ export default function App() {
 
   return (
     <>
+      <UpdatePrompt />
       <HomeScreen
         activeTab={activeTab}
         isFavorite={isFavorite}
