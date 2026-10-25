@@ -1,56 +1,84 @@
-# Filmes (Flutter) — pratica/ da Atividade 3
+# Atividade 3 - Filmes em Flutter
 
-App de catálogo de filmes em **Flutter**. Já roda; você completa os scaffolds (UI, estado, Firebase e offline-first) até `flutter test` ficar **verde**.
+Catálogo com cards, favoritos compartilhados (Riverpod), Firestore e cache offline.
+A TASK 8 (Remote Config) foi adiada e não foi alterada.
 
-## Rodar
-```bash
-cd exercicios/03-flutter-ui-estado/pratica   # confirme: ls lib
+## Executar
+
+Validado com Flutter 3.35.7 e Dart 3.9.2.
+
+```sh
+cd exercicios/03-flutter-ui-estado/pratica
 flutter pub get
-flutter run -d chrome --web-port 5300   # PORTA FIXA (o cache offline fica no navegador, por porta)
-# 💡 Atalho no VS Code: aperte F5 (o .vscode/launch.json já fixa a porta 5300)
-#    ou Ctrl/Cmd+Shift+B (terminal integrado: r = hot reload) · ./rodar.sh (Mac/Linux) · rodar.bat (Windows)
+flutter run -d chrome --web-port 5300
 ```
 
-## Testar (é o seu checklist)
-```bash
-flutter test                         # tudo: Ex1–Ex3 (UI/estado) + offline (TASKs 11–15) + checklist
-flutter test test/offline_test.dart  # só offline-first — cada grupo = 1 TASK
-flutter analyze                      # precisa ficar limpo
+A porta fixa preserva o armazenamento do navegador. Abra primeiro online para
+preencher o cache e use o botão de avião para simular a falta de rede.
+Sem cache e sem conexão, o app informa que ainda não há dados salvos.
+
+## Firebase
+
+Projeto pessoal: `filmes-aula-3`, plano Spark gratuito. O app Web está configurado
+em `lib/firebase_options.dart`. A persistência offline do Firestore está habilitada
+em `lib/main.dart`. O documento `favorites/meus-favoritos` guarda `ids`, uma lista
+de inteiros. Snapshots sincronizam o provider entre abas; adições e remoções usam
+transformações atômicas para preservar alterações de outras abas. A UI reage
+imediatamente. Nos testes sem Firebase inicializado, o provider fica em memória.
+
+As regras permitem ler e gravar somente esse documento, conforme o enunciado;
+os demais caminhos ficam bloqueados. O documento é público e contém apenas IDs
+de filmes. Essa configuração didática não serve para dados pessoais.
+
+## Testar
+
+```sh
+flutter analyze
+flutter test --reporter expanded
 ```
-Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.dart` e `test/offline_test.dart` são a **spec** (não edite).
 
-## O que completar (🧑‍🏫 aula · 🧑‍💻 casa)
-| TASK | Arquivo | O quê | |
-|---|---|---|---|
-| 1 | `lib/widgets/movie_card.dart` | compor o card (título + ⭐ nota + ano) | 🧑‍🏫 |
-| 2 | `lib/state/favorites.dart` | `favoritesProvider` (`toggle` + `clear`) | 🧑‍🏫 |
-| 3 | `lib/main.dart` | projeto Firebase + `flutterfire configure` | 🧑‍🏫 |
-| 10 | `lib/main.dart` | persistência offline do Firestore (1 linha) | 🧑‍🏫 fácil |
-| 4 | `lib/widgets/movie_card.dart` | coração favoritando (`ConsumerWidget` + `ref`) | 🧑‍💻 |
-| 5 | `lib/screens/home_screen.dart` | contador `♥ N` no header | 🧑‍💻 |
-| 6 | `lib/screens/home_screen.dart` | botão **limpar** favoritos | 🧑‍💻 |
-| 7 | `lib/state/favorites.dart` | persistir favoritos no **Firestore** | 🧑‍💻 médio |
-| 8 | `lib/services/remote_config.dart` + home | ⏸ **ADIADA** (Remote Config) — não faz parte desta atividade, pule | — |
-| 9 | `test/favorites_test.dart` | **você escreve** um teste do provider | 🧑‍💻 |
-| 11 | `lib/widgets/offline_banner.dart` | aviso "você está offline" | 🧑‍💻 fácil |
-| 12 | `lib/models/movie.dart` | `toJson` / `fromJson` | 🧑‍💻 fácil |
-| 13 | `lib/data/movie_repository.dart` | repositório **cache-first** | 🧑‍💻 médio |
-| 14 | `lib/data/movie_repository.dart` | validade do cache (**TTL**) | 🧑‍💻 médio |
-| 15 | `lib/data/sync_queue.dart` | **fila de sincronização** (conflitos + flush) | 🧑‍💻 🔴 difícil |
+Resultado: análise sem problemas e 28 testes aprovados. Os testes fornecidos em
+`app_test.dart`, `checklist_test.dart` e `offline_test.dart` foram preservados.
+O teste autoral em `favorites_test.dart` verifica o estado inicialmente vazio,
+a inclusão e remoção com toggle, e a limpeza de dois favoritos.
 
-✈️ O botão de **avião** na barra do topo simula o modo offline. Veja o `guia-passo-a-passo.md` e o `enunciado.md` (rubrica).
+O repositório emite o cache primeiro. Cache com menos de 10 minutos evita nova
+consulta; cache vencido é exibido e revalidado. Sem rede, preserva o cache existente;
+sem cache, propaga o erro. A serialização também preserva o pôster opcional.
+A fila não duplica ações iguais, cancela ações opostas e envia em ordem, persistindo
+a remoção após cada sucesso. No primeiro erro, mantém as operações restantes.
+A SyncQueue é testada isoladamente; os favoritos usam a fila offline do Firestore.
+A ligação da fila própria ao provider é bônus e não foi incluída.
+
+## Evidências
+
+Matrix foi favoritado e a página foi recarregada completamente. O coração e o
+contador foram mantidos após o refresh.
+
+Antes do refresh:
+
+![Favorito antes do refresh](docs/01-favorito-antes-refresh.jpg)
+
+Depois do refresh:
+
+![Favorito após o refresh completo](docs/02-favorito-apos-refresh.jpg)
+
+Modo avião simulado com banner e lista do cache:
+
+![Aplicativo offline](docs/03-offline.jpg)
+
+## Local, cloud e offline-first: trade-offs
+
+O estado local em memória reage imediatamente e funciona sem internet, mas se perde
+ao recarregar o app e não é compartilhado entre dispositivos. O Firestore persiste
+os favoritos e sincroniza dispositivos e abas, com custos de latência, limites de
+uso e necessidade de regras de acesso. A abordagem offline-first combina resposta
+rápida com persistência: mostra primeiro o cache do aparelho e sincroniza quando a
+rede permite. Em contrapartida, exige controlar validade dos dados (TTL), conflitos,
+filas e falhas parciais; enquanto a sincronização não ocorre, os dados locais e
+remotos podem divergir temporariamente.
 
 ## Entrega
-Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código (estrutural) e posta uma nota **mínima**; a final sai no Canvas.
-- ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`.
 
-> **CI no seu fork (opcional):** habilite o *Actions* do fork — o workflow *Flutter test — Atividade 3* roda `flutter analyze` + `flutter test` a cada push.
-> **Versões:** precisa de Flutter **3.27+** (o `pubspec` já avisa se for mais antigo).
-
-> **Não comite** `.dart_tool/`, `build/`, `pubspec.lock` (já no `.gitignore`).
-
-## Dados reais do TMDB (opcional)
-
-Sem chave, o app usa a lista simulada (5 filmes). Para filmes reais: copie `.env.local.example` → `.env.local`,
-cole sua chave do TMDB (`TMDB_KEY=...`) e rode `./rodar.sh` / `rodar.bat` (ou F5 → "dados reais TMDB").
-O `.env.local` não vai pro git. Os testes (`flutter test`) nunca usam a chave.
+Enviar as alterações desta pasta em um fork e Pull Request no repositório da
+disciplina e colar o link no Canvas. As imagens acima documentam a execução local.
