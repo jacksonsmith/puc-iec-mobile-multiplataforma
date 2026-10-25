@@ -44,25 +44,42 @@ class SyncQueue {
     // (pronto) idempotente: o mesmo id nunca entra duas vezes.
     if (ops.any((o) => o.id == op.id)) return;
 
-    // ── TASK 15a · REGRAS DE CONFLITO (🧑‍💻 EM CASA · difícil, parte 1) ──────────────────────
-    // Procure na fila uma operação PENDENTE do MESMO filme (`o.movieId == op.movieId`):
-    //   • se for a MESMA ação (ambas add, ou ambas remove) → não enfileire `op` (já está lá);
-    //   • se for a AÇÃO OPOSTA (add × remove) → as duas se CANCELAM: remova a antiga da fila,
-    //     salve, e NÃO enfileire `op` (o servidor nem precisa saber).
-    // Em qualquer desses casos: `await _save(...)` quando mudar a fila, e dê `return`.
-    // 👇 escreva aqui
+    // ── TASK 15a · REGRAS DE CONFLITO ────────────────────────────────────────────────────
+    // Operação pendente do MESMO filme:
+    //   • mesma ação → `op` é redundante (o servidor vai receber a que já está lá);
+    //   • ação oposta → as duas se cancelam (favoritou e desfavoritou offline = nada mudou
+    //     pro servidor): sai a antiga e `op` nem entra. A ordem das outras é preservada.
+    final i = ops.indexWhere((o) => o.movieId == op.movieId);
+    if (i != -1) {
+      if (ops[i].add != op.add) {
+        ops.removeAt(i);
+        await _save(ops);
+      }
+      return;
+    }
 
     ops.add(op); // (pronto) sem conflito: vai pro fim da fila
     await _save(ops);
   }
 
-  // ── TASK 15b — flush (🧑‍💻 EM CASA · difícil, parte 2) ─────────────────────────────────
-  // Envie as operações na ORDEM da fila chamando `send(op)` (que pode lançar erro/offline).
-  //   - a cada sucesso: remova a operação da fila E persista (se o app fechar no meio, não reenvia);
-  //   - no PRIMEIRO erro: PARE (as restantes continuam na fila, na mesma ordem) e NÃO propague o erro;
-  //   - devolva quantas operações foram enviadas com sucesso.
-  // Dica: `final ops = await pending();` → percorra com for → try { await send(op); ... } catch (_) { break; }
+  // ── TASK 15b — flush ─────────────────────────────────────────────────────────────────
+  // Envia na ORDEM da fila. A cada sucesso, tira a operação e PERSISTE na hora (se o app
+  // fechar no meio, o que já foi não é reenviado). No primeiro erro, PARA: o resto fica na
+  // fila, na mesma ordem, pra próxima tentativa — e o erro não sobe (é esperado offline).
+  // Devolve quantas foram enviadas.
   Future<int> flush(Future<void> Function(PendingOp op) send) async {
-    return 0; // 👈 implemente
+    final ops = await pending();
+    var sent = 0;
+    while (ops.isNotEmpty) {
+      try {
+        await send(ops.first);
+      } catch (_) {
+        break;
+      }
+      ops.removeAt(0);
+      await _save(ops);
+      sent++;
+    }
+    return sent;
   }
 }
