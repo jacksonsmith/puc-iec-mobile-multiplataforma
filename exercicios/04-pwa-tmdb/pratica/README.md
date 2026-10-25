@@ -1,88 +1,80 @@
-# A4 — PWA TMDB: filmes instalável e offline
+# Atividade 4 — PWA TMDB
 
-**Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma — PUC Minas IEC
+React + Vite com filmes populares em português, favoritos no localStorage,
+IndexedDB, Service Worker e atualização por confirmação do usuário.
 
----
+## Configurar e executar
 
-## Antes de começar
-
-**Clone novo** (nunca sincronize fork antigo — é isso que gera conflito):
-
-```bash
-git clone https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma.git a4-pwa
-cd a4-pwa
-git switch -c feat/a4-pwa
-git remote add meu https://github.com/<seu-login>/puc-iec-mobile-multiplataforma.git
-
-# Entre na pasta do exercício e confirme que está no lugar certo
+```sh
 cd exercicios/04-pwa-tmdb/pratica
-ls src/services          # → deve mostrar: tmdb.ts  db.ts
+npm ci
+cp .env.example .env.local
 ```
 
-> **Windows:** `cd exercicios\04-pwa-tmdb\pratica` e `dir src\services`
+No Windows, use `copy .env.example .env.local`. Em `.env.local`, preencha:
 
-```bash
-npm install
-cp .env.example .env.local        # Windows: copy .env.example .env.local
-# Edite .env.local → VITE_TMDB_TOKEN=<seu token>
-# Gere em: https://www.themoviedb.org/settings/api  (Read Access Token, grátis)
-npm run dev                       # http://localhost:5173
+```dotenv
+VITE_TMDB_TOKEN=seu_API_Read_Access_Token
 ```
 
----
+Reutilize o **API Read Access Token** da atividade anterior, se disponível, ou
+consulte https://www.themoviedb.org/settings/api. É o token longo (geralmente começa
+com `eyJ`), não a API Key v3 de 32 caracteres. Não acrescente `Bearer`: o cliente
+Axios já acrescenta esse prefixo. `.env.local` está ignorado pelo Git.
 
-## Roteiro
-
-### Em aula com o professor (não avaliativo)
-
-1. Missão **site comum × PWA** (celular) · leitura de `01-MovieCard.test.tsx` (📘 modelo)
-2. **TODO 1** — você faz sozinho; `npm test` fica verde
-
-### Solo em casa (avaliativo)
-
-| Ordem | Onde | O quê | Dificuldade |
-|---|---|---|---|
-| 1 | `vite.config.ts` | **TODO 2** — `runtimeCaching` (API e pôsteres) | MÉDIO |
-| 2 | `vite.config.ts` + `src/components/UpdatePrompt.tsx` | **TODO 3** — atualização do app | MÉDIO |
-| 3 | `src/screens/HomeScreen.tsx` | **TODO 4** — aba Favoritos | FÁCIL |
-| 4 | `src/hooks/useOfflineStatus.ts` | **TODO 5** — hook online/offline + banner | FÁCIL |
-| 5 | `ENTREGA.md` | evidências + reflexão | — |
-
-A especificação de cada TODO está nos comentários do arquivo e no [`enunciado.md`](../enunciado.md).
-
----
-
-## Como verificar
-
-```bash
-npm test                      # TODO 1 (e os testes-modelo)
-npm run build && npm run preview   # http://localhost:4173 — o Service Worker SÓ roda aqui, não no npm run dev
+```sh
+npm test
+npm run build
+npm run preview -- --host 0.0.0.0
 ```
 
-No preview: DevTools → **Application** → Service Workers · Cache Storage · Manifest. Para simular offline: Network → **Offline**.
+Abra http://localhost:4173. No Codespaces, abra a porta 4173 no navegador;
+continue usando o mesmo endereço durante os testes, pois o armazenamento é por origem.
+O Service Worker funciona no **build/preview**, não em `npm run dev`.
+Depois de trocar o token, gere o build novamente.
 
-> **Deu `webServer was not able to start` ou erro estranho de merge?** Não resolva — clone de novo numa pasta nova e copie só os arquivos que você editou.
+## O que foi implementado
 
----
+- `fetchPopularMovies(page)`: `/movie/popular`, `language: pt-BR`, paginação e retorno de `data`.
+- API em `NetworkFirst`, timeout de 3 s, `tmdb-api`, 50 entradas por até 1 dia.
+- Pôsteres de **image.tmdb.org** em `CacheFirst`, `tmdb-images`, 200 entradas por até 7 dias; aceita respostas 0 e 200.
+- Registro `prompt`, avisos de disponibilidade offline e nova versão, com Atualizar/Depois.
+- Aba Favoritos filtrada, remoção e os dois estados vazios previstos no enunciado.
+- Hook de conexão com estado inicial do navegador, listeners e cleanup; banner offline nos favoritos.
 
-## Arquivos
+## Registrar evidências
 
-```
-pratica/
-  vite.config.ts                 ← ✏️  TODO 2 e TODO 3 (parte 1)
-  ENTREGA.md                     ← ✏️  evidências + reflexão (manual)
-  src/
-    services/tmdb.ts             ← ✏️  TODO 1
-    components/UpdatePrompt.tsx  ← ✏️  TODO 3 (parte 2)
-    screens/HomeScreen.tsx       ← ✏️  TODO 4
-    hooks/useOfflineStatus.ts    ← ✏️  TODO 5
-    repositories/moviesRepository.ts  ← IndexedDB + estratégias (já pronto)
-    __tests__/unit/              ← 01 📘 modelo · 02 TODO 1 · 03 📘 modelo
-```
+1. Compare https://pwa-tmdb-aula4.vercel.app com um site comum e registre o que observou.
+2. Abra o seu build online com token válido, aguarde os filmes e os pôsteres.
+3. Em DevTools → Application, confira o Service Worker e os caches `tmdb-api` e
+   `tmdb-images` **com itens**. Role a lista para carregar mais pôsteres se necessário.
+4. Recarregue online uma vez para garantir que o Service Worker controla a página.
+   Favorite um filme, ative DevTools → Network → Offline e recarregue.
+5. Confira filmes/pôsteres, favorito persistido e banner na aba Favoritos; capture os prints.
+6. Volte online. Com o preview aberto, altere um texto visível e execute `npm run build`.
+   Em Application → Service Workers clique Update; aguarde “Nova versão disponível”.
+   Depois deve apenas dispensar; Atualizar deve ativar a versão e recarregar.
+7. Se alterar um texto só para o teste, desfaça essa alteração após a captura.
+8. Salve os prints em `evidencias/` e atualize [ENTREGA.md](ENTREGA.md).
 
----
+O aviso “App pronto para uso offline” confirma o cache do shell. A API e os
+pôsteres só entram nos respectivos caches depois de serem acessados online.
+O modo avião simulado da base não substitui o teste real no DevTools.
 
-## Entrega
+## Validação e limites
 
-Veja a seção **Entrega** do [`enunciado.md`](../enunciado.md) (clone novo → branch `feat/a4-pwa` → remote `meu` → PR).
-O bot J.A.R.V.I.S. comenta a nota mínima automática a cada commit.
+`npm test` cobre o serviço TMDB, card, favoritos, conexão, aba Favoritos e avisos
+de atualização. Os testes usam mocks; não exigem nem validam o token pessoal.
+O build gera `dist/sw.js` e o manifest instalável. O validador estrutural do
+professor confere os TODOs; os 3 pontos de evidências/reflexão dependem da revisão manual.
+A suíte e2e fornecida depende de navegador e token válido e não foi executada nesta entrega.
+
+## Evidências registradas
+
+O Codespaces confirmou 19 testes aprovados. A execução com token pessoal foi
+registrada com caches preenchidos, favoritos offline e atualização por confirmação
+(versão aguardando e versão ativada). Consulte os seis prints em [ENTREGA.md](ENTREGA.md).
+A instalação e abertura em janela própria também foram registradas.
+A comparação direta também foi registrada: o PWA do professor manteve filmes
+após reload offline, enquanto a navegação offline no site TMDB falhou.
+As nove capturas e os limites da comparação estão no ENTREGA.md.
