@@ -14,9 +14,9 @@ Comparei a PWA https://pwa-tmdb-aula4.vercel.app com o site https://www.themovie
 
 | # | Site comum | PWA | Print/evidência |
 |---|---|---|---|
-| 1 | Ao ficar sem internet e recarregar, o site deixa de carregar ou exibe erro de conexão, pois depende da rede para buscar seus arquivos e dados. | A página PWA continua exibindo a estrutura e os conteúdos, mesmo sem conexão com a internet. O erro de conexão só aparece quando o cache é esvaziado no recarregamento. | ![alt text](image-2.png) |
-| 2 | Ao fechar e abrir novamente sem internet, o navegador ainda precisa acessar a rede para carregar o site, salvo algum cache convencional do navegador. | O PWA pode ser reaberta e continuar funcionando parcialmente offline, pois seus arquivos essenciais podem ter sido armazenados localmente. | ![alt text](image.png) |
-| 3 | Um site comum pode ser acessado somente pelo navegador, dependendo da conexão de rede. | O PWA pode ser instalado como um app na área de trabalho, abrindo em uma janela independente sem a barra comum do navegador. | ![alt text](image-1.png) |
+| 1 | Ao ficar sem internet e recarregar, o site deixa de carregar ou exibe erro de conexão, pois depende da rede para buscar seus arquivos e dados. | A página PWA continua exibindo a estrutura e os conteúdos, mesmo sem conexão com a internet. O erro de conexão só aparece quando o cache é esvaziado no recarregamento. | [TMDB](evidencias/TMDB_Offline.png); [PWA](evidencias/PWA_Offline.png) |
+| 2 | Ao fechar e abrir novamente sem internet, o navegador ainda precisa acessar a rede para carregar o site, salvo algum cache convencional do navegador. | O PWA pode ser reaberta e continuar funcionando parcialmente offline, pois seus arquivos essenciais podem ter sido armazenados localmente. | [PWA](evidencias/ReabrirOffline.gif) |
+| 3 | Um site comum pode ser acessado somente pelo navegador, dependendo da conexão de rede. | O PWA pode ser instalado como um app na área de trabalho, abrindo em uma janela independente sem a barra comum do navegador. | [PWA](evidencias/Instalacao.png) |
 
 ## 2. Prova do offline no SEU build
 
