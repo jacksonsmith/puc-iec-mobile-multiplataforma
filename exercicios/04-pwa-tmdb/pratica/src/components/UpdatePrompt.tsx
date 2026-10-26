@@ -1,24 +1,53 @@
 // src/components/UpdatePrompt.tsx
-// ✅ AVALIATIVO — TODO 3 (parte 2)
+// TODO 3 (parte 2): avisos do Service Worker (registerType: 'prompt').
 //
-// O app já renderiza <UpdatePrompt /> em App.tsx. Seu trabalho é fazer ele funcionar.
+//   offlineReady → o app terminou de ser cacheado e já abre sem rede
+//   needRefresh  → há uma nova versão em espera; só ativa quando o usuário aceita
 //
-// Use o hook do vite-plugin-pwa:
-//   import { useRegisterSW } from 'virtual:pwa-register/react';
-//
-// Ele devolve dois estados (cada um é um par [valor, setter]) e uma função:
-//   - offlineReady  → true quando o app terminou de ser cacheado ("já funciona offline")
-//   - needRefresh   → true quando existe uma NOVA versão esperando (SW em "waiting")
-//   - updateServiceWorker(true) → ativa a nova versão e recarrega a página
-//
-// O que o componente deve mostrar:
-//   1. offlineReady  → aviso "App pronto para uso offline" + botão para dispensar (setOfflineReady(false))
-//   2. needRefresh   → aviso "Nova versão disponível" + botão "Atualizar" (updateServiceWorker(true))
-//                      + botão "Depois" que dispensa o aviso (setNeedRefresh(false))
-//   3. nenhum dos dois → não renderiza nada (return null)
-//
-// ⚠️ Só funciona com registerType: 'prompt' (TODO 3, parte 1) e no BUILD (npm run build && npm run preview).
+// Só aparece no build (npm run build && npm run preview): o SW não roda no npm run dev.
+
+import { useRegisterSW } from 'virtual:pwa-register/react';
+import { styles } from './UpdatePrompt.styles';
+
+// Abas que ficam abertas por horas nunca recarregam: pergunta ao servidor por versão nova.
+const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
 
 export function UpdatePrompt() {
-  return null; // TODO 3 — implemente
+  const {
+    offlineReady: [offlineReady, setOfflineReady],
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW({
+    onRegisteredSW(_swUrl, registration) {
+      if (!registration) return;
+      setInterval(() => {
+        registration.update().catch(() => {}); // offline: tenta de novo no próximo ciclo
+      }, UPDATE_CHECK_INTERVAL_MS);
+    },
+  });
+
+  if (!offlineReady && !needRefresh) return null;
+
+  const dismiss = () => {
+    setOfflineReady(false);
+    setNeedRefresh(false);
+  };
+
+  return (
+    <div role="status" aria-live="polite" className="update-toast" style={styles.toast}>
+      <span style={styles.message}>
+        {needRefresh ? '🔄 Nova versão disponível' : '✅ App pronto para uso offline'}
+      </span>
+      <div style={styles.actions}>
+        {needRefresh && (
+          <button onClick={() => updateServiceWorker(true)} style={styles.primary}>
+            Atualizar
+          </button>
+        )}
+        <button onClick={dismiss} style={styles.secondary}>
+          {needRefresh ? 'Depois' : 'OK'}
+        </button>
+      </div>
+    </div>
+  );
 }
