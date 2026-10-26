@@ -9,10 +9,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { Movie } from '@/types/movie';
 import { posterUrl } from '@/utils/poster-url';
 import type { RootStackParamList } from '@/routes/RootStack';
-// TODO [TASK 6]: import store de favoritos
-// import { useFavoritesStore } from '@/store/favoritesStore';
-// TODO [TASK 8]: import HeartButton (criar componente Reanimated)
-// import HeartButton from './HeartButton';
+import { useQueryClient } from '@tanstack/react-query';
+import { useFavoritesStore } from '@/store/favoritesStore';
+import { movieQueryOptions } from '@/queries/movies/get-movie-by-id';
+import HeartButton from './HeartButton';
+import SwipeableCard from './SwipeableCard';
 
 type Props = { movie: Movie };
 
@@ -20,34 +21,32 @@ export default function MovieCard({ movie }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const poster = posterUrl(movie.poster_path, 'w185');
 
-  // TODO [TASK 6]: ler isFavorite + toggle do store
-  // const isFav = useFavoritesStore((s) => s.isFavorite(movie.id));
-  // const toggle = useFavoritesStore((s) => s.toggle);
+  const isFav = useFavoritesStore((s) => s.isFavorite(movie.id));
+  const toggle = useFavoritesStore((s) => s.toggle);
+  const add = useFavoritesStore((s) => s.add);
+  const remove = useFavoritesStore((s) => s.remove);
+  const queryClient = useQueryClient();
+
+  const openDetail = () => {
+    // Bônus: aquece o cache do detalhe ANTES de navegar (a tela abre sem loading)
+    queryClient.prefetchQuery(movieQueryOptions(movie.id));
+    navigation.navigate('Detail', { id: movie.id, title: movie.title });
+  };
 
   return (
-    <Pressable
-      onPress={() => navigation.navigate('Detail', { id: movie.id, title: movie.title })}
-      style={styles.card}
-    >
-      {poster && <Image source={{ uri: poster }} style={styles.poster} />}
-      <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={2}>
-          {movie.title}
-        </Text>
-        <Text style={styles.meta}>⭐ {movie.vote_average.toFixed(1)}</Text>
-      </View>
+    <SwipeableCard onSwipeRight={() => add(movie.id)} onSwipeLeft={() => remove(movie.id)}>
+      <Pressable onPress={openDetail} style={styles.card}>
+        {poster && <Image source={{ uri: poster }} style={styles.poster} />}
+        <View style={styles.info}>
+          <Text style={styles.title} numberOfLines={2}>
+            {movie.title}
+          </Text>
+          <Text style={styles.meta}>⭐ {movie.vote_average.toFixed(1)}</Text>
+        </View>
 
-      {/* TODO [TASK 8]: substituir por <HeartButton active={isFav} onPress={() => toggle(movie.id)} /> */}
-      <Pressable
-        onPress={(e) => {
-          e.stopPropagation();
-          // TODO [TASK 6]: toggle(movie.id)
-        }}
-        style={styles.heart}
-      >
-        <Text style={styles.heartIcon}>🤍</Text>
+        <HeartButton active={isFav} onPress={() => toggle(movie.id)} />
       </Pressable>
-    </Pressable>
+    </SwipeableCard>
   );
 }
 
@@ -64,6 +63,4 @@ const styles = StyleSheet.create({
   info: { flex: 1, gap: 4 },
   title: { fontSize: 16, fontWeight: '600' },
   meta: { color: '#666', fontSize: 12 },
-  heart: { padding: 8 },
-  heartIcon: { fontSize: 24 },
 });
