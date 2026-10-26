@@ -44,15 +44,20 @@ class SyncQueue {
     // (pronto) idempotente: o mesmo id nunca entra duas vezes.
     if (ops.any((o) => o.id == op.id)) return;
 
-    // ── TASK 15a · REGRAS DE CONFLITO (🧑‍💻 EM CASA · difícil, parte 1) ──────────────────────
-    // Procure na fila uma operação PENDENTE do MESMO filme (`o.movieId == op.movieId`):
-    //   • se for a MESMA ação (ambas add, ou ambas remove) → não enfileire `op` (já está lá);
-    //   • se for a AÇÃO OPOSTA (add × remove) → as duas se CANCELAM: remova a antiga da fila,
-    //     salve, e NÃO enfileire `op` (o servidor nem precisa saber).
-    // Em qualquer desses casos: `await _save(...)` quando mudar a fila, e dê `return`.
-    // 👇 escreva aqui
+    for (var i = 0; i < ops.length; i++) {
+      final existing = ops[i];
+      if (existing.movieId != op.movieId) continue;
 
-    ops.add(op); // (pronto) sem conflito: vai pro fim da fila
+      if (existing.add == op.add) {
+        return;
+      }
+
+      ops.removeAt(i);
+      await _save(ops);
+      return;
+    }
+
+    ops.add(op);
     await _save(ops);
   }
 
@@ -63,6 +68,21 @@ class SyncQueue {
   //   - devolva quantas operações foram enviadas com sucesso.
   // Dica: `final ops = await pending();` → percorra com for → try { await send(op); ... } catch (_) { break; }
   Future<int> flush(Future<void> Function(PendingOp op) send) async {
-    return 0; // 👈 implemente
+    var ops = await pending();
+    var sent = 0;
+
+    while (ops.isNotEmpty) {
+      final op = ops.first;
+      try {
+        await send(op);
+        sent++;
+        ops.removeAt(0);
+        await _save(ops);
+      } catch (_) {
+        break;
+      }
+    }
+
+    return sent;
   }
 }

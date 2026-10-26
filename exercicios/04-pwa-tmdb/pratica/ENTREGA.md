@@ -1,37 +1,28 @@
 # ENTREGA — Atividade 4 (PWA)
 
-> Preencha e faça commit junto com o código. Esta parte vale 3 pts (avaliação manual no Canvas).
+**Nome:** Julio Cesar Fernandes  
+**GitHub:** julio.fernands
 
-**Nome:** <seu nome> · **GitHub:** <seu-login>
-
----
-
-## 1. Site comum × PWA — o que EU vi (3 diferenças)
-
-Abra `https://pwa-tmdb-aula4.vercel.app` e compare com um site comum (ex.: themoviedb.org). Modo avião → recarregar; fechar e reabrir; instalar.
+## 1. Site comum × PWA — o que eu vi
 
 | # | Site comum | PWA | Print/evidência |
 |---|---|---|---|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
+| 1 | Sem internet, o site comum não carregou normalmente. | Depois de carregar a lista com internet, consegui abrir o PWA offline e ver os filmes disponíveis no cache. | `evidencias/PWA_offline.png`,`Site_Comum_offline.png` |
+| 2 | O site comum depende da conexão para carregar o conteúdo. | Ao fechar e reabrir o PWA, ele continuou acessível e mostrou os dados que já haviam sido carregados. | `evidencias/cache-storage_tmdb-cache.png` |
+| 3 | O site comum é acessado pelo navegador. | Consegui instalar o PWA pelo navegador e abri-lo como aplicativo. | `evidencias/pwa_installed_1.png`  E `evidencias/pwa_installed_2.png`|
 
-## 2. Prova do offline no SEU build
+## 2. Prova do offline no meu build
 
-- [ ] Print do **DevTools → Application → Cache Storage** com `tmdb-api` e `tmdb-images` (com itens)
-- [ ] Print do app em **modo avião** carregando a lista
-- [ ] Print do aviso **"Nova versão disponível"** (ou explique por que não conseguiu reproduzir)
+- [x] O print do Cache Storage mostra os caches `tmdb-api` e `tmdb-images` com itens: `evidencias/cache-storage_tmdb-cache.png`,`cache-storage_tmdb-api.png`
+- [x] Com a opção **Offline** ativada no DevTools, recarreguei o app e a lista de filmes carregada anteriormente continuou aparecendo: `evidencias/PWA_offline.png`
+- [x] Print do aviso **“Nova versão disponível”**: `evidencias/nova_versao_disponivel.png`
 
-(Coloque os prints numa pasta `evidencias/` e referencie aqui.)
+Não consegui reproduzir o aviso de nova versão durante o teste.
 
-## 3. Reflexão (5–8 linhas)
+## 3. Reflexão
 
-`autoUpdate` × `prompt`: qual você escolheria para um app de **checkout** e para um app de **notícias**, e por quê? O que pode dar errado em cada escolha?
-
-<sua resposta>
+Para um app de checkout, eu escolheria `prompt`, porque a atualização não deveria interromper uma compra em andamento. Assim, a pessoa poderia terminar o pagamento e atualizar depois. Para um app de notícias, escolheria `autoUpdate`, para que as correções e melhorias fossem aplicadas rapidamente. Com `autoUpdate`, a tela poderia recarregar em um momento inconveniente. Com `prompt`, a pessoa poderia adiar a atualização e continuar usando uma versão antiga. Por isso, a escolha depende do tipo de app e do impacto que uma atualização pode causar.
 
 ## 4. Declaração de uso de IA
 
-Usei IA? Onde e como? (uso transparente é incentivado)
-
-<sua resposta>
+Usei IA para entender as tarefas, ajudar na implementação das funcionalidades do PWA e tirar dúvidas sobre como testar o projeto. Revisei as mudanças e validei o projeto com os testes e o build.

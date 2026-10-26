@@ -1,10 +1,35 @@
 # Starter — Aula 2 (Arquitetura Mobile + Atividade 2)
-
+**Aluno(a):** Julio Cesar Fernandes 
 App Expo + TypeScript com arquitetura profissional separando **services**, **queries**, **contexts**, **screens**, **components**.
 
 > Você vai usar esse starter no **hands-on da Aula 2** (em sala) e na **Atividade 2** (entrega ver Canvas, 15pts).
 
 ---
+## Funcionalidades
+
+- Exibição de filmes populares.
+- Marcação e remoção de filmes dos favoritos.
+- Persistência dos favoritos no dispositivo.
+- Animação de favoritos com React Native Reanimated — **opção [A]**.
+
+## Tecnologias
+
+- React Native e Expo
+- TypeScript
+- React Navigation
+- TanStack Query
+- Zustand
+- MMKV
+- React Native Reanimated
+
+## Capturas de tela
+
+![Captura de tela do aplicativo](./assets/screenshot.png)
+
+## Demonstração
+
+![Demonstração do aplicativo](./assets/screencast.gif)
+
 
 ## Arquitetura
 
