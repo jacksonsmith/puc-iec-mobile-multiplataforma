@@ -10,8 +10,8 @@ Completar uma Progressive Web App de filmes populares do TMDB, com instalação,
 persistência de favoritos e suporte à consulta offline. A base já fornece o Service Worker,
 IndexedDB, busca, lazy loading, instalação e o fluxo de cache.
 
-Esta prática cobre os 15 pontos avaliativos do enunciado. O bônus do `MovieCard` não faz parte
-desta entrega.
+Esta prática cobre os 12 pontos da validação automática e os 3 pontos de avaliação manual
+descritos em [`ENTREGA.md`](ENTREGA.md). O bônus do `MovieCard` não faz parte desta entrega.
 
 ## Antes de começar
 
@@ -78,11 +78,15 @@ com um teste que simula `tmdbClient.get`, evitando chamadas reais à API.
 
 | Critério | Pontos |
 |---|---:|
-| TODO 1 — `fetchPopularMovies` chama `tmdbClient.get()` e retorna os dados | 4 |
-| TODO 2 — três testes reais de `useFavorites` | 4 |
-| TODO 3, passo 1 — filtra e renderiza a lista de favoritos | 3 |
-| TODO 3, passo 2 — estados vazios com e sem filmes carregados | 2 |
-| TODO 3, passo 3 — listeners offline/online, cleanup e uso na tela | 2 |
+| TODO 1 — `fetchPopularMovies` | 2 |
+| TODO 2a — API com `NetworkFirst` e timeout de 3 segundos | 2 |
+| TODO 2b — pôsteres com `CacheFirst` | 2 |
+| TODO 3a — registro PWA com `prompt` | 1 |
+| TODO 3b — `UpdatePrompt` usando `useRegisterSW` | 2 |
+| TODO 4 — aba Favoritos e estado vazio | 2 |
+| TODO 5 — status offline e banner | 1 |
+| **Subtotal automático** | **12** |
+| Evidências, comparação site × PWA e reflexão no `ENTREGA.md` | 3 |
 | **Total** | **15** |
 
 ---
@@ -105,6 +109,10 @@ npm run validate -- --entrega ../pratica
 
 O validator deve aprovar todos os critérios e gerar `grade.json`. Esse arquivo é gerado na
 pasta de onde o comando for executado e não deve ser incluído na entrega.
+
+O `ENTREGA.md` deve ser preenchido com as capturas reais feitas no DevTools. Ele documenta
+instalação, Service Worker, cache da API, cache dos pôsteres, funcionamento offline e a
+comparação entre o site responsivo e a PWA instalada.
 
 ---
 
@@ -134,9 +142,11 @@ pratica/
     hooks/
       useTmdb.ts          ← usa o repository (já pronto)
       useFavorites.ts     ← favoritos no localStorage (já pronto)
-      useOfflineStatus.ts ← TODO 3 Passo 3 (status online/offline)
+      useOfflineStatus.ts ← TODO 5 (status online/offline)
     screens/
-      HomeScreen.tsx   ← ✏️  TODO 3 Passos 1 e 2 (aba Favoritos)
+      HomeScreen.tsx   ← TODO 4 (aba Favoritos)
+    components/
+      UpdatePrompt.tsx  ← TODO 3b (aviso de atualização)
     __tests__/
       unit/
         01-MovieCard.test.tsx    ← 📘 MODELO — leia primeiro
@@ -156,6 +166,10 @@ git add pratica/src/services/tmdb.ts
 git add pratica/src/__tests__/unit/03-useFavorites.test.ts
 git add pratica/src/screens/HomeScreen.tsx
 git add pratica/src/hooks/useOfflineStatus.ts
+git add pratica/vite.config.ts
+git add pratica/src/components/UpdatePrompt.tsx
+git add pratica/src/vite-env.d.ts
+git add pratica/ENTREGA.md
 git commit -m "feat(a4-pwa): fetchPopularMovies + testes + aba Favoritos"
 git push origin feat/a4-pwa
 ```
