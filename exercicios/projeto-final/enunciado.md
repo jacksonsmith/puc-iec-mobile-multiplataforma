@@ -2,8 +2,8 @@
 
 **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
 **Modalidade:** grupo (3 a 4 alunos, auto-organizados)
-**Entrega:** PR no fork do repo público (data a definir — combinar na próxima aula)
-**Apresentação:** ao vivo, com demo funcionando (10min + 5min Q&A)
+**Entrega:** PR no fork do repo público — prazo: ver Canvas
+**Apresentação:** ao vivo, com demo funcionando (10min + 5min Q&A) — data: ver Canvas
 
 ---
 
@@ -127,7 +127,19 @@ apresentação são avaliadas **manualmente depois**, no Canvas — não aparece
 mesma branch — o autograder **roda de novo automaticamente** a cada commit novo no PR. Podem
 iterar quantas vezes quiserem até a apresentação.
 
-**7. Apresentação** — ao vivo, com demo funcionando (10min + 5min Q&A), data a combinar.
+**7. Apresentação** — ao vivo, com demo funcionando (10min + 5min Q&A), data: ver Canvas.
+
+## Marcos sugeridos (o projeto dura 2 semanas)
+
+Não há apresentação intermediária — o **PR aberto cedo** é o checkpoint (sem nota; o bot comenta o
+progresso a cada push).
+
+| Quando | Marco | Como comprovar |
+|---|---|---|
+| Semana 1 (início) | Grupo formado + combinação reservada | Issue `Grupo <nomes> — <tema> + <framework>` |
+| Meio do caminho | App builda + 2 dos 5 flows verdes | PR final aberto (pode ser *draft*) |
+| Semana 2 | 5 flows verdes + README reprodutível; ensaio da demo | PR final atualizado |
+| Fim | Apresentação ao vivo (10min + 5min Q&A) | App rodando |
 
 ## Rubrica (30 pts)
 
