@@ -19,6 +19,50 @@
 //
 // ⚠️ Só funciona com registerType: 'prompt' (TODO 3, parte 1) e no BUILD (npm run build && npm run preview).
 
+import { useRegisterSW } from 'virtual:pwa-register/react';
+
 export function UpdatePrompt() {
-  return null; // TODO 3 — implemente
+  const {
+    offlineReady: [offlineReady, setOfflineReady],
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW();
+
+  if (!offlineReady && !needRefresh) return null;
+
+  const noticeStyle: React.CSSProperties = {
+    position: 'fixed',
+    right: 16,
+    bottom: 88,
+    zIndex: 1000,
+    maxWidth: 360,
+    padding: 16,
+    borderRadius: 12,
+    background: '#1c2d40',
+    color: '#fff',
+    boxShadow: '0 4px 16px #0006',
+  };
+
+  if (needRefresh) {
+    return (
+      <aside role="status" aria-live="polite" style={noticeStyle}>
+        <p style={{ margin: '0 0 12px' }}>Nova versão disponível</p>
+        <button type="button" onClick={() => updateServiceWorker(true)}>
+          Atualizar
+        </button>{' '}
+        <button type="button" onClick={() => setNeedRefresh(false)}>
+          Depois
+        </button>
+      </aside>
+    );
+  }
+
+  return (
+    <aside role="status" aria-live="polite" style={noticeStyle}>
+      <span>App pronto para uso offline</span>{' '}
+      <button type="button" onClick={() => setOfflineReady(false)} aria-label="Dispensar aviso">
+        ×
+      </button>
+    </aside>
+  );
 }
