@@ -19,6 +19,68 @@
 //
 // ⚠️ Só funciona com registerType: 'prompt' (TODO 3, parte 1) e no BUILD (npm run build && npm run preview).
 
+import { useRegisterSW } from 'virtual:pwa-register/react';
+
+const boxStyle: React.CSSProperties = {
+  position: 'fixed',
+  left: 16,
+  right: 16,
+  bottom: 80,
+  zIndex: 1000,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 12,
+  padding: '12px 16px',
+  borderRadius: 12,
+  background: '#0d253f',
+  color: '#fff',
+  border: '1px solid #01b4e4',
+  fontSize: 14,
+};
+
+const btnStyle: React.CSSProperties = {
+  padding: '6px 12px',
+  borderRadius: 8,
+  border: '1px solid #01b4e4',
+  background: 'transparent',
+  color: '#fff',
+  cursor: 'pointer',
+};
+
 export function UpdatePrompt() {
-  return null; // TODO 3 — implemente
+  const {
+    offlineReady: [offlineReady, setOfflineReady],
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW();
+
+  if (needRefresh) {
+    return (
+      <div role="alert" style={boxStyle}>
+        <span>Nova versão disponível</span>
+        <span style={{ display: 'flex', gap: 8 }}>
+          <button style={btnStyle} onClick={() => updateServiceWorker(true)}>
+            Atualizar
+          </button>
+          <button style={btnStyle} onClick={() => setNeedRefresh(false)}>
+            Depois
+          </button>
+        </span>
+      </div>
+    );
+  }
+
+  if (offlineReady) {
+    return (
+      <div role="status" style={boxStyle}>
+        <span>App pronto para uso offline</span>
+        <button style={btnStyle} onClick={() => setOfflineReady(false)}>
+          OK
+        </button>
+      </div>
+    );
+  }
+
+  return null;
 }
