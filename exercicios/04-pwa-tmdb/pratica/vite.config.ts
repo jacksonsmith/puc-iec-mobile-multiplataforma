@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 /// <reference types="vitest" />
 
+const ONE_DAY = 60 * 60 * 24; // em segundos (unidade do maxAgeSeconds do Workbox)
+
 export default defineConfig({
   test: {
     environment: 'happy-dom',
@@ -33,24 +35,31 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        // TODO 2 — runtimeCaching: é AQUI que mora o PWA offline do app.
-        //
-        // Escreva DUAS regras (cada uma é um objeto { urlPattern, handler, options }):
-        //
-        //  (a) API de filmes  → https://api.themoviedb.org/...
-        //      - estratégia que tenta a REDE primeiro e cai pro cache se falhar
-        //      - desiste da rede após 3 segundos (networkTimeoutSeconds)
-        //      - cacheName 'tmdb-api' · expiration: no máx. 50 entradas, 1 dia
-        //
-        //  (b) Pôsteres → qual é o HOST das imagens? Abra o app, DevTools → Network → Img
-        //      e olhe a URL de um pôster (NÃO é o mesmo host da API!)
-        //      - estratégia que serve do CACHE primeiro (imagem não muda)
-        //      - cacheName 'tmdb-images' · expiration: no máx. 200 entradas, 7 dias
-        //      - pôsteres vêm de outra origem SEM CORS → a resposta é "opaca" (status 0):
-        //        só entra no cache se você liberar o status 0 em cacheableResponse
-        //
-        // Referências: slides "Cache strategies" e "vite-plugin-pwa" · web.dev/learn/pwa (módulo Caching)
-        runtimeCaching: [],
+        // TODO 2: cada regra casa pela URL. API e pôsteres vêm de hosts diferentes.
+        runtimeCaching: [
+          {
+            // Lista muda todo dia: rede primeiro; sem resposta em 3 s (ou offline), usa o cache.
+            urlPattern: /^https:\/\/api\.themoviedb\.org\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'tmdb-api',
+              networkTimeoutSeconds: 3,
+              expiration: { maxEntries: 50, maxAgeSeconds: ONE_DAY },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+          {
+            // Pôster de um path não muda: cache primeiro, rede só no primeiro acesso.
+            // <img> de outra origem sem CORS chega opaca (status 0), por isso o 0 liberado.
+            urlPattern: /^https:\/\/image\.tmdb\.org\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tmdb-images',
+              expiration: { maxEntries: 200, maxAgeSeconds: 7 * ONE_DAY },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],
