@@ -48,18 +48,22 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
 
   const isEmpty = !loading && movies.length === 0;
 
-  // ─── tab: favorites (TODO 4 lista + estado vazio · TODO 5 banner offline) ──────
+  // TODO 5: sem rede, o usuário precisa saber que a lista pode estar desatualizada,
+  // então o aviso aparece em todas as abas (não só em Favoritos).
+  const offlineBanner = !isOnline && (
+    <div role="status" style={styles.offlineBanner}>
+      📡 Offline — exibindo dados do cache
+    </div>
+  );
+
+  // ─── tab: favorites (TODO 4 lista + estado vazio) ────────────────────────────
   // Mostra os favoritos entre os filmes já carregados (rede ou IndexedDB).
   if (activeTab === 'favorites') {
     const favMovies = movies.filter((m) => isFavorite(m.id));
     return (
       <main style={styles.main} className="main-content">
         <AppHeader title="★ Favoritos" />
-        {!isOnline && (
-          <div role="status" style={styles.offlineBanner}>
-            📡 Offline — exibindo dados do cache
-          </div>
-        )}
+        {offlineBanner}
         {favMovies.length === 0 ? (
           <p style={styles.emptyState}>
             {isEmpty ? 'Nenhum filme carregado ainda.' : 'Nenhum favorito ainda — toque ★ em um filme.'}
@@ -83,6 +87,7 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
     return (
       <main style={styles.main} className="main-content">
         <AppHeader title="🔍 Buscar" />
+        {offlineBanner}
         <NetworkToggle />
         <input
           type="search"
@@ -125,6 +130,7 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
   return (
     <main style={styles.main} className="main-content">
       <AppHeader />
+      {offlineBanner}
       <NetworkToggle />
       <InstallButton />
       <section>
