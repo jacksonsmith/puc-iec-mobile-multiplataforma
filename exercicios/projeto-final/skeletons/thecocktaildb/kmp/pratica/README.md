@@ -1,8 +1,9 @@
 # Projeto Final — TheCocktailDB (drinks) em Kotlin Multiplatform (Compose)
 
-Skeleton do **Projeto Final** (30 pts). A UI já está pronta — telas, navegação e `testID`s que os
-testes E2E (Maestro) procuram. Falta a **lógica das 5 features**, marcada com `// TODO 1` a
-`// TODO 5` nos arquivos de tela. Vocês não escrevem UI do zero.
+Skeleton **opcional** de ponto de partida do **Projeto Final** (30 pts). A estrutura de telas e a lógica das
+5 features básicas vêm marcadas com `// TODO 1` a `// TODO 5`. **O visual é básico de propósito**: persistência,
+estados de loading/vazio/erro e todo o checklist de UI/UX (tema escuro, design tokens, responsividade,
+acessibilidade, ícone/splash) são **trabalho do grupo** — veja o [`enunciado.md`](../../../../enunciado.md).
 
 **API deste tema:** TheCocktailDB — drinks; filtro por categoria (`filter.php?c=`); id `String`.
 Endpoints exatos, fixtures dos testes e gotchas: [`temas/04-thecocktaildb/README.md`](../../../../temas/04-thecocktaildb/README.md).
@@ -32,9 +33,10 @@ ls flows   # confere que está no lugar certo: 01-list.yaml … 05-favorites.yam
 | 4 — Categoria/filtro (parâmetro real da API) | `TODO 4` | `androidApp/src/main/kotlin/**/ListScreen.kt` |
 | 5 — Favoritos persistidos | `TODO 5` | `androidApp/src/main/kotlin/**/DetailScreen.kt` + `androidApp/src/main/kotlin/**/FavoritesScreen.kt` |
 
-## Como saber se passou
+## Como se autoverificar (opcional)
 
-Os mesmos flows que o autograder roda no CI estão em `flows/`. Para rodar localmente
+Os flows Maestro em `flows/` **não são mais avaliados pelo CI** — servem para vocês conferirem
+a mão que as 5 features funcionam. Para rodar localmente
 ([instalar Maestro](https://docs.maestro.dev/getting-started/installing-maestro)):
 
 ```bash
@@ -42,18 +44,19 @@ Os mesmos flows que o autograder roda no CI estão em `flows/`. Para rodar local
 maestro test flows/
 ```
 
-Sem Maestro local, dá pra validar na mão: cada flow descreve o passo-a-passo (abrir lista, tocar
-num item, buscar, filtrar, favoritar) — se funciona no emulador com os dados das fixtures do tema,
-tende a passar no CI.
+Se mudarem a UI e um flow quebrar, tudo bem: ajustem o flow (ou ignorem) — o que vale é o app
+funcionar bem e o checklist do enunciado.
+
 
 ## Antes de abrir/atualizar o PR
 
-O build precisa passar — **critério eliminatório** (app que não builda zera os 15 pts de E2E):
+O build precisa passar — **critério eliminatório** (app que não builda não pode ser demonstrado e zera a Funcionalidade):
 
 ```bash
 ./gradlew :androidApp:assembleDebug
 ```
 
 Entrega em grupo: 1 fork por grupo; integrantes trabalham via PRs internos no fork do grupo; o PR
-final (fork → repo da disciplina) dispara o autograder a cada commit. Detalhes no
+final (fork → repo da disciplina) é avaliado pelo professor (sem autograder neste projeto).
+Adicionem `README.md` (com ≥ 3 screenshots) e `ADR.md` nesta pasta. Detalhes no
 [`enunciado.md`](../../../../enunciado.md).

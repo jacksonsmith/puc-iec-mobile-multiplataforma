@@ -7,8 +7,8 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 };
 
-// ── TODO 5 ─────────────────────────────────────────────────────────────────
-// Capture o evento `beforeinstallprompt` para mostrar um botão "Instalar"
+// ── Já pronto (leia — é a base do botão "Instalar") ───────────────────────────
+// Captura o evento `beforeinstallprompt` para mostrar um botão "Instalar"
 // customizado em vez do banner padrão do browser.
 //
 // Passos:
@@ -27,7 +27,6 @@ export function useInstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
-    // TODO 5: implemente aqui
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferred(e as BeforeInstallPromptEvent);
@@ -37,7 +36,6 @@ export function useInstallPrompt() {
   }, []);
 
   const triggerInstall = async () => {
-    // TODO 5: chame deferred.prompt() e trate userChoice
     if (!deferred) return;
     await deferred.prompt();
     const { outcome } = await deferred.userChoice;
@@ -45,9 +43,11 @@ export function useInstallPrompt() {
   };
 
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+  const isDesktop = !isMobile; // Chrome/Edge desktop também dispara beforeinstallprompt
   const isStandalone =
     window.matchMedia('(display-mode: standalone)').matches ||
     (navigator as any).standalone === true;
 
-  return { canInstall: !!deferred, triggerInstall, isIOS, isStandalone };
+  return { canInstall: !!deferred, triggerInstall, isIOS, isDesktop, isStandalone };
 }

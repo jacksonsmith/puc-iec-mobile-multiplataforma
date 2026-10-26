@@ -1,9 +1,9 @@
-// tests/e2e/pwa.spec.ts — gate do grader (roda contra build do aluno)
+// tests/e2e/pwa.spec.ts — verificação OPCIONAL na sua máquina (o bot NÃO executa este arquivo)
 // Executa com: npm run build && npx playwright test
 
 import { test, expect } from '@playwright/test';
 
-// ── Grupo A: dados (TODO 1 + 2) ─────────────────────────────────────────────
+// ── Grupo A: dados (TODO 1) ─────────────────────────────────────────────
 
 test.describe('A — Dados TMDB', () => {
   test('A1. exibe pelo menos 10 cards de filmes', async ({ page }) => {
@@ -35,7 +35,7 @@ test.describe('A — Dados TMDB', () => {
   });
 });
 
-// ── Grupo B: PWA offline (TODO 3 + Workbox) ─────────────────────────────────
+// ── Grupo B: PWA offline (TODO 2 e 3 + Workbox) ─────────────────────────────────
 
 test.describe('B — PWA & Offline', () => {
   test('B1. Web App Manifest está linkado e tem display=standalone', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('B — PWA & Offline', () => {
   });
 });
 
-// ── Grupo C: favoritos + badge (TODO 4) ─────────────────────────────────────
+// ── Grupo C: favoritos + badge (TODO 4 e 5) ─────────────────────────────────────
 
 test.describe('C — Favoritos', () => {
   test('C1. clicar em Favoritar adiciona o filme e persiste no reload', async ({ page }) => {

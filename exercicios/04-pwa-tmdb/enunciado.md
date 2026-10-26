@@ -1,167 +1,160 @@
 # Atividade 4 — PWA: filmes populares, instalável e offline (15 pts)
 
 **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
-**Entrega:** fork + PR no repositório da disciplina
-**Valor:** 15 pontos
+**Entrega:** ver Canvas
+**Modalidade:** individual · fork + PR no repositório da disciplina
+**Tempo estimado:** ~3-4 horas (a parte 1 começa em aula)
+**Dificuldade:** ⭐⭐ Médio
 
 ---
 
 ## Contexto
 
-Você vai completar uma **Progressive Web App** de filmes (TMDB) que já vem com toda a base
-funcionando — Service Worker (Workbox), IndexedDB, instalação (`InstallButton`), busca,
-lazy loading. Faltam 3 pontos de lógica, marcados com `TODO` no código.
+Na Atividade 3 você construiu offline-first no Flutter (cache, TTL, fila de sincronização). Agora a mesma ideia **na web**: quem faz o papel do disco e da camada de dados é o **Service Worker** (Cache Storage) + **IndexedDB**.
+
+Você recebe um app de filmes (React + Vite + TMDB) **que já é instalável e funciona com dados em IndexedDB**, mas com a parte de PWA **em branco**: a configuração de cache do Service Worker e a atualização do app **são trabalho seu**.
+
+> **Antes de codar (10 min):** abra o PWA publicado pelo professor (`https://pwa-tmdb-aula4.vercel.app`) e compare com um site comum — modo avião, fechar e reabrir, instalar. Isso vira a seção 1 do seu `ENTREGA.md`.
 
 ---
 
 ## Antes de começar
 
+Siga o **[README da `pratica/`](pratica/README.md)** (clone novo, branch, setup e token do TMDB).
+
 ```bash
 cd exercicios/04-pwa-tmdb/pratica
-
-# Confirme que está no lugar certo
-ls src/services
-# → deve mostrar: tmdb.ts  db.ts
+ls src/services      # confirma o lugar: tmdb.ts  db.ts
 ```
 
 > **Windows:** `cd exercicios\04-pwa-tmdb\pratica` e `dir src\services`
 
-```bash
-npm install
-cp .env.example .env.local        # Windows: copy .env.example .env.local
-# Edite .env.local → coloque seu token em VITE_TMDB_TOKEN
-# Gere em: https://www.themoviedb.org/settings/api  (Read Access Token)
-
-npm run dev
-# Abre http://localhost:5173
-```
-
-A tela mostra "Token TMDB não configurado" se o token não estiver configurado.
-
 ---
 
-## Roteiro das tarefas
+## O que você implementa
 
-### Em aula com o professor (não avaliativo)
-
-| Arquivo | O que fazemos juntos |
-|---|---|
-| [`src/__tests__/unit/01-MovieCard.test.tsx`](pratica/src/__tests__/unit/01-MovieCard.test.tsx) | 📘 MODELO — lemos os testes prontos, entendemos a estrutura |
-| [`src/services/tmdb.ts`](pratica/src/services/tmdb.ts) | Vemos o stub com `throw` e entendemos o que o TODO 1 pede |
-
-### Solo em casa (avaliativo)
-
-| Ordem | Arquivo | O que implementar | Dificuldade |
+| # | Onde | O quê | Pts |
 |---|---|---|---|
-| 1 | [`src/services/tmdb.ts`](pratica/src/services/tmdb.ts) | **TODO 1** — `fetchPopularMovies()` | FÁCIL |
-| 2 | [`src/__tests__/unit/03-useFavorites.test.ts`](pratica/src/__tests__/unit/03-useFavorites.test.ts) | **TODO 2** — implemente os 3 casos `it.todo` (testes 3, 4 e 5) | MÉDIO |
-| 3 | [`src/screens/HomeScreen.tsx`](pratica/src/screens/HomeScreen.tsx) + [`src/hooks/useOfflineStatus.ts`](pratica/src/hooks/useOfflineStatus.ts) | **TODO 3** — aba Favoritos (3 passos abaixo) | MÉDIO |
+| 1 | `src/services/tmdb.ts` | `fetchPopularMovies()` | 2 |
+| 2 | `vite.config.ts` | `runtimeCaching`: **API** (NetworkFirst) e **pôsteres** (CacheFirst) | 4 |
+| 3 | `vite.config.ts` + `src/components/UpdatePrompt.tsx` | atualização do app: `registerType: 'prompt'` + aviso "Nova versão" | 3 |
+| 4 | `src/screens/HomeScreen.tsx` | aba **★ Favoritos** (lista + estado vazio) | 2 |
+| 5 | `src/hooks/useOfflineStatus.ts` | hook online/offline + banner na aba Favoritos | 1 |
+| — | `ENTREGA.md` | evidências + reflexão (manual, Canvas) | 3 |
+| | | **Total** | **15** |
+
+Os comentários `TODO` em cada arquivo trazem a especificação detalhada.
+
+### TODO 1 — `fetchPopularMovies`
+
+`GET /movie/popular` com `params: { language: 'pt-BR', page }`; retorne o `data` da resposta. Use o `tmdbClient` já configurado. **Verificação:** `npm test` — `02-tmdb-service.test.ts` fica verde.
+
+### TODO 2 — `runtimeCaching` (aqui mora o PWA offline)
+
+Em `vite.config.ts`, dentro de `workbox.runtimeCaching`, escreva **duas regras**:
+
+| | Host | Estratégia | Detalhes |
+|---|---|---|---|
+| (a) | API de filmes | **NetworkFirst** | desiste da rede em **3 s**; `cacheName: 'tmdb-api'`; até **50** entradas, **1 dia** |
+| (b) | Pôsteres | **CacheFirst** | `cacheName: 'tmdb-images'`; até **200** entradas, **7 dias** |
+
+**Dois conceitos que você vai usar aqui** (cada regra do Workbox casa por **URL**, então você precisa saber de onde vem cada recurso):
+
+1. **De qual host vem cada tipo de recurso?** A API e os pôsteres não ficam no mesmo servidor. Para descobrir: DevTools → **Network** → recarregue → filtre por **Fetch/XHR** (API) e depois por **Img** (pôsteres) → olhe a coluna **Domain** (ou clique numa requisição → *Headers → Request URL*). Se o `urlPattern` não casar com essa URL, a regra nunca dispara e o cache fica vazio — esse é o primeiro sintoma para diagnosticar.
+2. **Resposta opaca (status 0).** Uma `<img>` de outra origem, sem CORS, é carregada como resposta *opaca*: o navegador a exibe, mas o código não consegue ler o status. Por padrão o Workbox só guarda respostas `200`, então é preciso dizer explicitamente quais status aceitar. Leia sobre `cacheableResponse` na doc do Workbox (link abaixo) e decida o que faz sentido para pôsteres.
+
+**Como conferir:** `npm run build && npm run preview` (o SW **não roda** no `npm run dev`) → DevTools → Application → **Cache Storage**: devem existir `tmdb-api` e `tmdb-images` com itens.
+
+### TODO 3 — atualização do app
+
+- **Parte 1** (`vite.config.ts`): hoje o app se atualiza sozinho (`autoUpdate`). Mude para o modo em que **o usuário decide** quando atualizar.
+- **Parte 2** (`UpdatePrompt.tsx`): com `useRegisterSW`, mostre (i) "App pronto para uso offline" e (ii) "Nova versão disponível" com **Atualizar** e **Depois**. Sem aviso ativo, retorne `null`.
+
+**Como conferir** (o SW só atualiza com o app já *controlado* por ele):
+1. `npm run build && npm run preview`, abra http://localhost:4173 e **recarregue uma vez** (aparece o aviso "pronto para uso offline" na 1ª visita)
+2. Com o preview rodando, mude um texto qualquer no código e rode `npm run build` de novo
+3. Na aba aberta: DevTools → Application → Service Workers → **Update** → deve aparecer **"Nova versão disponível"**; clique **Atualizar** e a página recarrega com o texto novo
+
+### TODO 4 — aba Favoritos
+
+**Passo 1:** filtre `movies` por `isFavorite(m.id)` e renderize um `MovieCard` por favorito. **Passo 2:** estado vazio — `isEmpty` → `'Nenhum filme carregado ainda.'`; senão → `'Nenhum favorito ainda — toque ★ em um filme.'`
+
+### TODO 5 — `useOfflineStatus`
+
+`useState(navigator.onLine)`, listeners `online`/`offline` com cleanup, e o banner `📡 Offline — exibindo dados do cache` na aba Favoritos. **Teste:** DevTools → Network → Offline.
 
 ---
 
-## TODO 1 — fetchPopularMovies
+## `ENTREGA.md` (3 pts, avaliação manual)
 
-**Arquivo:** `src/services/tmdb.ts`
+Preencha o modelo em `pratica/ENTREGA.md`:
 
-Implemente a função que está com `throw` como stub, usando o `tmdbClient` já configurado no
-arquivo (axios com baseURL + Bearer token):
-
-```typescript
-export async function fetchPopularMovies(page = 1): Promise<MoviesResponse> {
-  const { data } = await tmdbClient.get<MoviesResponse>('/movie/popular', {
-    params: { language: 'pt-BR', page },
-  });
-  return data;
-}
-```
-
-**Verificação:** `npm test` — os testes de `02-tmdb-service.test.ts` devem ficar verdes.
-
----
-
-## TODO 2 — Testes de useFavorites
-
-**Arquivo:** `src/__tests__/unit/03-useFavorites.test.ts`
-
-Os casos 1 e 2 estão prontos como exemplo. Implemente os `it.todo()`:
-
-- **3.** toggle duas vezes remove o favorito
-- **4.** persiste favoritos no localStorage (desmonte e remonte o hook)
-- **5.** chama `navigator.setAppBadge` com a contagem
-
-Os comentários dentro de cada `it.todo()` descrevem o que fazer.
-
----
-
-## TODO 3 — Aba Favoritos (3 passos)
-
-**Passo 1** — em `HomeScreen.tsx`, no bloco `if (activeTab === 'favorites')`:
-- Filtre `movies` por `isFavorite(m.id)` → `favMovies`
-- Renderize `<MovieCard key={m.id} movie={m} isFavorite={true} onToggleFavorite={toggleFavorite} />` pra cada filme
-
-**Passo 2** — ainda em `HomeScreen.tsx`, estado vazio:
-- Se `favMovies.length === 0`, mostre um `<p>` com:
-  - `isEmpty === true` → `'Nenhum filme carregado ainda.'`
-  - `isEmpty === false` → `'Nenhum favorito ainda — toque ★ em um filme.'`
-
-**Passo 3** — em `src/hooks/useOfflineStatus.ts`:
-- `useState` com valor inicial `navigator.onLine`
-- `useEffect` com listeners `window.addEventListener('online'/'offline', ...)` + cleanup
-- Use `isOnline` (já importado em `HomeScreen`) pra mostrar o banner offline
-
-**Verificação manual (demo em aula):** DevTools → Network → Throttling → "Offline" — o banner
-"📡 Offline — exibindo dados do cache" deve aparecer na aba Favoritos.
-
----
-
-## Como rodar os testes
-
-```bash
-cd exercicios/04-pwa-tmdb/pratica
-npm test              # roda uma vez
-npm run test:watch    # modo watch
-```
+1. **Site comum × PWA** — 3 diferenças que você **viu** (com print do DevTools → Application ou do app instalado)
+2. **Prova do offline** — print do Cache Storage com `tmdb-api` e `tmdb-images`, e do app aberto em modo avião
+3. **Reflexão (5-8 linhas)** — `autoUpdate` × `prompt`: qual você escolheria para um app de **checkout** e para um app de **notícias**, e por quê?
 
 ---
 
 ## Entrega
 
+**Comece com um clone novo** (sem sincronizar fork, sem conflito):
+
 ```bash
-git checkout -b feat/a4-pwa
-git add exercicios/04-pwa-tmdb/pratica/src/services/tmdb.ts
-git add exercicios/04-pwa-tmdb/pratica/src/__tests__/unit/03-useFavorites.test.ts
-git add exercicios/04-pwa-tmdb/pratica/src/screens/HomeScreen.tsx
-git add exercicios/04-pwa-tmdb/pratica/src/hooks/useOfflineStatus.ts
-git commit -m "feat(a4-pwa): implementa TODO 1, 2 e 3"
-git push origin feat/a4-pwa
+git clone https://github.com/jacksonsmith/puc-iec-mobile-multiplataforma.git a4-pwa
+cd a4-pwa
+git switch -c feat/a4-pwa
+git remote add meu https://github.com/<seu-login>/puc-iec-mobile-multiplataforma.git
+cd exercicios/04-pwa-tmdb/pratica
+ls src/services      # confirma que está no lugar certo: tmdb.ts  db.ts
 ```
 
-Abra PR com título: `feat(a4-pwa): <seu-github-login>`.
+Faça os TODOs e envie:
 
-O bot comenta a nota mínima automática a cada commit.
+```bash
+cd ../../..          # volta pra raiz do clone
+git add exercicios/04-pwa-tmdb/pratica
+git commit -m "feat(a4-pwa): runtimeCaching, atualizacao do app e aba Favoritos"
+git push -u meu feat/a4-pwa
+```
+
+Abra o PR **da branch `feat/a4-pwa` do seu fork para o `main` do professor**, com título: `feat(a4-pwa): <seu-github-login>`.
+
+> Deu conflito ou erro estranho? **Não resolva** — clone de novo numa pasta nova e copie só os arquivos que você editou.
+
+O bot comenta a **nota mínima automática** a cada commit (ele lê seus arquivos; não executa seu código). Evidências, reflexão e qualidade entram na nota final lançada no Canvas.
+
+**Critério eliminatório:** `npm run build` precisa passar — se não buildar, os pontos de PWA ficam zerados.
 
 ---
 
-## Critérios de avaliação
+## Critérios de avaliação (15 pts)
 
-| Critério | Pts |
-|---|---|
-| TODO 1 — `fetchPopularMovies` chama `tmdbClient.get()` e retorna os dados | 4 |
-| TODO 2 — testes 3, 4 e 5 de `useFavorites` implementados com asserções reais | 4 |
-| TODO 3 Passo 1 — aba Favoritos filtra e renderiza a lista | 3 |
-| TODO 3 Passo 2 — estado vazio (com/sem filme carregado) | 2 |
-| TODO 3 Passo 3 — hook `useOfflineStatus` com listeners + cleanup, usado na tela | 2 |
-| **Total** | **15** |
+| Critério | Pts | Avaliação |
+|---|---|---|
+| TODO 1 — `fetchPopularMovies` chama `/movie/popular` com `pt-BR` e retorna `data` | 2 | 🤖 automática |
+| TODO 2a — API: `NetworkFirst`, `networkTimeoutSeconds: 3`, `tmdb-api`, `expiration` (50 entradas) | 2 | 🤖 |
+| TODO 2b — Pôsteres: host correto, `CacheFirst`, `tmdb-images`, `expiration` (200), `cacheableResponse` com status 0 | 2 | 🤖 |
+| TODO 3a — `registerType: 'prompt'` | 1 | 🤖 |
+| TODO 3b — `UpdatePrompt` com `needRefresh`, `offlineReady`, `updateServiceWorker` e dispensar | 2 | 🤖 |
+| TODO 4 — aba Favoritos (lista 1 · estado vazio 1) | 2 | 🤖 |
+| TODO 5 — `useOfflineStatus` com listeners + cleanup e banner | 1 | 🤖 |
+| `ENTREGA.md` — evidências e comparação site × PWA | 2 | 📝 Canvas |
+| `ENTREGA.md` — reflexão `autoUpdate` × `prompt` | 1 | 📝 Canvas |
+| **Total** | **15** | |
 
-> Nota mínima automática vem do bot no PR (checklist estrutural). Qualidade de código entra na
-> nota final lançada no Canvas.
+---
+
+## 🎁 Bônus (não pontua)
+
+- **`window-controls-overlay`**: troque `display: 'standalone'` por `'window-controls-overlay'` no manifest ([MDN](https://developer.mozilla.org/en-US/docs/Web/API/WindowControlsOverlay)).
+- **Badging API:** o hook `useFavorites` já chama `navigator.setAppBadge` — instale o PWA no desktop e veja o número no ícone.
 
 ---
 
 ## Links úteis
 
-- [TMDB API — Movie Popular](https://developer.themoviedb.org/reference/movie-popular-list)
-- [axios.get docs](https://axios-http.com/docs/req_config)
-- [MDN — Online/offline events](https://developer.mozilla.org/pt-BR/docs/Web/API/Navigator/onLine)
-- [Workbox Strategies](https://developer.chrome.com/docs/workbox/caching-strategies-overview/)
+- [web.dev — Learn PWA](https://web.dev/learn/pwa) (módulos *Caching*, *Workbox*, *Update*)
+- [Workbox — estratégias de cache](https://developer.chrome.com/docs/workbox/caching-strategies-overview/)
+- [vite-plugin-pwa — `registerType` e `useRegisterSW`](https://vite-pwa-org.netlify.app/guide/auto-update.html)
 - [MDN — Service Worker API](https://developer.mozilla.org/pt-BR/docs/Web/API/Service_Worker_API)
+- [TMDB API — Movie Popular](https://developer.themoviedb.org/reference/movie-popular-list)
