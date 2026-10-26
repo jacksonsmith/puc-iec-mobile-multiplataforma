@@ -22,7 +22,6 @@ export function useOfflineStatus(): { isOnline: boolean } {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
-    // implemente aqui
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
@@ -33,7 +32,7 @@ export function useOfflineStatus(): { isOnline: boolean } {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [isOnline]);
+  }, []);
 
   return { isOnline };
 }
