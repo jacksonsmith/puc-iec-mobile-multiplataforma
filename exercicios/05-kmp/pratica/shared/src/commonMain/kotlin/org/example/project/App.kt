@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.data.Movie
 import org.example.project.data.TmdbApi
+import kotlin.math.roundToInt
 
 // ─────────────────────────────────────────────────────────────────────────────
 // App — Composable raiz compartilhado entre Android, iOS e Web.
@@ -47,14 +48,20 @@ fun App(tmdbToken: String = "") {
 
         Surface(modifier = Modifier.fillMaxSize()) {
             // ── TODO 1 ──────────────────────────────────────────────────────
-            // Troque a linha abaixo por um `when` que mostra, nesta ordem:
-            //   - tmdbToken em branco       -> TokenMissingMessage()
-            //   - isLoading == true         -> CircularProgressIndicator() centralizado
-            //   - error != null             -> ErrorMessage(error!!)
-            //   - caso contrário            -> MovieList(movies)
+            // `when` sem argumento: vale o primeiro ramo verdadeiro, então a
+            // ordem importa (sem token nem chega a carregar; erro só depois
+            // que o carregamento terminou). Cada mudança em isLoading/error/
+            // movies recompõe este bloco e troca a tela.
+            // `error!!` é necessário: `error` é um `var` delegado (by), e o
+            // Kotlin não faz smart cast de propriedade delegada.
             // ────────────────────────────────────────────────────────────────
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("TODO 1: implemente os estados (loading / erro / lista)")
+            when {
+                tmdbToken.isBlank() -> TokenMissingMessage()
+                isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+                error != null -> ErrorMessage(error!!)
+                else -> MovieList(movies)
             }
         }
     }
@@ -70,32 +77,91 @@ private fun MovieList(movies: List<Movie>) {
     }
 
     // ── TODO 2 ──────────────────────────────────────────────────────────────
-    // Monte um LazyColumn (fillMaxSize, contentPadding 16dp,
-    // verticalArrangement spacedBy 12dp) com:
-    //   - um item de cabeçalho: Text("${movies.size} filmes populares")
-    //   - um items(movies) { movie -> MovieCard(movie) }
+    // LazyColumn só compõe os itens visíveis (equivale à FlatList do RN e ao
+    // ListView.builder do Flutter). `item {}` é o cabeçalho; `items(movies)`
+    // vira um MovieCard por filme. `key = id` deixa o Compose reaproveitar o
+    // card certo se a lista mudar.
+    // safeDrawingPadding(): o MainActivity chama enableEdgeToEdge(), então
+    // sem isso o cabeçalho ficaria embaixo da status bar no Android.
     // ────────────────────────────────────────────────────────────────────────
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("TODO 2: monte o LazyColumn com cabeçalho + itens")
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().safeDrawingPadding(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            Text(
+                text = "${movies.size} filmes populares",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        items(movies, key = { it.id }) { movie -> MovieCard(movie) }
     }
 }
 
 @Composable
 private fun MovieCard(movie: Movie) {
     // ── TODO 3 ──────────────────────────────────────────────────────────────
-    // Construa o card do filme. Sugestão de layout (Card > Row):
-    //   - Box à esquerda (56x84dp, cantos arredondados 6dp, background
-    //     MaterialTheme.colorScheme.primaryContainer) com a inicial do
-    //     título centralizada (placeholder de poster, sem imagem real)
-    //   - Column à direita (weight 1f) com: título (bold, 2 linhas max),
-    //     overview (2 linhas max), e uma Row com nota "⭐ X.X" + ano
+    // Card > Row: placeholder do poster à esquerda (Box 56x84dp com a
+    // inicial do título) e, à direita, uma Column com weight(1f), que ocupa
+    // o resto da largura. maxLines + Ellipsis mantêm todos os cards com a
+    // mesma altura, mesmo com título ou sinopse longos.
     // ────────────────────────────────────────────────────────────────────────
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "TODO 3: card de ${movie.title}",
-            modifier = Modifier.padding(16.dp),
-        )
+        Row(
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 56.dp, height = 84.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = movie.title.firstOrNull()?.uppercase() ?: "?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = movie.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    // a API às vezes não traz sinopse em pt-BR
+                    text = movie.overview.ifBlank { "Sem sinopse em português." },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("⭐ ${formatRating(movie.voteAverage)}", style = MaterialTheme.typography.labelLarge)
+                    // releaseDate vem como "AAAA-MM-DD" (ou vazio)
+                    if (movie.releaseDate.length >= 4) {
+                        Text(movie.releaseDate.take(4), style = MaterialTheme.typography.labelLarge)
+                    }
+                }
+            }
+        }
     }
+}
+
+// Nota com 1 casa decimal (7.25 -> "7.3"). String.format só existe na JVM,
+// então não dá para usar em commonMain; a conta abaixo roda em toda plataforma.
+private fun formatRating(rating: Double): String {
+    val tenths = (rating * 10).roundToInt()
+    return "${tenths / 10}.${tenths % 10}"
 }
 
 @Composable
