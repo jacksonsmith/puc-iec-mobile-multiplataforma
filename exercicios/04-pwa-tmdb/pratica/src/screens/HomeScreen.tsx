@@ -35,7 +35,7 @@ const searchInputStyle: React.CSSProperties = {
   outline: 'none',
 };
 
-export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
+export function HomeScreen({ activeTab, isFavorite, toggleFavorite, count }: Props) {
   const { movies, loading, error, hasMore, loadMore } = usePopularMovies();
   const [search, setSearch] = useState('');
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -64,13 +64,32 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
   //     📡 Offline — exibindo dados do cache
   //   </div>
   if (activeTab === 'favorites') {
+    const favMovies = movies.filter((m) => isFavorite(m.id));
+
     return (
       <main style={styles.main} className="main-content">
         <AppHeader title="★ Favoritos" />
-        {/* TODO 4 e TODO 5 — implemente aqui */}
-        <p style={{ color: '#90a4ae', textAlign: 'center', padding: '40px 0' }}>
-          🚧 Passo 1: filtre e renderize os filmes favoritos
-        </p>
+        {!isOnline && (
+          <div style={{ background: '#C2410C', color: '#fff', padding: '8px 16px', textAlign: 'center', fontSize: 14 }}>
+            📡 Offline — exibindo dados do cache
+          </div>
+        )}
+        {favMovies.length === 0 ? (
+          <p style={{ color: '#90a4ae', textAlign: 'center', padding: '40px 0', fontSize: 15 }}>
+            {isEmpty
+              ? 'Nenhum filme carregado ainda.'
+              : count > 0
+                ? // Há favoritos salvos, mas em páginas que ainda não foram carregadas nesta sessão
+                  `Seus ${count} favorito(s) estão em páginas ainda não carregadas — role a lista em Início.`
+                : 'Nenhum favorito ainda — toque ★ em um filme.'}
+          </p>
+        ) : (
+          <section>
+            {favMovies.map((m) => (
+              <MovieCard key={m.id} movie={m} isFavorite={true} onToggleFavorite={toggleFavorite} />
+            ))}
+          </section>
+        )}
       </main>
     );
   }

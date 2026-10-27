@@ -14,9 +14,9 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // TODO 3 (parte 1): hoje o app se atualiza SOZINHO. Troque para o modo em que
-      // o usuário decide quando atualizar (veja a tabela do slide "Nova versão").
-      registerType: 'autoUpdate',
+      // TODO 3 (parte 1): o usuário decide quando atualizar. A nova versão fica em
+      // "waiting" até ele clicar em "Atualizar" no UpdatePrompt.
+      registerType: 'prompt',
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'TMDB Popular Movies',
@@ -34,23 +34,39 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         // TODO 2 — runtimeCaching: é AQUI que mora o PWA offline do app.
-        //
-        // Escreva DUAS regras (cada uma é um objeto { urlPattern, handler, options }):
-        //
-        //  (a) API de filmes  → https://api.themoviedb.org/...
-        //      - estratégia que tenta a REDE primeiro e cai pro cache se falhar
-        //      - desiste da rede após 3 segundos (networkTimeoutSeconds)
-        //      - cacheName 'tmdb-api' · expiration: no máx. 50 entradas, 1 dia
-        //
-        //  (b) Pôsteres → qual é o HOST das imagens? Abra o app, DevTools → Network → Img
-        //      e olhe a URL de um pôster (NÃO é o mesmo host da API!)
-        //      - estratégia que serve do CACHE primeiro (imagem não muda)
-        //      - cacheName 'tmdb-images' · expiration: no máx. 200 entradas, 7 dias
-        //      - pôsteres vêm de outra origem SEM CORS → a resposta é "opaca" (status 0):
-        //        só entra no cache se você liberar o status 0 em cacheableResponse
-        //
-        // Referências: slides "Cache strategies" e "vite-plugin-pwa" · web.dev/learn/pwa (módulo Caching)
-        runtimeCaching: [],
+        runtimeCaching: [
+          {
+            // (a) API de filmes: a lista de populares muda, então tenta a rede primeiro.
+            // Se a rede falhar ou demorar mais de 3 s, serve a última resposta do cache.
+            urlPattern: /^https:\/\/api\.themoviedb\.org\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'tmdb-api',
+              networkTimeoutSeconds: 3,
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24, // 1 dia
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // (b) Pôsteres: vêm de image.tmdb.org (host diferente da API) e a imagem
+            // de uma URL não muda, então serve do cache primeiro.
+            urlPattern: /^https:\/\/image\.tmdb\.org\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tmdb-images',
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 dias
+              },
+              // <img> de outra origem sem CORS chega como resposta opaca (status 0).
+              // Sem liberar o 0, o Workbox nunca guardaria os pôsteres.
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],
