@@ -1,42 +1,52 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web.
+# Atividade 5 — KMP: Filmes Populares · COMECE AQUI
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Projeto Kotlin Multiplatform (Android · iOS · Web) gerado pelo wizard oficial. **Você só escreve UI** em
+`shared/src/commonMain/kotlin/org/example/project/App.kt` — a chamada à API (TMDB) já está pronta.
+Enunciado, rubrica e entrega: [`../enunciado.md`](../enunciado.md).
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## 1. Entre na pasta certa
 
-### Running the apps
+```bash
+cd exercicios/05-kmp/pratica
+ls shared/src/commonMain/kotlin/org/example/project    # deve listar App.kt e data/
+```
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+> Abra **esta pasta (`pratica/`)** no Android Studio — não o repositório inteiro.
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- Web app:
-  - Wasm target (faster, modern browsers): `./gradlew :webApp:wasmJsBrowserDevelopmentRun`
-  - JS target (slower, supports older browsers): `./gradlew :webApp:jsBrowserDevelopmentRun`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+## 2. Configure o token do TMDB (grátis)
 
-### Running tests
+1. Copie `local.properties.example` para `local.properties`
+2. Gere o token em [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) (**API Read Access Token**, o JWT longo `eyJhbGc…`)
+3. Cole em `tmdb.token=` e ajuste `sdk.dir=` (o Android Studio costuma preencher sozinho)
+4. **Sync Gradle** (elefante 🐘 na barra) — o token vira `BuildKonfig.TMDB_TOKEN` em todas as plataformas
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+> `local.properties` está no `.gitignore` — **nunca commite o token**.
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- Web tests:
-  - Wasm target: `./gradlew :shared:wasmJsTest`
-  - JS target: `./gradlew :shared:jsTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+## 3. Rode
 
----
+- **Android (obrigatório):** dropdown `androidApp` + emulador (ou celular via USB) → ▶
+- **Web (opcional, rápido pra ver a UI):** `./gradlew :webApp:wasmJsBrowserDevelopmentRun`
+- **iOS (opcional, só Mac):** `open iosApp/iosApp.xcodeproj` e rode pelo Xcode
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+Sem o token, o app mostra *"Token TMDB não configurado"* — é o estado esperado até o passo 2.
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+## 4. O que fazer (3 TODOs em `App.kt`)
+
+| TODO | O quê |
+|---|---|
+| 1 | `when` dos estados: sem token · carregando · erro · lista |
+| 2 | `MovieList`: `LazyColumn` com cabeçalho + itens |
+| 3 | `MovieCard`: card com placeholder de poster, título, overview, nota e ano |
+
+Os comentários `// TODO N` no arquivo trazem a especificação exata de cada um.
+
+## 5. Antes de abrir o PR
+
+O build precisa passar — **critério eliminatório** (não builda = 0 pts):
+
+```bash
+./gradlew :androidApp:assembleDebug
+```
+
+Se deu erro de sync/versão: o projeto exige **Android Studio Quail 2026.1.1+** e **JDK 17**. Use
+`./gradlew --no-configuration-cache <task>` se o config cache reclamar.

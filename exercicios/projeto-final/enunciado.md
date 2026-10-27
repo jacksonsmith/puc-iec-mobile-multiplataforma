@@ -1,158 +1,108 @@
 # Projeto Final em Grupo (30 pts)
 
 **Disciplina:** Arquitetura de Aplicações Móveis e Multiplataforma
-**Modalidade:** grupo (3 a 4 alunos, auto-organizados)
-**Entrega:** PR no fork do repo público — prazo: ver Canvas
-**Apresentação:** ao vivo, com demo funcionando (10min + 5min Q&A) — data: ver Canvas
+**Grupo:** 3 a 4 alunos · **Valor:** 30 pts
+**Prazo final:** a **próxima aula (Aula 6)** — ver Canvas
+**Apresentação:** demonstração técnica ao vivo de **até 20 minutos** (incluindo perguntas), na Aula 6
+**Entrega:** a **URL do repositório do grupo** no GitHub, colada no Canvas
 
 ---
 
 ## O que é
 
-Cada grupo escolhe **um tema** (app + API pública gratuita) e **um framework** (Flutter, React
-Native ou KMP Compose Multiplatform — os 3 que vocês já usaram nas Atividades 2, 3 e 5) dentre as
-combinações disponíveis. Nós já construímos os **skeletons** dos 3 frameworks para cada tema — sua
-tarefa é completar **5 features** que faltam no skeleton `pratica/` do seu tema+framework escolhido,
-até fazer os **5 testes E2E (Maestro)** passarem de verdade em CI.
+O grupo constrói **um app mobile** em **Flutter, React Native ou KMP Compose Multiplatform** (os que vocês
+usaram nas Atividades 2, 3 e 5) com **5 features** e o apresenta ao vivo.
 
-Diferente do trabalho final de Testes de Aplicações Mobile (relatório + repo linkado), aqui a
-**entrega é o PR em si** — o mesmo modelo de fork+PR que vocês já usam nas outras atividades desta
-disciplina. Um **autograder roda um emulador Android real no CI** e executa os 5 flows Maestro contra
-o app que vocês construíram — é a mesma convenção de testID nos 3 frameworks, então o app "funciona"
-quando o Maestro consegue achar e interagir com os elementos certos.
+**Feature = uma funcionalidade que o usuário vê e usa.** Exemplos:
 
-## As 5 features (iguais em todo tema + framework)
-
-| # | Feature | O que faz |
+| # | Feature | Exemplo (app de filmes) |
 |---|---|---|
-| 1 | Lista consumindo API real | Tela inicial faz fetch de uma lista da API e renderiza os itens |
-| 2 | Navegação lista → detalhe | Tocar num item abre uma tela de detalhe com dados adicionais |
-| 3 | Busca por texto | Campo de busca filtra a lista (client-side) pelo texto digitado |
-| 4 | Categoria/filtro estruturado | Chips de categoria que refinam a lista via parâmetro real da API |
-| 5 | Favoritos persistidos localmente | Favoritar no detalhe, ver na aba Favoritos, sobrevive a reabrir o app |
+| 1 | **Lista** de dados reais | tela inicial com os filmes populares vindos de uma API |
+| 2 | **Detalhe** | tocar num filme abre sinopse, nota e elenco |
+| 3 | **Busca** | campo de busca que filtra a lista |
+| 4 | **Filtro / categoria** | chips de gênero que refinam a lista |
+| 5 | **Favoritos** que sobrevivem a fechar o app | marcar ★ e ver na aba "Favoritos" |
 
-Cada `pratica/` já vem com a tela toda montada (testID nos lugares certos, navegação, layout) — só a
-**lógica de cada feature** (chamar a API, aplicar o filtro, persistir o favorito) está marcada com
-`// TODO N` nos arquivos certos. Vocês **não escrevem UI do zero** — o trabalho é ligar a lógica que
-falta pros testIDs que o Maestro procura passarem a funcionar de verdade (não é decorar o testID em
-cima de um elemento que não faz nada — o grader valida isso, ver seção de rubrica).
+Além das 5 features, o app trata **carregando, vazio e erro/sem internet** (mensagem clara, nunca tela branca).
 
-## Temas disponíveis
+## Escolham um dos dois caminhos
 
-Todos usam API pública **sem key real** (ou key de demonstração documentada oficialmente — nenhum
-segredo/cadastro pago necessário), sem rate-limit que atrapalhe o CI, e todos resolvem a **feature 4
-(categoria/filtro)** via parâmetro real da API — não é filtro inventado. A diferença entre eles é
-domínio visual e o **tipo do id** (isso afeta o `FavoritesStore`/model nos 3 frameworks — vale olhar
-antes de escolher, não só depois de já ter começado).
+**Opção A — um dos 5 temas prontos.** Todos têm **as mesmas 5 features**; muda só a API e o visual.
+Cada tema tem **skeleton** de ponto de partida em `skeletons/<tema>/<framework>/pratica/`
+(com `README.md` de setup e os `// TODO` das features).
 
-| # | Tema | API retorna | Filtro (feature 4) | Tipo do id |
-|---|------|---|---|---|
-| 1 | **PokeAPI** — Pokédex (151 pokémons) | nome, sprite, tipos, altura/peso | `type` — 1 chamada extra pra cruzar com a lista | `Int` |
-| 2 | **Rick and Morty** — personagens (826, paginado) | nome, status (alive/dead/unknown), espécie, gênero | `status` — nativo, `?status=` já filtrado | `Int` |
-| 3 | **TheMealDB** — receitas (25 do seed) | nome, categoria, área/origem, foto do prato | `c` (categoria) — nativo, `filter.php?c=` | **`String`** |
-| 4 | **TheCocktailDB** — drinks (100 da categoria Cocktail) | nome, categoria, tipo de copo, alcoólico/não | `c` (categoria) — nativo, `filter.php?c=` (mesmo padrão do tema 3, mesmo mantenedor) | **`String`** |
-| 5 | **Studio Ghibli** — filmes (22, curadoria fixa) | título, diretor, ano, duração | `director` — nativo, `?director=` | **`String` (UUID)** |
+| # | Tema | Filtro natural | Tipo do id |
+|---|------|---|---|
+| 1 | **PokeAPI** — Pokédex | `type` | `Int` |
+| 2 | **Rick and Morty** — personagens | `status` | `Int` |
+| 3 | **TheMealDB** — receitas | `c` (categoria) | `String` |
+| 4 | **TheCocktailDB** — drinks | `c` (categoria) | `String` |
+| 5 | **Studio Ghibli** — filmes | `director` | `String` |
 
-Domínio bicho (1) → personagem de série (2) → comida (3) → drinks (4) → filmes (5): escolham pelo
-que o grupo achar mais divertido de montar tela pra ele, a dificuldade técnica das 5 features é a
-mesma nos 5 temas. A única decisão que muda código de verdade é o tipo do id — temas 3, 4 e 5 usam
-`String` (não `Int`) no model e no `Set` de favoritos.
+Detalhes de cada API em [`temas/`](./temas/).
 
-Cada tema tem uma pasta própria em [`temas/`](./temas/) com endpoints exatos, fixtures usadas nos 5
-testes Maestro (qual item/categoria/termo de busca esperar) e gotchas específicos — abram o README
-do tema escolhido **antes** de começar a implementar: `temas/01-pokeapi/README.md`,
-`temas/02-rickandmorty/README.md`, `temas/03-themealdb/README.md`, `temas/04-thecocktaildb/README.md`,
-`temas/05-studio-ghibli/README.md`.
+**Opção B — a sua própria API / tema.** Qualquer tema (hábitos, clima, estudo, viagem…), desde que:
 
-## Framework
+1. tenha **no mínimo as mesmas 5 features** da tabela acima (adaptadas ao seu tema);
+2. use **dados reais** (API pública, JSON público ou serviço gratuito — não vale lista fixa no código);
+3. seja **gratuita**: sem cartão, sem cadastro pago; chave grátis é ok, mas **nunca commitem a chave**.
 
-Escolha 1 dos 3 (o mesmo grupo entrega só **1 combinação** tema+framework):
+## Não vale pegar o mesmo trabalho — alinhem entre vocês
 
-| Framework | Onde já foi ensinado | Dificuldade aqui |
-|---|---|---|
-| React Native | Atividade 2 | ⭐⭐ |
-| Flutter | Atividade 3 | ⭐⭐⭐ |
-| KMP Compose Multiplatform | Atividade 5 | ⭐⭐⭐⭐ |
+Cada combinação **tema + framework** (Opção A) é de **um grupo só**, e temas livres (Opção B) devem ser
+diferentes entre si. Para reservar, o grupo abre **uma issue** no repo da disciplina:
+`Grupo <nomes> — <tema> + <framework>` (Opção B: `<seu tema> + <framework>` com 2 linhas sobre o app).
+Vale a **ordem de chegada** (horário da issue). Antes de abrir a sua, **olhem as issues existentes**.
 
-## Regra de exclusividade: sem combinação repetida
+## Dicas para um app bonito (recomendado)
 
-**Cada combinação tema + framework só pode ser usada por UM grupo.** São 5 temas × 3 frameworks =
-**15 combinações** — e bem menos grupos que isso, então não tem por que repetir.
+O visual é **de vocês**: façam do jeito que quiserem. O professor avalia na demo se o app está **agradável e
+consistente**. Algumas dicas que ajudam:
 
-- **Reserva:** o grupo **abre uma issue** no repo público da disciplina com o título
-  `Grupo <nomes> — <tema> + <framework>` assim que decidir. Vale a ordem de chegada
-  (timestamp da issue).
-- Antes de abrir a sua, **olhem as issues existentes** — se a combinação já foi reservada,
-  escolham outra (pode repetir o tema OU o framework, nunca os dois juntos).
-- PR entregue com combinação duplicada sem reserva: **quem reservou primeiro fica com ela**;
-  o outro grupo troca (o esforço nas 5 features transfere quase inteiro — muda só domínio/API).
+- Defina **cores, tipografia e espaçamento em um lugar só** (tema)
+- **Tema claro e escuro**
+- **Skeleton/shimmer** no lugar do spinner solto · **placeholder** e fallback nas imagens
+- Teste em **paisagem** e com fonte maior · **ícone e splash** próprios
+- **Design systems e bibliotecas** que aceleram:
+  - **Flutter:** [Material 3](https://m3.material.io) · [`google_fonts`](https://pub.dev/packages/google_fonts) · [`shimmer`](https://pub.dev/packages/shimmer)
+  - **React Native:** [React Native Paper](https://callstack.github.io/react-native-paper/) · [`expo-image`](https://docs.expo.dev/versions/latest/sdk/image/)
+  - **KMP:** [Material 3 do Compose](https://m3.material.io) · [Coil](https://coil-kt.github.io/coil/)
 
-## Entrega — passo a passo
+## Arquitetura, ADR e testes
 
-**0. Grupo + escolha** — formem o grupo (3-4 pessoas), decidam **1 tema + 1 framework** juntos (ver
-tabelas acima) e **reservem via issue** (regra de exclusividade acima). É a única decisão que
-precisa de consenso antes de escrever código.
+- **Camadas separadas**: dados (API/storage), estado/lógica e UI — sem fetch dentro do widget/componente
+- **`ADR.md`** (~1 página): por que esse framework, por que esse gerenciador de estado, **que alternativa descartaram e por quê**
+- **Testes próprios** (pelo menos 3 casos) para a lógica que vocês criaram — vale **o que decidiram testar**, não existe teste "pra passar"
+- **`README.md`** do app: o que faz · **como rodar** (com o `cd` da pasta) · **pelo menos 3 screenshots** · link do `ADR.md`
 
-**1. Fork do grupo** — **UM** integrante faz fork do repo público da disciplina: esse fork é o
-**repo do grupo** e é dele que sai o PR final. Os outros integrantes **não criam fork próprio** —
-todos clonam o fork do grupo.
+## Como entregar
 
-**2. Trabalhar em grupo (política de contribuição)** — cada integrante clona o **fork do grupo**,
-cria uma branch com a sua parte e abre **PR interno → `main` do fork do grupo**. O grupo revisa e
-mergeia. É assim que cada um acumula commits/PRs na própria conta — exatamente o que o critério
-**Contribuição individual (4 pts)** avalia. (Dica: o dono do fork adiciona os colegas como
-*collaborators* em Settings → Collaborators pra todo mundo poder mergear.) Commits todos na conta
-de uma pessoa só = grupo perde esses pontos.
+1. **Um repositório GitHub do grupo** (fork do repo da disciplina ou repo novo). Público — ou privado com o
+   professor (`jacksonsmith`) como *collaborator*. Todos os integrantes entram como *collaborators*.
+2. **Trabalhem em branches e PRs internos** no repo do grupo — a **Contribuição individual** olha os commits
+   e PRs de **cada** integrante. Tudo commitado por uma pessoa só = o grupo perde esses pontos.
+3. **O app fica numa pasta** do repo, com `README.md` e `ADR.md`. (Se usarem skeleton, copiem/editem o da Opção A.)
+4. **Abram o repo cedo** e deem push com frequência — o professor acompanha e avisa de problema antes do prazo.
+5. **Colem a URL do repo no Canvas** até o prazo e **apresentem na Aula 6**.
 
-**3. Implementar** — editem **só**
-`exercicios/projeto-final/skeletons/<tema>/<framework>/pratica/` e completem os 5 `// TODO`
-marcados nos arquivos de tela (a tela/navegação/testID já vêm prontos — ver "As 5 features" acima).
-**Cada skeleton tem um `README.md`** dentro da `pratica/` com o setup do framework, onde está cada
-TODO e como rodar os flows Maestro localmente — comecem por ele. Leiam também o README do tema
-escolhido (endpoints exatos + fixtures).
+> **Critério eliminatório:** se o app **não builda**, ele não pode ser demonstrado — Funcionalidade fica
+> **zerada**. Rodem o build local antes de entregar
+> (`flutter build apk --debug` · `./gradlew :androidApp:assembleDebug` · `npx expo prebuild` + `./gradlew assembleDebug`).
 
-**4. Abrir o PR final** — do `main` do **fork do grupo** → repo da disciplina. O autograder
-dispara sozinho: builda o app, sobe um emulador Android real no CI, roda os 5 flows Maestro contra
-ele, e comenta a nota no PR.
-
-> **Critério eliminatório:** se o app não builda, o autograder não consegue nem tentar rodar os
-> testes — os 15 pts do critério E2E ficam **zerados automaticamente**, então rodem `flutter build`
-> / `./gradlew assembleDebug` / `expo prebuild` localmente antes de confiar no PR.
-
-**5. Ler o comentário do bot** — a nota que aparece é **mínima automática** (só o que dá pra
-verificar sem humano: os 5 flows Maestro + convenção de testID). Contribuição individual e
-apresentação são avaliadas **manualmente depois**, no Canvas — não aparecem no comentário do bot.
-
-**6. Iterar** — deu 0/15 num flow, ou builda mas falha no meio? Ajustem o código e deem push na
-mesma branch — o autograder **roda de novo automaticamente** a cada commit novo no PR. Podem
-iterar quantas vezes quiserem até a apresentação.
-
-**7. Apresentação** — ao vivo, com demo funcionando (10min + 5min Q&A), data: ver Canvas.
-
-## Marcos sugeridos (o projeto dura 2 semanas)
-
-Não há apresentação intermediária — o **PR aberto cedo** é o checkpoint (sem nota; o bot comenta o
-progresso a cada push).
-
-| Quando | Marco | Como comprovar |
-|---|---|---|
-| Semana 1 (início) | Grupo formado + combinação reservada | Issue `Grupo <nomes> — <tema> + <framework>` |
-| Meio do caminho | App builda + 2 dos 5 flows verdes | PR final aberto (pode ser *draft*) |
-| Semana 2 | 5 flows verdes + README reprodutível; ensaio da demo | PR final atualizado |
-| Fim | Apresentação ao vivo (10min + 5min Q&A) | App rodando |
+**Não há autograder:** o professor clona o repo, builda, roda o app e avalia pela rubrica.
 
 ## Rubrica (30 pts)
 
-| Critério | Peso | Pts |
-|---|---|---|
-| CI E2E — 5 flows Maestro passando (3pts/flow) | 50% | 15 |
-| Convenção de testID correta (não hardcoded pra enganar o teste) | ~17% | 5 |
-| Contribuição individual (commits do grupo, avaliação manual) | ~13% | 4 |
-| Apresentação + demo ao vivo + Q&A | ~13% | 4 |
-| Qualidade do código + README reprodutível | ~7% | 2 |
+| Critério | Pts |
+|---|---|
+| **UI/UX** — visual agradável e consistente (avaliado na demo) | 8 |
+| **Arquitetura + ADR** — camadas, estado, coerência com o ADR | 7 |
+| **Funcionalidade** — as 5 features, estados de erro, build passando | 6 |
+| **Apresentação** — demonstração técnica ao vivo + perguntas | 4 |
+| **Contribuição individual** — commits e PRs por integrante | 3 |
+| **Qualidade** — testes próprios (≥ 3 casos) + README reprodutível | 2 |
 
-O autograder posta uma nota **mínima automática** no PR (o critério E2E + a checagem estrutural de
-testID) — a nota final, incluindo os critérios manuais (contribuição individual e apresentação), é
-lançada no Canvas depois da apresentação.
+A nota é lançada no Canvas depois da apresentação. A nota individual pode diferir da nota do grupo conforme
+a Contribuição individual.
 
 Dúvidas: Teams da turma ou jackson.96@gmail.com.

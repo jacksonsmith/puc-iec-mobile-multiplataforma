@@ -24,10 +24,14 @@ ls shared/src/commonMain/kotlin/org/example/project    # deve listar App.kt e da
 ```
 
 1. Copie `local.properties.example` para `local.properties`
-2. Gere um token gratuito em [themoviedb.org](https://www.themoviedb.org/settings/api) (v4 Read Access Token) e cole em `tmdb.token=`
-3. Abra a pasta `pratica/` no Android Studio (Kotlin Multiplatform plugin já instalado da aula) → Sync Gradle → Run `androidApp`
+2. Gere um token gratuito em [themoviedb.org](https://www.themoviedb.org/settings/api) (v4 **Read Access Token**) e cole em `tmdb.token=`
+3. Abra a pasta `pratica/` no Android Studio (plugin Kotlin Multiplatform já instalado em aula) → **Sync Gradle**
+4. Rode o `androidApp` num **emulador Android** (ou celular com depuração USB) → ▶
 
-> **Toolchain:** Android Studio Quail 2026.1.1+, JDK 17. Mesmos requisitos verificados em aula. iOS/Web fazem parte do projeto wizard mas não são exigidos nesta atividade — só o `androidApp`.
+> **Toolchain:** Android Studio Quail 2026.1.1+, JDK 17 — as mesmas versões verificadas em aula.
+> **Sem emulador?** Dá pra ver a UI pela Web: `./gradlew :webApp:wasmJsBrowserDevelopmentRun`. Mas o **critério
+> eliminatório** abaixo exige o Android SDK (o build do `androidApp`). iOS/Web não são exigidos.
+> Passo a passo completo em [`pratica/README.md`](./pratica/README.md).
 
 ---
 
