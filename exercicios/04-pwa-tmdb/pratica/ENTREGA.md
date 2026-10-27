@@ -41,4 +41,4 @@ Sim. A análise inicial da atividade e a projetização da solução foram minha
 - **Construção de testes** — escrita dos casos de teste e do roteiro de verificação no navegador (Service Worker, Cache Storage, offline e fluxo de "Nova versão").
 - **Correção de bug** — diagnóstico e correção de problemas encontrados durante o desenvolvimento.
 - **Completude de cenários** — revisão para cobrir casos que faltavam (ex.: estado vazio com/sem filmes carregados, aviso dispensável, versão antiga mantida até o usuário aceitar a atualização).
-- **Redação deste ENTREGA.md** — coleta das evidências (comparação site × PWA e prints) e redação das seções 1 a 3.
+- **Sintetização da entrega** — apoio na síntese do que foi feito e verificado, para auxiliar a escrita deste artefato.
