@@ -29,14 +29,48 @@ describe('useFavorites', () => {
 
   // 🧑‍💻 TODO 2a — toggle duas vezes deve REMOVER o favorito
   // Dica: chame toggle(42) duas vezes e verifique isFavorite + count
-  it.todo('3. toggle duas vezes remove o favorito');
+  it('3. toggle duas vezes remove o favorito', () => {
+    const { result } = renderHook(() => useFavorites());
+    act(() => result.current.toggle(42));
+    act(() => result.current.toggle(42));
+    expect(result.current.isFavorite(42)).toBe(false);
+    expect(result.current.count).toBe(0);
+  });
 
   // 🧑‍💻 TODO 2b — favoritos devem sobreviver a um unmount + remount
   // Dica: use { result, unmount } = renderHook(...), faça toggle, unmount(),
   //       renderHook novamente e verifique isFavorite no novo result
-  it.todo('4. persiste favoritos no localStorage');
+  it('4. persiste favoritos no localStorage', () => {
+    const { result, unmount } = renderHook(() => useFavorites());
+    act(() => result.current.toggle(7));
+    act(() => result.current.toggle(13));
+    unmount();
+
+    expect(JSON.parse(localStorage.getItem('tmdb-favorites') ?? '[]')).toEqual([7, 13]);
+
+    const { result: remounted } = renderHook(() => useFavorites());
+    expect(remounted.current.isFavorite(7)).toBe(true);
+    expect(remounted.current.isFavorite(13)).toBe(true);
+    expect(remounted.current.count).toBe(2);
+  });
 
   // 🧑‍💻 TODO 2c — hook deve chamar navigator.setAppBadge com a contagem
   // Dica: vi.fn() + Object.defineProperty(navigator, 'setAppBadge', { value: mockBadge, configurable: true })
-  it.todo('5. chama navigator.setAppBadge com a contagem');
+  it('5. chama navigator.setAppBadge com a contagem', () => {
+    const mockBadge = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'setAppBadge', { value: mockBadge, configurable: true });
+
+    try {
+      const { result } = renderHook(() => useFavorites());
+      expect(mockBadge).toHaveBeenLastCalledWith(0);
+
+      act(() => result.current.toggle(1));
+      expect(mockBadge).toHaveBeenLastCalledWith(1);
+
+      act(() => result.current.toggle(2));
+      expect(mockBadge).toHaveBeenLastCalledWith(2);
+    } finally {
+      delete (navigator as { setAppBadge?: unknown }).setAppBadge;
+    }
+  });
 });
