@@ -17,6 +17,11 @@ code {
   font-size: 0.9em;
 }
 
+/* toast do UpdatePrompt — acima da tab bar no mobile */
+.update-prompt {
+  bottom: 16px;
+}
+
 /* bottom tab bar — visível só no mobile */
 .bottom-tab-bar {
   display: none;
@@ -37,5 +42,9 @@ code {
 
   .main-content {
     padding-bottom: 80px;
+  }
+
+  .update-prompt {
+    bottom: 80px;
   }
 }

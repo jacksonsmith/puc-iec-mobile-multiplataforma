@@ -14,4 +14,14 @@ export const styles: Record<string, React.CSSProperties> = {
     marginBottom: 16,
     outline: 'none',
   },
+  offlineBanner: {
+    background: '#C2410C',
+    color: '#fff',
+    padding: '8px 16px',
+    textAlign: 'center',
+    fontSize: 14,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  emptyState: { color: '#90a4ae', textAlign: 'center', padding: '40px 0', fontSize: 15 },
 };
