@@ -28,7 +28,8 @@ import org.example.project.data.TmdbApi
 fun App(tmdbToken: String = "") {
     MaterialTheme {
         var movies by remember { mutableStateOf<List<Movie>>(emptyList()) }
-        var isLoading by remember { mutableStateOf(false) }
+        // Com token, já nasce carregando: senão o 1º frame (antes do LaunchedEffect) pisca "Nenhum filme".
+        var isLoading by remember { mutableStateOf(tmdbToken.isNotBlank()) }
         var error by remember { mutableStateOf<String?>(null) }
 
         val api = remember(tmdbToken) { TmdbApi(tmdbToken) }
@@ -46,15 +47,18 @@ fun App(tmdbToken: String = "") {
         }
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            // ── TODO 1 ──────────────────────────────────────────────────────
-            // Troque a linha abaixo por um `when` que mostra, nesta ordem:
-            //   - tmdbToken em branco       -> TokenMissingMessage()
-            //   - isLoading == true         -> CircularProgressIndicator() centralizado
-            //   - error != null             -> ErrorMessage(error!!)
-            //   - caso contrário            -> MovieList(movies)
-            // ────────────────────────────────────────────────────────────────
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("TODO 1: implemente os estados (loading / erro / lista)")
+            // TODO 1: uma tela por estado. A ordem importa: sem token nem existe busca.
+            // `error` é delegado (by mutableStateOf), então a cópia local permite o smart cast.
+            val currentError = error
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+                when {
+                    tmdbToken.isBlank() -> TokenMissingMessage()
+                    isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    currentError != null -> ErrorMessage(currentError)
+                    else -> MovieList(movies)
+                }
             }
         }
     }
