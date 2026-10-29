@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 import org.example.project.data.Movie
 import org.example.project.data.TmdbApi
 
@@ -28,7 +29,8 @@ import org.example.project.data.TmdbApi
 fun App(tmdbToken: String = "") {
     MaterialTheme {
         var movies by remember { mutableStateOf<List<Movie>>(emptyList()) }
-        var isLoading by remember { mutableStateOf(false) }
+        // Com token, já nasce carregando: senão o 1º frame (antes do LaunchedEffect) pisca "Nenhum filme".
+        var isLoading by remember { mutableStateOf(tmdbToken.isNotBlank()) }
         var error by remember { mutableStateOf<String?>(null) }
 
         val api = remember(tmdbToken) { TmdbApi(tmdbToken) }
@@ -46,15 +48,18 @@ fun App(tmdbToken: String = "") {
         }
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            // ── TODO 1 ──────────────────────────────────────────────────────
-            // Troque a linha abaixo por um `when` que mostra, nesta ordem:
-            //   - tmdbToken em branco       -> TokenMissingMessage()
-            //   - isLoading == true         -> CircularProgressIndicator() centralizado
-            //   - error != null             -> ErrorMessage(error!!)
-            //   - caso contrário            -> MovieList(movies)
-            // ────────────────────────────────────────────────────────────────
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("TODO 1: implemente os estados (loading / erro / lista)")
+            // TODO 1: uma tela por estado. A ordem importa: sem token nem existe busca.
+            // `error` é delegado (by mutableStateOf), então a cópia local permite o smart cast.
+            val currentError = error
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+                when {
+                    tmdbToken.isBlank() -> TokenMissingMessage()
+                    isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    currentError != null -> ErrorMessage(currentError)
+                    else -> MovieList(movies)
+                }
             }
         }
     }
@@ -69,32 +74,82 @@ private fun MovieList(movies: List<Movie>) {
         return
     }
 
-    // ── TODO 2 ──────────────────────────────────────────────────────────────
-    // Monte um LazyColumn (fillMaxSize, contentPadding 16dp,
-    // verticalArrangement spacedBy 12dp) com:
-    //   - um item de cabeçalho: Text("${movies.size} filmes populares")
-    //   - um items(movies) { movie -> MovieCard(movie) }
-    // ────────────────────────────────────────────────────────────────────────
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("TODO 2: monte o LazyColumn com cabeçalho + itens")
+    // TODO 2: LazyColumn só compõe os itens visíveis. O id do filme como key mantém o estado
+    // de cada card estável se a lista mudar de ordem.
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            Column(Modifier.padding(bottom = 4.dp)) {
+                Text(
+                    text = "Filmes em alta",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "${movies.size} filmes populares",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        items(movies, key = { it.id }) { movie -> MovieCard(movie) }
     }
 }
 
 @Composable
 private fun MovieCard(movie: Movie) {
-    // ── TODO 3 ──────────────────────────────────────────────────────────────
-    // Construa o card do filme. Sugestão de layout (Card > Row):
-    //   - Box à esquerda (56x84dp, cantos arredondados 6dp, background
-    //     MaterialTheme.colorScheme.primaryContainer) com a inicial do
-    //     título centralizada (placeholder de poster, sem imagem real)
-    //   - Column à direita (weight 1f) com: título (bold, 2 linhas max),
-    //     overview (2 linhas max), e uma Row com nota "⭐ X.X" + ano
-    // ────────────────────────────────────────────────────────────────────────
+    // TODO 3: placeholder de pôster (inicial do título) + título, sinopse, nota e ano.
+    val initial = movie.title.firstOrNull { it.isLetterOrDigit() }?.uppercase() ?: "?"
+    val year = movie.releaseDate.take(4).takeIf { it.length == 4 && it.all(Char::isDigit) }
+    val rating = (movie.voteAverage * 10).roundToInt() / 10.0 // 1 casa decimal sem String.format (indisponível no common)
+
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "TODO 3: card de ${movie.title}",
-            modifier = Modifier.padding(16.dp),
-        )
+        Row(
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 56.dp, height = 84.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = initial,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = movie.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = movie.overview.ifBlank { "Sinopse indisponível." },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = listOfNotNull("⭐ $rating", year).joinToString("  ·  "),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
     }
 }
 
