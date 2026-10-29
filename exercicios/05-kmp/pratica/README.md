@@ -4,6 +4,9 @@ Projeto Kotlin Multiplatform (Android · iOS · Web) gerado pelo wizard oficial.
 `shared/src/commonMain/kotlin/org/example/project/App.kt` — a chamada à API (TMDB) já está pronta.
 Enunciado, rubrica e entrega: [`../enunciado.md`](../enunciado.md).
 
+A especificação implementada, com critérios de aceite e comandos de validação, está em
+[`SPEC.md`](./SPEC.md).
+
 ## 1. Entre na pasta certa
 
 ```bash
@@ -30,7 +33,7 @@ ls shared/src/commonMain/kotlin/org/example/project    # deve listar App.kt e da
 
 Sem o token, o app mostra *"Token TMDB não configurado"* — é o estado esperado até o passo 2.
 
-## 4. O que fazer (3 TODOs em `App.kt`)
+## 4. Interface implementada em `App.kt`
 
 | TODO | O quê |
 |---|---|
@@ -38,7 +41,8 @@ Sem o token, o app mostra *"Token TMDB não configurado"* — é o estado espera
 | 2 | `MovieList`: `LazyColumn` com cabeçalho + itens |
 | 3 | `MovieCard`: card com placeholder de poster, título, overview, nota e ano |
 
-Os comentários `// TODO N` no arquivo trazem a especificação exata de cada um.
+Os três requisitos acima estão implementados no código compartilhado. Consulte a
+[`SPEC.md`](./SPEC.md) para os critérios de aceite adotados.
 
 ## 5. Antes de abrir o PR
 
