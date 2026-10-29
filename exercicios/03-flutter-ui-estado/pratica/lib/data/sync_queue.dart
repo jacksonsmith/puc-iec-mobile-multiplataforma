@@ -50,7 +50,16 @@ class SyncQueue {
     //   • se for a AÇÃO OPOSTA (add × remove) → as duas se CANCELAM: remova a antiga da fila,
     //     salve, e NÃO enfileire `op` (o servidor nem precisa saber).
     // Em qualquer desses casos: `await _save(...)` quando mudar a fila, e dê `return`.
-    // 👇 escreva aqui
+    final i = ops.indexWhere((o) => o.movieId == op.movieId);
+    if (i != -1) {
+      // mesma ação já pendente (ex.: favoritar 2x offline) → nada a fazer.
+      if (ops[i].add == op.add) return;
+      // ação oposta (favoritou e desfavoritou offline) → uma anula a outra:
+      // tira a antiga da fila e a nova nem entra (o servidor nem precisa saber).
+      ops.removeAt(i);
+      await _save(ops);
+      return;
+    }
 
     ops.add(op); // (pronto) sem conflito: vai pro fim da fila
     await _save(ops);
@@ -63,6 +72,19 @@ class SyncQueue {
   //   - devolva quantas operações foram enviadas com sucesso.
   // Dica: `final ops = await pending();` → percorra com for → try { await send(op); ... } catch (_) { break; }
   Future<int> flush(Future<void> Function(PendingOp op) send) async {
-    return 0; // 👈 implemente
+    final ops = await pending();
+    var sent = 0;
+    while (ops.isNotEmpty) {
+      final op = ops.first; // sempre na ORDEM da fila
+      try {
+        await send(op);
+      } catch (_) {
+        break; // 1º erro (ex.: caiu a rede): para; o resto fica na fila, na mesma ordem
+      }
+      ops.removeAt(0);
+      await _save(ops); // persiste a cada sucesso: se o app fechar agora, não reenvia
+      sent++;
+    }
+    return sent;
   }
 }
