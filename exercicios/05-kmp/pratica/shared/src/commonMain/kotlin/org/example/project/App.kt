@@ -73,14 +73,28 @@ private fun MovieList(movies: List<Movie>) {
         return
     }
 
-    // ── TODO 2 ──────────────────────────────────────────────────────────────
-    // Monte um LazyColumn (fillMaxSize, contentPadding 16dp,
-    // verticalArrangement spacedBy 12dp) com:
-    //   - um item de cabeçalho: Text("${movies.size} filmes populares")
-    //   - um items(movies) { movie -> MovieCard(movie) }
-    // ────────────────────────────────────────────────────────────────────────
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("TODO 2: monte o LazyColumn com cabeçalho + itens")
+    // TODO 2: LazyColumn só compõe os itens visíveis. O id do filme como key mantém o estado
+    // de cada card estável se a lista mudar de ordem.
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            Column(Modifier.padding(bottom = 4.dp)) {
+                Text(
+                    text = "Filmes em alta",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "${movies.size} filmes populares",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        items(movies, key = { it.id }) { movie -> MovieCard(movie) }
     }
 }
 
