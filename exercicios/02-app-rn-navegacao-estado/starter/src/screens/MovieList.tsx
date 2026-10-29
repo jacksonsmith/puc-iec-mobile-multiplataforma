@@ -7,12 +7,11 @@
 // ATIVIDADE 2 — usar MovieCard com favoritar
 
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
-import { usePopularMovies } from '@/queries/movies/get-popular-movies';
-import { useCounterStore } from '@/store/counterStore';
-import { isTokenError, isTokenMissing } from '@/services/api';
+import MovieCard from '@/components/MovieCard';
 import TokenMissingScreen from '@/components/TokenMissingScreen';
-// TODO [TASK 3]: descomentar quando renderizar MovieCard
-// import MovieCard from '@/components/MovieCard';
+import { usePopularMovies } from '@/queries/movies/get-popular-movies';
+import { isTokenError, isTokenMissing } from '@/services/api';
+import { useCounterStore } from '@/store/counterStore';
 
 export default function MovieList() {
   const { data, isLoading, error, refetch } = usePopularMovies();
@@ -39,19 +38,17 @@ export default function MovieList() {
     );
   }
 
-  // TODO [TASK 3]: substituir o stub abaixo por FlatList
-  //
-  //   <FlatList
-  //     data={data?.results ?? []}
-  //     keyExtractor={(item) => String(item.id)}
-  //     renderItem={({ item }) => <MovieCard movie={item} />}
-  //     onRefresh={refetch}
-  //     refreshing={isLoading}
-  //   />
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Counter: {count}</Text>
-      <Text>TODO [TASK 3]: renderizar FlatList aqui</Text>
+      <FlatList
+        data={data?.results ?? []}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => <MovieCard movie={item} />}
+        onRefresh={refetch}
+        refreshing={isLoading}
+        contentContainerStyle={styles.listContent}
+      />
       <Text style={styles.hint}>{data?.results?.length ?? 0} filmes carregados</Text>
     </View>
   );
@@ -62,4 +59,5 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 24, fontWeight: 'bold' },
   hint: { color: '#666', fontSize: 12 },
+  listContent: { gap: 8, paddingBottom: 16 },
 });
