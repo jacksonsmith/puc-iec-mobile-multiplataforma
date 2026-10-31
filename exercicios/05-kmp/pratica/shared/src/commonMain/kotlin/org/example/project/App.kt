@@ -10,8 +10,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.data.Movie
@@ -47,14 +49,17 @@ fun App(tmdbToken: String = "") {
 
         Surface(modifier = Modifier.fillMaxSize()) {
             // ── TODO 1 ──────────────────────────────────────────────────────
-            // Troque a linha abaixo por um `when` que mostra, nesta ordem:
-            //   - tmdbToken em branco       -> TokenMissingMessage()
-            //   - isLoading == true         -> CircularProgressIndicator() centralizado
-            //   - error != null             -> ErrorMessage(error!!)
-            //   - caso contrário            -> MovieList(movies)
-            // ────────────────────────────────────────────────────────────────
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("TODO 1: implemente os estados (loading / erro / lista)")
+
+            when{
+                tmdbToken.isBlank() -> TokenMissingMessage()
+                isLoading -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    CircularProgressIndicator()
+                }
+                error !=null -> ErrorMessage(error!!)
+                else -> MovieList(movies)
             }
         }
     }
@@ -76,7 +81,14 @@ private fun MovieList(movies: List<Movie>) {
     //   - um items(movies) { movie -> MovieCard(movie) }
     // ────────────────────────────────────────────────────────────────────────
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("TODO 2: monte o LazyColumn com cabeçalho + itens")
+        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+           item{
+               Text("${movies.size} filmes populares", fontSize = 20.sp)
+           }
+            items(movies){
+                movie -> MovieCard(movie)
+            }
+        }
     }
 }
 
@@ -91,10 +103,37 @@ private fun MovieCard(movie: Movie) {
     //     overview (2 linhas max), e uma Row com nota "⭐ X.X" + ano
     // ────────────────────────────────────────────────────────────────────────
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "TODO 3: card de ${movie.title}",
-            modifier = Modifier.padding(16.dp),
-        )
+        Row(modifier = Modifier.padding(12.dp)){
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.size(56.dp,84.dp).clip(RoundedCornerShape(6.dp)).background(
+                    MaterialTheme.colorScheme.primaryContainer)){
+                Text(
+                    text = movie.title.firstOrNull()?.uppercase()?:"??",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = movie.title,
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
+                )
+                Text(
+                    text = movie.overview,
+                    maxLines = 2
+                )
+                Row{
+                    Text("⭐ ${movie.voteAverage}")
+                    Text(text = movie.releaseDate.take(4),
+                        modifier = Modifier.padding(start = 16.dp))
+                }
+            }
+        }
     }
 }
 
@@ -104,6 +143,7 @@ private fun TokenMissingMessage() {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Token TMDB não configurado", fontWeight = FontWeight.Bold, fontSize = 18.sp)
             Spacer(Modifier.height(8.dp))
+
             Text(
                 "Adicione tmdb.token=<seu-token> em local.properties e sincronize o Gradle.",
                 style = MaterialTheme.typography.bodyMedium,
@@ -116,5 +156,13 @@ private fun TokenMissingMessage() {
 private fun ErrorMessage(msg: String) {
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
         Text("Erro: $msg", color = MaterialTheme.colorScheme.error)
+    }
+}
+
+@Preview
+@Composable
+private fun MovieCardP() {
+    MaterialTheme {
+        App()
     }
 }
