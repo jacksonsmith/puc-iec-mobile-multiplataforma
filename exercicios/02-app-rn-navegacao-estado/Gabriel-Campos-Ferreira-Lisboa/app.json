@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Feed de Filmes - Atividade 2",
+    "slug": "atividade-2-feed-favoritos",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.atividade2feedfavoritos"
+    }
+  }
+}
