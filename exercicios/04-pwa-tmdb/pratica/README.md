@@ -86,3 +86,14 @@ pratica/
 
 Veja a seção **Entrega** do [`enunciado.md`](../enunciado.md) (clone novo → branch `feat/a4-pwa` → remote `meu` → PR).
 O bot J.A.R.V.I.S. comenta a nota mínima automática a cada commit.
+
+
+## Validação desta entrega
+
+- `npm test`: 15 testes passaram, incluindo os quatro estados/ações de UpdatePrompt.
+- `npm run build`: concluído.
+- Chrome: cache real da API (200) e pôster opaco (0), reload offline com imagem,
+  persistência de favorito e troca real de Service Worker pelo botão Atualizar.
+- Respostas do TMDB simuladas no teste; um token pessoal é necessário para usar a API real.
+
+Veja [ENTREGA.md](ENTREGA.md) para capturas, comparação site × PWA e reflexão.

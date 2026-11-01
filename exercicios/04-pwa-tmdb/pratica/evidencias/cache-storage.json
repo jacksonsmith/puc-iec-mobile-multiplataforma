@@ -1,0 +1,18 @@
+{
+  "tmdb-api": [
+    {
+      "url": "https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1",
+      "status": 200
+    },
+    {
+      "url": "https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=2",
+      "status": 200
+    }
+  ],
+  "tmdb-images": [
+    {
+      "url": "https://image.tmdb.org/t/p/w342/laboratorio.png",
+      "status": 0
+    }
+  ]
+}
