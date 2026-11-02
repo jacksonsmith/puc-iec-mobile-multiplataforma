@@ -26,25 +26,38 @@ describe('useFavorites', () => {
 
   it('3. toggle duas vezes remove o favorito', () => {
     const { result } = renderHook(() => useFavorites());
-    act(() => result.current.toggle(42));
-    act(() => result.current.toggle(42));
+
+    act(() => {
+      result.current.toggle(42);
+      result.current.toggle(42);
+    });
+
     expect(result.current.isFavorite(42)).toBe(false);
     expect(result.current.count).toBe(0);
   });
 
   it('4. persiste favoritos no localStorage', () => {
-    const { result, unmount } = renderHook(() => useFavorites());
-    act(() => result.current.toggle(7));
-    unmount();
-    const { result: result2 } = renderHook(() => useFavorites());
-    expect(result2.current.isFavorite(7)).toBe(true);
+    const first = renderHook(() => useFavorites());
+
+    act(() => first.result.current.toggle(42));
+    first.unmount();
+
+    const second = renderHook(() => useFavorites());
+    expect(second.result.current.isFavorite(42)).toBe(true);
+    expect(second.result.current.count).toBe(1);
   });
 
-  it('5. chama navigator.setAppBadge com a contagem', async () => {
+  it('5. chama navigator.setAppBadge com a contagem', () => {
     const mockBadge = vi.fn();
-    Object.defineProperty(navigator, 'setAppBadge', { value: mockBadge, configurable: true });
+    Object.defineProperty(navigator, 'setAppBadge', {
+      value: mockBadge,
+      configurable: true,
+    });
+
     const { result } = renderHook(() => useFavorites());
-    await act(async () => { result.current.toggle(1); });
-    expect(mockBadge).toHaveBeenCalledWith(1);
+    expect(mockBadge).toHaveBeenLastCalledWith(0);
+
+    act(() => result.current.toggle(42));
+    expect(mockBadge).toHaveBeenLastCalledWith(1);
   });
 });
