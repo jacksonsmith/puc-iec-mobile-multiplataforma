@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "CineFav Web (Chrome, porta 5300)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": [
+        "--web-port",
+        "5300"
+      ]
+    },
+    {
+      "name": "CineFav Web (dados reais TMDB — precisa do .env.local)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": [
+        "--web-port",
+        "5300",
+        "--dart-define-from-file=.env.local"
+      ]
+    }
+  ]
+}

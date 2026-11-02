@@ -1,5 +1,5 @@
 // src/hooks/useOfflineStatus.ts
-// ✅ AVALIATIVO — TODO 3, Passo 3
+// ✅ AVALIATIVO — TODO 5
 //
 // Implemente este hook pra rastrear o status de conexão do browser.
 //

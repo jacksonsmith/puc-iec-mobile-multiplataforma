@@ -14,7 +14,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'TMDB Popular Movies',
@@ -37,14 +37,16 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'tmdb-api',
+              networkTimeoutSeconds: 3,
               expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
             },
           },
           {
-            urlPattern: /^https:\/\/image\.themoviedb\.org\//,
+            urlPattern: /^https:\/\/image\.tmdb\.org\//,
             handler: 'CacheFirst',
             options: {
               cacheName: 'tmdb-images',
+              cacheableResponse: { statuses: [0, 200] },
               expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 7 },
             },
           },
