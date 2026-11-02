@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.data.Movie
 import org.example.project.data.TmdbApi
+import kotlin.math.roundToInt
 
 // ─────────────────────────────────────────────────────────────────────────────
 // App — Composable raiz compartilhado entre Android, iOS e Web.
@@ -53,8 +54,13 @@ fun App(tmdbToken: String = "") {
             //   - error != null             -> ErrorMessage(error!!)
             //   - caso contrário            -> MovieList(movies)
             // ────────────────────────────────────────────────────────────────
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("TODO 1: implemente os estados (loading / erro / lista)")
+            when {
+                tmdbToken.isBlank() -> TokenMissingMessage()
+                isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+                error != null -> ErrorMessage(error!!)
+                else -> MovieList(movies)
             }
         }
     }
@@ -75,8 +81,19 @@ private fun MovieList(movies: List<Movie>) {
     //   - um item de cabeçalho: Text("${movies.size} filmes populares")
     //   - um items(movies) { movie -> MovieCard(movie) }
     // ────────────────────────────────────────────────────────────────────────
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("TODO 2: monte o LazyColumn com cabeçalho + itens")
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            Text(
+                text = "${movies.size} filmes populares",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        items(movies) { movie -> MovieCard(movie) }
     }
 }
 
@@ -90,11 +107,52 @@ private fun MovieCard(movie: Movie) {
     //   - Column à direita (weight 1f) com: título (bold, 2 linhas max),
     //     overview (2 linhas max), e uma Row com nota "⭐ X.X" + ano
     // ────────────────────────────────────────────────────────────────────────
+    val rating = (movie.voteAverage * 10).roundToInt() / 10.0
+    val year = movie.releaseDate.take(4)
+
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "TODO 3: card de ${movie.title}",
-            modifier = Modifier.padding(16.dp),
-        )
+        Row(
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 56.dp, height = 84.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = movie.title.firstOrNull()?.uppercase() ?: "?",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = movie.title,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = movie.overview,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(6.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("⭐ $rating", style = MaterialTheme.typography.labelMedium)
+                    if (year.isNotEmpty()) {
+                        Text(year, style = MaterialTheme.typography.labelMedium)
+                    }
+                }
+            }
+        }
     }
 }
 
