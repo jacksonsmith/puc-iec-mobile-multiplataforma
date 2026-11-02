@@ -4,6 +4,8 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
@@ -25,12 +27,21 @@ class TmdbApi(private val token: String) {
         }
     }
 
-    suspend fun popularMovies(page: Int = 1): MoviesResponse =
-        client.get("$BASE_URL/movie/popular") {
+    suspend fun popularMovies(page: Int = 1): MoviesResponse {
+        val response = client.get("$BASE_URL/movie/popular") {
             header("Authorization", "Bearer $token")
             parameter("language", "pt-BR")
             parameter("page", page)
-        }.body()
+        }
+
+        if (!response.status.isSuccess()) {
+            throw IllegalStateException(
+                "TMDB respondeu HTTP ${response.status.value}: ${response.bodyAsText()}",
+            )
+        }
+
+        return response.body()
+    }
 }
 
 // URL pública de poster do TMDB (w342 = largura 342px)
