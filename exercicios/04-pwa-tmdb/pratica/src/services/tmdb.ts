@@ -32,13 +32,13 @@ tmdbClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Implemente fetchPopularMovies usando tmdbClient.
-//
-// Endpoint : GET /movie/popular
-// Parâmetros: { language: 'pt-BR', page }
-//
-// Dica: tmdbClient.get<MoviesResponse>('/movie/popular', { params: {...} })
-// e retorne o `data` da resposta.
-export async function fetchPopularMovies(_page = 1): Promise<MoviesResponse> {
-  throw new Error('TODO 1: fetchPopularMovies não implementada');
+// TODO 1 — GET /movie/popular?language=pt-BR&page=N.
+// O axios monta a query string a partir de `params`; o token e a baseURL já vêm do tmdbClient.
+// Retorna só o `data` (o corpo JSON): quem chama não precisa saber que existe axios.
+// Erros (401 de token inválido, falta de rede) sobem para o repositório decidir o fallback.
+export async function fetchPopularMovies(page = 1): Promise<MoviesResponse> {
+  const { data } = await tmdbClient.get<MoviesResponse>('/movie/popular', {
+    params: { language: 'pt-BR', page },
+  });
+  return data;
 }

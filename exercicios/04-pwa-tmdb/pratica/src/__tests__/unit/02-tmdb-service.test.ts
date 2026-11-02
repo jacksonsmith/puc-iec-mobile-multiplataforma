@@ -35,5 +35,15 @@ describe('fetchPopularMovies', () => {
     await expect(fetchPopularMovies()).rejects.toThrow('401');
   });
 
-  it.todo('3. inclui param page=1 na chamada');
+  it('3. inclui param page=1 na chamada (e repassa a página pedida)', async () => {
+    const get = vi.spyOn(tmdbClient, 'get').mockResolvedValue({
+      data: { results: [], page: 1, total_pages: 1, total_results: 0 },
+    });
+
+    await fetchPopularMovies();
+    await fetchPopularMovies(2);
+
+    expect(get).toHaveBeenNthCalledWith(1, '/movie/popular', { params: { language: 'pt-BR', page: 1 } });
+    expect(get).toHaveBeenNthCalledWith(2, '/movie/popular', { params: { language: 'pt-BR', page: 2 } });
+  });
 });
