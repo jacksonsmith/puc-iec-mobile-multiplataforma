@@ -23,10 +23,10 @@ cd exercicios/05-kmp/pratica
 ls shared/src/commonMain/kotlin/org/example/project    # deve listar App.kt e data/
 ```
 
+
 1. Copie `local.properties.example` para `local.properties`
 2. Gere um token gratuito em [themoviedb.org](https://www.themoviedb.org/settings/api) (v4 Read Access Token) e cole em `tmdb.token=`
 3. Abra a pasta `pratica/` no Android Studio (Kotlin Multiplatform plugin já instalado da aula) → Sync Gradle → Run `androidApp`
-
 > **Toolchain:** Android Studio Quail 2026.1.1+, JDK 17. Mesmos requisitos verificados em aula. iOS/Web fazem parte do projeto wizard mas não são exigidos nesta atividade — só o `androidApp`.
 
 ---

@@ -80,7 +80,7 @@ private fun MovieList(movies: List<Movie>) {
         item {
             Text(
                 text = "${movies.size} filmes populares",
-                style = MaterialTheme.typography.medium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
         }
