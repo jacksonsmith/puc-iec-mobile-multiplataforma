@@ -1,16 +1,11 @@
-// tests/e2e/pwa.spec.ts — verificação OPCIONAL na sua máquina (o bot NÃO executa este arquivo)
-// Executa com: npm run build && npx playwright test
-
 import { test, expect } from '@playwright/test';
-
-// ── Grupo A: dados (TODO 1) ─────────────────────────────────────────────
 
 test.describe('A — Dados TMDB', () => {
   test('A1. exibe pelo menos 10 cards de filmes', async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('article', { timeout: 10_000 });
     const cards = page.locator('article');
-    await expect(cards).toHaveCountGreaterThan(9);
+    await expect.poll(() => cards.count()).toBeGreaterThan(9);
   });
 
   test('A2. cada card tem título e nota visíveis', async ({ page }) => {
@@ -21,9 +16,12 @@ test.describe('A — Dados TMDB', () => {
     await expect(first).toContainText(/[0-9]\.[0-9]/);
   });
 
+  test.use({ viewport: { width: 740, height: 860 } });
+
   test('A3. campo de busca filtra filmes por título', async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('article');
+    await page.getByRole('button', { name: 'Buscar', exact: true }).click();
     const total = await page.locator('article').count();
 
     await page.fill('input[type="search"]', 'xyznotfound999');
@@ -34,8 +32,6 @@ test.describe('A — Dados TMDB', () => {
     await expect(page.locator('article')).toHaveCount(total);
   });
 });
-
-// ── Grupo B: PWA offline (TODO 2 e 3 + Workbox) ─────────────────────────────────
 
 test.describe('B — PWA & Offline', () => {
   test('B1. Web App Manifest está linkado e tem display=standalone', async ({ page }) => {
@@ -65,18 +61,19 @@ test.describe('B — PWA & Offline', () => {
     await page.goto('/');
     await page.waitForSelector('article');
 
-    // Ativa modo offline e recarrega
+    await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
+    await page.reload();
+    await page.locator("article").first().waitFor();
+
     await context.setOffline(true);
     await page.reload();
     await page.waitForSelector('article', { timeout: 8_000 });
 
     const cards = page.locator('article');
-    await expect(cards).toHaveCountGreaterThan(0);
+    await expect.poll(() => cards.count()).toBeGreaterThan(0);
     await context.setOffline(false);
   });
 });
-
-// ── Grupo C: favoritos + badge (TODO 4 e 5) ─────────────────────────────────────
 
 test.describe('C — Favoritos', () => {
   test('C1. clicar em Favoritar adiciona o filme e persiste no reload', async ({ page }) => {

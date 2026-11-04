@@ -1,0 +1,3 @@
+Cache Storage do Chromium — http://localhost:4173
+tmdb-api: 1 entrada
+tmdb-images: 5 entradas

@@ -1,5 +1,3 @@
-// src/services/tmdb.ts — chamadas TMDB sem React
-
 import axios from 'axios';
 import type { Movie, MoviesResponse } from '../types/movie';
 
@@ -10,14 +8,11 @@ export const isTokenMissing = !TOKEN || TOKEN === 'cole_seu_token_aqui';
 export const posterUrl = (path: string | null) =>
   path ? `https://image.tmdb.org/t/p/w342${path}` : null;
 
-// Cliente axios pré-configurado — baseURL e token já prontos
 export const tmdbClient = axios.create({
   baseURL: 'https://api.themoviedb.org/3',
   headers: { Authorization: `Bearer ${TOKEN}` },
 });
 
-// Simulador de offline — usado pelo NetworkToggle (só em dev)
-// Persiste em sessionStorage pra sobreviver ao reload
 const OFFLINE_KEY = 'dev:simulate-offline';
 let _simulateOffline = sessionStorage.getItem(OFFLINE_KEY) === 'true';
 
@@ -32,13 +27,9 @@ tmdbClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Implemente fetchPopularMovies usando tmdbClient.
-//
-// Endpoint : GET /movie/popular
-// Parâmetros: { language: 'pt-BR', page }
-//
-// Dica: tmdbClient.get<MoviesResponse>('/movie/popular', { params: {...} })
-// e retorne o `data` da resposta.
-export async function fetchPopularMovies(_page = 1): Promise<MoviesResponse> {
-  throw new Error('TODO 1: fetchPopularMovies não implementada');
+export async function fetchPopularMovies(page = 1): Promise<MoviesResponse> {
+  const { data } = await tmdbClient.get<MoviesResponse>('/movie/popular', {
+    params: { language: 'pt-BR', page },
+  });
+  return data;
 }

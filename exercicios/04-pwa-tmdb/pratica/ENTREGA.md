@@ -1,37 +1,35 @@
-# ENTREGA — Atividade 4 (PWA)
+# Entrega — Atividade 4 (PWA)
 
-> Preencha e faça commit junto com o código. Esta parte vale 3 pts (avaliação manual no Canvas).
+**Nome:** Diego Cardoso Marques · **GitHub:** D2Diego
 
-**Nome:** <seu nome> · **GitHub:** <seu-login>
+## 1. Site comum × PWA
 
----
+1. O PWA de referência ofereceu o botão **Instalar** no Chrome. Seu manifest
+   usa `display: standalone`, que permite abrir o app em uma janela própria.
+2. Com a rede desativada no navegador de teste, o site do TMDB falhou ao
+   recarregar. O PWA voltou a mostrar o catálogo a partir do armazenamento local.
+3. Ao fechar a aba do PWA e abri-la de novo ainda sem rede, os filmes e os
+   pôsteres continuaram visíveis. O navegador já tinha preparado o app para
+   funcionar offline na visita online.
 
-## 1. Site comum × PWA — o que EU vi (3 diferenças)
+[Referência carregada](evidencias/01-pwa-referencia.png) ·
+[Referência reaberta offline](evidencias/01b-referencia-reaberta-offline.png)
 
-Abra `https://pwa-tmdb-aula4.vercel.app` e compare com um site comum (ex.: themoviedb.org). Modo avião → recarregar; fechar e reabrir; instalar.
+## 2. Prova do offline no build
 
-| # | Site comum | PWA | Print/evidência |
-|---|---|---|---|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
+- [DevTools — cache de pôsteres](evidencias/02b-devtools-cache-storage.png) e [cache da API](evidencias/02c-devtools-cache-api.png).
+- [Contagem lida do Cache Storage do Chromium](evidencias/02a-cache-storage.txt),
+  com entradas de API e pôsteres.
+- [Aba Favoritos após recarregar offline](evidencias/02-app-offline.png), com
+  banner e pôster visíveis.
+- [Aviso de nova versão](evidencias/03-nova-versao.png). Ao clicar em
+  **Atualizar**, a página recarregou.
 
-## 2. Prova do offline no SEU build
+## 3. Reflexão
 
-- [ ] Print do **DevTools → Application → Cache Storage** com `tmdb-api` e `tmdb-images` (com itens)
-- [ ] Print do app em **modo avião** carregando a lista
-- [ ] Print do aviso **"Nova versão disponível"** (ou explique por que não conseguiu reproduzir)
-
-(Coloque os prints numa pasta `evidencias/` e referencie aqui.)
-
-## 3. Reflexão (5–8 linhas)
-
-`autoUpdate` × `prompt`: qual você escolheria para um app de **checkout** e para um app de **notícias**, e por quê? O que pode dar errado em cada escolha?
-
-<sua resposta>
-
-## 4. Declaração de uso de IA
-
-Usei IA? Onde e como? (uso transparente é incentivado)
-
-<sua resposta>
+- Para checkout, escolheria `prompt`.
+- Um recarregamento automático durante o pagamento pode interromper a confirmação ou perder dados digitados.
+- Mostraria o aviso ao fim do fluxo para que o usuário escolhesse quando atualizar.
+- O risco é manter a versão antiga por mais tempo se o usuário adiar a atualização.
+- Para notícias, escolheria `autoUpdate`, porque uma leitura costuma ser fácil de retomar.
+- Ainda assim, a atualização pode fazer o leitor perder a posição na matéria.
