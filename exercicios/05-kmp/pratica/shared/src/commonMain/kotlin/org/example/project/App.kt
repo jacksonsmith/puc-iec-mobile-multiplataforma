@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.data.Movie
 import org.example.project.data.TmdbApi
+import kotlin.math.roundToInt
 
 // ─────────────────────────────────────────────────────────────────────────────
 // App — Composable raiz compartilhado entre Android, iOS e Web.
@@ -85,19 +86,57 @@ private fun MovieList(movies: List<Movie>) {
 
 @Composable
 private fun MovieCard(movie: Movie) {
-    // ── TODO 3 ──────────────────────────────────────────────────────────────
-    // Construa o card do filme. Sugestão de layout (Card > Row):
-    //   - Box à esquerda (56x84dp, cantos arredondados 6dp, background
-    //     MaterialTheme.colorScheme.primaryContainer) com a inicial do
-    //     título centralizada (placeholder de poster, sem imagem real)
-    //   - Column à direita (weight 1f) com: título (bold, 2 linhas max),
-    //     overview (2 linhas max), e uma Row com nota "⭐ X.X" + ano
-    // ────────────────────────────────────────────────────────────────────────
+    // String.format só existe na JVM; em commonMain a casa decimal é montada à mão.
+    val notaEmDecimos = (movie.voteAverage * 10).roundToInt()
+
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "TODO 3: card de ${movie.title}",
-            modifier = Modifier.padding(16.dp),
-        )
+        Row(
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 56.dp, height = 84.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = movie.title.take(1).uppercase(),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                )
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = movie.title,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = movie.overview,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        text = "⭐ ${notaEmDecimos / 10}.${notaEmDecimos % 10}",
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                    Text(
+                        text = movie.releaseDate.take(4),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
+            }
+        }
     }
 }
 
