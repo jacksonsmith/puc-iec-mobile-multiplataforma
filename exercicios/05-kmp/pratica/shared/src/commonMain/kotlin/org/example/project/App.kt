@@ -47,13 +47,16 @@ fun App(tmdbToken: String = "") {
         }
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            when {
-                tmdbToken.isBlank() -> TokenMissingMessage()
-                isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+            // No Android 15+ o app desenha atrás das barras do sistema (edge-to-edge).
+            Box(Modifier.safeDrawingPadding()) {
+                when {
+                    tmdbToken.isBlank() -> TokenMissingMessage()
+                    isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    error != null -> ErrorMessage(error!!)
+                    else -> MovieList(movies)
                 }
-                error != null -> ErrorMessage(error!!)
-                else -> MovieList(movies)
             }
         }
     }
