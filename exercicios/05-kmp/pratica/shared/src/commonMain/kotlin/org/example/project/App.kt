@@ -17,13 +17,6 @@ import androidx.compose.ui.unit.sp
 import org.example.project.data.Movie
 import org.example.project.data.TmdbApi
 
-// ─────────────────────────────────────────────────────────────────────────────
-// App — Composable raiz compartilhado entre Android, iOS e Web.
-//
-// A busca de dados (TmdbApi) já está pronta — o exercício é construir a UI.
-// tmdbToken vem do BuildKonfig.TMDB_TOKEN (gerado do local.properties pra todas as plataformas).
-// ─────────────────────────────────────────────────────────────────────────────
-
 @Composable
 fun App(tmdbToken: String = "") {
     MaterialTheme {
@@ -46,15 +39,15 @@ fun App(tmdbToken: String = "") {
         }
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            // ── TODO 1 ──────────────────────────────────────────────────────
-            // Troque a linha abaixo por um `when` que mostra, nesta ordem:
-            //   - tmdbToken em branco       -> TokenMissingMessage()
-            //   - isLoading == true         -> CircularProgressIndicator() centralizado
-            //   - error != null             -> ErrorMessage(error!!)
-            //   - caso contrário            -> MovieList(movies)
-            // ────────────────────────────────────────────────────────────────
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("TODO 1: implemente os estados (loading / erro / lista)")
+            Box(Modifier.fillMaxSize().safeDrawingPadding()) {
+                when {
+                    tmdbToken.isBlank() -> TokenMissingMessage()
+                    isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    error != null -> ErrorMessage(error!!)
+                    else -> MovieList(movies)
+                }
             }
         }
     }
@@ -69,32 +62,48 @@ private fun MovieList(movies: List<Movie>) {
         return
     }
 
-    // ── TODO 2 ──────────────────────────────────────────────────────────────
-    // Monte um LazyColumn (fillMaxSize, contentPadding 16dp,
-    // verticalArrangement spacedBy 12dp) com:
-    //   - um item de cabeçalho: Text("${movies.size} filmes populares")
-    //   - um items(movies) { movie -> MovieCard(movie) }
-    // ────────────────────────────────────────────────────────────────────────
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("TODO 2: monte o LazyColumn com cabeçalho + itens")
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            Text("${movies.size} filmes populares", style = MaterialTheme.typography.titleLarge)
+        }
+        items(movies) { movie -> MovieCard(movie) }
     }
 }
 
 @Composable
 private fun MovieCard(movie: Movie) {
-    // ── TODO 3 ──────────────────────────────────────────────────────────────
-    // Construa o card do filme. Sugestão de layout (Card > Row):
-    //   - Box à esquerda (56x84dp, cantos arredondados 6dp, background
-    //     MaterialTheme.colorScheme.primaryContainer) com a inicial do
-    //     título centralizada (placeholder de poster, sem imagem real)
-    //   - Column à direita (weight 1f) com: título (bold, 2 linhas max),
-    //     overview (2 linhas max), e uma Row com nota "⭐ X.X" + ano
-    // ────────────────────────────────────────────────────────────────────────
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "TODO 3: card de ${movie.title}",
+        Row(
             modifier = Modifier.padding(16.dp),
-        )
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier.size(56.dp, 84.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    movie.title.firstOrNull()?.uppercase() ?: "—",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(movie.title, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(movie.overview, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val rating = kotlin.math.round(movie.voteAverage * 10).toInt()
+                    Text("⭐ ${rating / 10}.${rating % 10}")
+                    Text(movie.releaseDate.take(4))
+                }
+            }
+        }
     }
 }
 
