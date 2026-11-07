@@ -16,8 +16,10 @@ class PendingOp {
   const PendingOp({required this.id, required this.movieId, required this.add});
 
   Map<String, dynamic> toJson() => {'id': id, 'movieId': movieId, 'add': add};
-  factory PendingOp.fromJson(Map<String, dynamic> j) =>
-      PendingOp(id: j['id'] as String, movieId: j['movieId'] as int, add: j['add'] as bool);
+  factory PendingOp.fromJson(Map<String, dynamic> j) => PendingOp(
+      id: j['id'] as String,
+      movieId: j['movieId'] as int,
+      add: j['add'] as bool);
 }
 
 class SyncQueue {
@@ -51,7 +53,15 @@ class SyncQueue {
     //     salve, e NÃO enfileire `op` (o servidor nem precisa saber).
     // Em qualquer desses casos: `await _save(...)` quando mudar a fila, e dê `return`.
     // 👇 escreva aqui
-
+    final moviesEquals = ops.where((o) => o.movieId == op.movieId).toList();
+    for (final movie in moviesEquals) {
+      if (movie.add == op.add) {
+        return;
+      }
+      ops.remove(movie);
+      await _save(ops);
+      return;
+    }
     ops.add(op); // (pronto) sem conflito: vai pro fim da fila
     await _save(ops);
   }
@@ -63,6 +73,18 @@ class SyncQueue {
   //   - devolva quantas operações foram enviadas com sucesso.
   // Dica: `final ops = await pending();` → percorra com for → try { await send(op); ... } catch (_) { break; }
   Future<int> flush(Future<void> Function(PendingOp op) send) async {
-    return 0; // 👈 implemente
+    final ops = await pending();
+    var sent = 0;
+    for (final op in List<PendingOp>.from(ops)) {
+      try {
+        await send(op);
+        ops.remove(op);
+        await _save(ops);
+        sent++;
+      } catch (_) {
+        break;
+      }
+    }
+    return sent;
   }
 }
