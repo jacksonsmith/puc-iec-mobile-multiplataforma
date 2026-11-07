@@ -17,7 +17,7 @@ flutter analyze                         # sem issues
 - **Ex1/Ex2** — `MovieCard` composto (pôster, título, ⭐ nota, ano) e favoritos com Riverpod (`favoritesProvider`): o coração do card, o contador `♥ N` e o botão limpar leem/escrevem o mesmo provider.
 - **Ex3** — `test/favorites_test.dart`: toggle/clear, imutabilidade do `Set` e notificação de quem escuta.
 - **Ex4** — o `favoritesProvider` lê e grava o documento `favorites/meus-favoritos` no Firestore (atualização otimista: a UI muda na hora, a gravação vai em paralelo).
-- **Ex5** — `fetchBannerMessage()` busca `banner_message` no Remote Config e o banner aparece no topo da `HomeScreen` (cai no texto padrão se offline).
+- **Ex5 (extra — TASK 8 adiada, não pontua)** — `fetchBannerMessage()` busca `banner_message` no Remote Config e o banner aparece no topo da `HomeScreen` (cai no texto padrão se offline).
 - **Ex6** — banner offline, `toJson`/`fromJson`, repositório *cache-first* com TTL (cache fresco não chama a API) e `SyncQueue` com cancelamento de ações opostas e `flush` em ordem que persiste a cada sucesso e para no 1º erro.
 
 **Local × cloud × offline-first.** O estado **local** (Riverpod em memória) é instantâneo e funciona sem rede, mas vive preso a uma aba/aparelho e morre no reload. O estado **cloud** (Firestore) persiste e sincroniza entre abas e dispositivos, mas cada leitura depende de rede, tem latência, custo e regras de acesso — sem conexão, um app "só cloud" fica vazio. O **offline-first** combina os dois: a tela lê sempre o que está no aparelho (cache com TTL) e a rede vira um detalhe de sincronização — atualiza quando dá, e escritas feitas offline vão para uma fila que é enviada na volta. O preço é complexidade: decidir quando o cache está velho, aceitar que o usuário pode ver dado desatualizado e resolver conflitos (ex.: favoritar e desfavoritar offline se cancelam em vez de gerar duas escritas).
@@ -62,7 +62,7 @@ Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.da
 | 5 | `lib/screens/home_screen.dart` | contador `♥ N` no header | 🧑‍💻 |
 | 6 | `lib/screens/home_screen.dart` | botão **limpar** favoritos | 🧑‍💻 |
 | 7 | `lib/state/favorites.dart` | persistir favoritos no **Firestore** | 🧑‍💻 médio |
-| 8 | `lib/services/remote_config.dart` + home | banner via **Remote Config** | 🧑‍💻 médio |
+| 8 | `lib/services/remote_config.dart` + home | ⏸ **ADIADA** (Remote Config) — não faz parte desta atividade, pule | — |
 | 9 | `test/favorites_test.dart` | **você escreve** um teste do provider | 🧑‍💻 |
 | 11 | `lib/widgets/offline_banner.dart` | aviso "você está offline" | 🧑‍💻 fácil |
 | 12 | `lib/models/movie.dart` | `toJson` / `fromJson` | 🧑‍💻 fácil |

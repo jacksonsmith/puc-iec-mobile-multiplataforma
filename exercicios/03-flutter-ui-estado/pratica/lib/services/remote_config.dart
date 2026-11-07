@@ -1,5 +1,6 @@
 // lib/services/remote_config.dart
 //
+// ⏸ TASK 8 foi ADIADA pelo professor (não vale ponto nesta atividade) — implementada como extra.
 // Ex5 (TASK 8): busca o parâmetro `banner_message` do Firebase Remote Config.
 // Pré-requisito: projeto Firebase configurado (TASK 3) + parâmetro `banner_message`
 // criado e PUBLICADO no console (Build → Remote Config).

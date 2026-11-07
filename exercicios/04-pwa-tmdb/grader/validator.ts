@@ -1,6 +1,8 @@
 // grader/validator.ts — A4 PWA (Arquitetura)
-// Valida TODO 1, TODO 2 e TODO 3 estruturalmente.
-// Uso: npx ts-node grader/validator.ts --entrega <path-to-pratica>
+// Validação ESTRUTURAL e ESTÁTICA: só LÊ os arquivos da entrega (nunca executa código do aluno).
+// Uso: npx ts-node validator.ts --entrega <path-to-pratica>
+//
+// Rubrica (enunciado.md): 12 pts automáticos (piso) + 3 pts manuais (ENTREGA.md, lançados no Canvas).
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -14,110 +16,164 @@ function read(rel: string): string {
   return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : '';
 }
 
-// ─── TODO 1: fetchPopularMovies ──────────────────────────────────────────────
-function checkTodo1(): { pass: boolean; note: string } {
-  const src = read('src/services/tmdb.ts');
-  const hasThrow = src.includes("throw new Error('TODO 1");
-  // `.get<MoviesResponse>(...)` — o `<Tipo>` genérico do TS fica entre `.get` e `(`,
-  // então checagem por substring literal ('.get(') dava falso-negativo no próprio gabarito.
-  const hasGet = /\.get\s*(<[^>]*>)?\s*\(/.test(src);
-  const hasReturn = /return\s+(await\s+)?.*\.data/.test(src) || /return\s+data/.test(src);
+// Remove comentários (// , /* */ e {/* */}) pra não pontuar texto que só está no enunciado do scaffold.
+function code(rel: string): string {
+  // Cuidado: globs como '**/*.{js}' contêm "/*" dentro de string — só remove comentário "de verdade":
+  // bloco no início da linha, bloco JSX {/* */}, linha inteira // e comentário no fim da linha (" // ...").
+  return read(rel)
+    .replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, '')
+    .replace(/(^|\n)[ \t]*\/\*[\s\S]*?\*\//g, '$1')
+    .replace(/^[ \t]*\/\/.*$/gm, '')
+    .replace(/[ \t]\/\/[ \t].*$/gm, '');
+}
 
-  if (hasThrow) return { pass: false, note: 'fetchPopularMovies ainda lança TODO stub' };
-  if (!hasGet)  return { pass: false, note: 'fetchPopularMovies não chama tmdbClient.get()' };
-  if (!hasReturn) return { pass: false, note: 'fetchPopularMovies não retorna os dados' };
+type Check = { pass: boolean; note: string };
+
+// ─── TODO 1: fetchPopularMovies (2 pts) ─────────────────────────────────────
+function checkTodo1(): Check {
+  const src = code('src/services/tmdb.ts');
+  if (src.includes("throw new Error('TODO 1")) return { pass: false, note: 'fetchPopularMovies ainda lança o stub' };
+  const fn = src.slice(src.indexOf('fetchPopularMovies'));
+  // `.get<MoviesResponse>(...)`: o <Tipo> genérico fica entre `.get` e `(`
+  if (!/\.get\s*(<[^>]*>)?\s*\(/.test(fn)) return { pass: false, note: 'não chama tmdbClient.get(...)' };
+  if (!/\/movie\/popular/.test(src)) return { pass: false, note: "endpoint '/movie/popular' não encontrado" };
+  if (!/pt-BR/.test(fn)) return { pass: false, note: "falta params { language: 'pt-BR', page }" };
+  if (!/return\s+(await\s+)?[^;]*\.data|return\s+data/.test(fn)) return { pass: false, note: 'não retorna o data da resposta' };
   return { pass: true, note: 'fetchPopularMovies implementada' };
 }
 
-// ─── TODO 2: it.todo → testes reais ─────────────────────────────────────────
-function checkTodo2(): { pass: boolean; note: string; count: number } {
-  const src = read('src/__tests__/unit/03-useFavorites.test.ts');
-  const todos  = (src.match(/it\.todo\(/g) ?? []).length;
-  const reals  = (src.match(/\bit\s*\(/g) ?? []).length;
-  // expect at least 3 real tests beyond the 2 model ones (= 5 total)
-  if (todos > 0) return { pass: false, note: `${todos} caso(s) ainda como it.todo — implemente todos`, count: reals };
-  if (reals < 5) return { pass: false, note: `esperado ≥5 it() em 03-useFavorites, encontrado ${reals}`, count: reals };
-  return { pass: true, note: `03-useFavorites: ${reals} testes implementados`, count: reals };
+// ─── TODO 2: runtimeCaching (4 pts = 2 + 2) ─────────────────────────────────
+// Devolve o texto do objeto { ... } que envolve a primeira menção ao host (independe da ordem das chaves).
+function blockFor(cfg: string, hostRegex: RegExp): string {
+  const idx = cfg.search(hostRegex);
+  if (idx === -1) return '';
+  let depth = 0;
+  let start = -1;
+  for (let i = idx; i >= 0; i--) {
+    if (cfg[i] === '}') depth++;
+    else if (cfg[i] === '{') {
+      if (depth === 0) { start = i; break; }
+      depth--;
+    }
+  }
+  if (start === -1) return '';
+  depth = 0;
+  for (let i = start; i < cfg.length; i++) {
+    if (cfg[i] === '{') depth++;
+    else if (cfg[i] === '}') { depth--; if (depth === 0) return cfg.slice(start, i + 1); }
+  }
+  return cfg.slice(start);
 }
 
-// ─── TODO 3a: favorites tab renders list ─────────────────────────────────────
-function checkTodo3a(): { pass: boolean; note: string } {
-  const src = read('src/screens/HomeScreen.tsx');
-  const hasFavMovies = src.includes('isFavorite(m.id)') || src.includes("activeTab === 'favorites'");
-  const hasMap       = /favMovies\s*\.\s*map/.test(src) || /movies\s*\.\s*filter/.test(src);
-  const hasPlaceholder = src.includes('🚧 Passo 1');
-
-  if (hasPlaceholder) return { pass: false, note: 'Passo 1: placeholder ainda presente, lista não implementada' };
-  if (!hasFavMovies)  return { pass: false, note: 'Passo 1: filtro por isFavorite não encontrado' };
-  if (!hasMap)        return { pass: false, note: 'Passo 1: .map sobre favoritos não encontrado' };
-  return { pass: true, note: 'Passo 1: aba Favoritos renderiza lista' };
+function checkTodo2a(): Check {
+  const cfg = code('vite.config.ts');
+  const b = blockFor(cfg, /api\\?\.themoviedb\\?\.org/);
+  if (!b) return { pass: false, note: 'nenhuma regra para api.themoviedb.org no runtimeCaching' };
+  if (!/handler\s*:\s*['"]NetworkFirst['"]/.test(b)) return { pass: false, note: 'API: use NetworkFirst (rede primeiro, cache como reserva)' };
+  if (!/networkTimeoutSeconds\s*:\s*3\b/.test(b)) return { pass: false, note: 'API: falta networkTimeoutSeconds: 3' };
+  if (!/cacheName\s*:\s*['"]tmdb-api['"]/.test(b)) return { pass: false, note: "API: cacheName deve ser 'tmdb-api'" };
+  if (!/expiration\s*:/.test(b) || !/maxEntries\s*:\s*50\b/.test(b)) return { pass: false, note: 'API: expiration com maxEntries: 50 ausente' };
+  if (!/maxAgeSeconds/.test(b)) return { pass: false, note: 'API: expiration sem maxAgeSeconds (1 dia)' };
+  return { pass: true, note: 'API: NetworkFirst + timeout 3s + expiration' };
 }
 
-// ─── TODO 3b: empty state ────────────────────────────────────────────────────
-function checkTodo3b(): { pass: boolean; note: string } {
-  const src = read('src/screens/HomeScreen.tsx');
-  const hasEmptyMsg = src.includes('Nenhum favorito') || src.includes('Nenhum filme carregado');
-  if (!hasEmptyMsg) return { pass: false, note: 'Passo 2: estado vazio não implementado' };
+function checkTodo2b(): Check {
+  const cfg = code('vite.config.ts');
+  if (/image\\?\.themoviedb\\?\.org/.test(cfg) && !/image\\?\.tmdb\\?\.org/.test(cfg))
+    return { pass: false, note: 'Pôsteres: o host do urlPattern não casa com as URLs dos pôsteres (confira no DevTools → Network)' };
+  const b = blockFor(cfg, /image\\?\.tmdb\\?\.org/);
+  if (!b) return { pass: false, note: 'nenhuma regra para image.tmdb.org no runtimeCaching' };
+  if (!/handler\s*:\s*['"]CacheFirst['"]/.test(b)) return { pass: false, note: 'Pôsteres: use CacheFirst' };
+  if (!/cacheName\s*:\s*['"]tmdb-images['"]/.test(b)) return { pass: false, note: "Pôsteres: cacheName deve ser 'tmdb-images'" };
+  if (!/maxEntries\s*:\s*200\b/.test(b)) return { pass: false, note: 'Pôsteres: expiration com maxEntries: 200 ausente' };
+  if (!/cacheableResponse\s*:\s*\{[^}]*statuses\s*:\s*\[[^\]]*\b0\b[^\]]*\]/.test(b))
+    return { pass: false, note: 'Pôsteres: resposta opaca (status 0) precisa de cacheableResponse.statuses incluindo 0' };
+  return { pass: true, note: 'Pôsteres: CacheFirst + expiration + cacheableResponse [0, 200]' };
+}
+
+// ─── TODO 3: atualização do app (3 pts = 1 + 2) ─────────────────────────────
+function checkTodo3a(): Check {
+  const cfg = code('vite.config.ts');
+  if (!/registerType\s*:\s*['"]prompt['"]/.test(cfg)) return { pass: false, note: "registerType ainda não é 'prompt'" };
+  return { pass: true, note: "registerType: 'prompt'" };
+}
+
+function checkTodo3b(): Check {
+  const src = code('src/components/UpdatePrompt.tsx');
+  if (!/useRegisterSW/.test(src)) return { pass: false, note: 'UpdatePrompt não usa useRegisterSW' };
+  if (!/virtual:pwa-register\/react/.test(src)) return { pass: false, note: "import de 'virtual:pwa-register/react' ausente" };
+  if (!/needRefresh/.test(src) || !/updateServiceWorker\s*\(/.test(src))
+    return { pass: false, note: 'falta tratar needRefresh e chamar updateServiceWorker(...)' };
+  if (!/offlineReady/.test(src)) return { pass: false, note: 'falta tratar offlineReady (aviso "pronto para uso offline")' };
+  if (!/setNeedRefresh|setOfflineReady/.test(src)) return { pass: false, note: 'falta o botão que dispensa o aviso (setNeedRefresh/setOfflineReady)' };
+  if (!/return\s+null/.test(src)) return { pass: false, note: 'sem nenhum aviso ativo o componente deve retornar null' };
+  const app = code('src/App.tsx');
+  if (!/<UpdatePrompt\s*\/>/.test(app)) return { pass: false, note: 'UpdatePrompt não está renderizado em App.tsx' };
+  return { pass: true, note: 'UpdatePrompt com needRefresh + offlineReady + dispensar' };
+}
+
+// ─── TODO 4: aba Favoritos (2 pts = 1 + 1) ──────────────────────────────────
+function checkTodo4a(): Check {
+  const src = code('src/screens/HomeScreen.tsx');
+  if (src.includes('🚧')) return { pass: false, note: 'Passo 1: placeholder ainda presente' };
+  if (!/isFavorite\s*\(\s*m\.id\s*\)/.test(src)) return { pass: false, note: 'Passo 1: filtro por isFavorite(m.id) não encontrado' };
+  if (!/favMovies\s*\.\s*map/.test(src)) return { pass: false, note: 'Passo 1: favMovies.map não encontrado' };
+  return { pass: true, note: 'Passo 1: aba Favoritos renderiza a lista' };
+}
+
+function checkTodo4b(): Check {
+  const src = code('src/screens/HomeScreen.tsx');
+  if (!src.includes('Nenhum favorito') || !src.includes('Nenhum filme carregado'))
+    return { pass: false, note: 'Passo 2: estado vazio (as duas mensagens) não implementado' };
   return { pass: true, note: 'Passo 2: estado vazio presente' };
 }
 
-// ─── TODO 3c: useOfflineStatus hook ──────────────────────────────────────────
-function checkTodo3c(): { pass: boolean; note: string } {
-  const hookSrc = read('src/hooks/useOfflineStatus.ts');
-  const hasOnline    = hookSrc.includes("'online'") || hookSrc.includes('"online"');
-  const hasOffline   = hookSrc.includes("'offline'") || hookSrc.includes('"offline"');
-  const hasListener  = hookSrc.includes('addEventListener');
-  const hasCleanup   = hookSrc.includes('removeEventListener');
-  const hasNavOnline = hookSrc.includes('navigator.onLine');
-  const isStub       = hookSrc.includes('return { isOnline: true }') && !hasListener;
-
-  if (isStub)         return { pass: false, note: 'Passo 3: useOfflineStatus ainda é stub (sem listeners)' };
-  if (!hasNavOnline)  return { pass: false, note: 'Passo 3: não usa navigator.onLine para estado inicial' };
-  if (!hasOnline || !hasOffline) return { pass: false, note: 'Passo 3: listeners "online"/"offline" ausentes' };
-  if (!hasCleanup)    return { pass: false, note: 'Passo 3: removeEventListener (cleanup) ausente' };
-
-  // Also check it's actually used in HomeScreen
-  const screen = read('src/screens/HomeScreen.tsx');
-  const usedInScreen = screen.includes('useOfflineStatus') && screen.includes('isOnline');
-  if (!usedInScreen) return { pass: false, note: 'Passo 3: useOfflineStatus não usado em HomeScreen' };
-
-  return { pass: true, note: 'Passo 3: hook offline com cleanup + usado na tela' };
+// ─── TODO 5: useOfflineStatus (1 pt) ────────────────────────────────────────
+function checkTodo5(): Check {
+  const hook = code('src/hooks/useOfflineStatus.ts');
+  if (!/navigator\.onLine/.test(hook)) return { pass: false, note: 'não usa navigator.onLine no estado inicial' };
+  if (!/addEventListener\s*\(\s*['"]online['"]/.test(hook) || !/addEventListener\s*\(\s*['"]offline['"]/.test(hook))
+    return { pass: false, note: 'listeners "online"/"offline" ausentes' };
+  if (!/removeEventListener/.test(hook)) return { pass: false, note: 'cleanup (removeEventListener) ausente' };
+  const screen = code('src/screens/HomeScreen.tsx');
+  if (!/!\s*isOnline/.test(screen) || !/Offline/.test(screen)) return { pass: false, note: 'banner offline não aparece na aba Favoritos (!isOnline)' };
+  return { pass: true, note: 'hook com listeners + cleanup, banner na tela' };
 }
 
-// ─── Run ─────────────────────────────────────────────────────────────────────
-const t1  = checkTodo1();
-const t2  = checkTodo2();
-const t3a = checkTodo3a();
-const t3b = checkTodo3b();
-const t3c = checkTodo3c();
+// ─── Manual (não conta no piso) ─────────────────────────────────────────────
+function entregaNote(): string {
+  const e = read('ENTREGA.md');
+  if (!e) return 'ENTREGA.md não encontrado — avaliar no Canvas';
+  return 'ENTREGA.md presente — avaliar evidências e reflexão no Canvas';
+}
 
-// Pesos batem com a rubrica do enunciado.md (Critérios de avaliação) — soma 15.
-const results = [
-  { id: 'todo1',   label: 'TODO 1 — fetchPopularMovies', weight: 4, ...t1 },
-  { id: 'todo2',   label: 'TODO 2 — 3 testes useFavorites', weight: 4, ...t2 },
-  { id: 'todo3a',  label: 'TODO 3 Passo 1 — render favorites list', weight: 3, ...t3a },
-  { id: 'todo3b',  label: 'TODO 3 Passo 2 — empty state', weight: 2, ...t3b },
-  { id: 'todo3c',  label: 'TODO 3 Passo 3 — useOfflineStatus hook', weight: 2, ...t3c },
+const auto = [
+  { id: 'todo1',  label: 'TODO 1 — fetchPopularMovies',                 weight: 2, ...checkTodo1() },
+  { id: 'todo2a', label: 'TODO 2a — runtimeCaching da API (NetworkFirst)', weight: 2, ...checkTodo2a() },
+  { id: 'todo2b', label: 'TODO 2b — runtimeCaching dos pôsteres (CacheFirst)', weight: 2, ...checkTodo2b() },
+  { id: 'todo3a', label: "TODO 3a — registerType: 'prompt'",            weight: 1, ...checkTodo3a() },
+  { id: 'todo3b', label: 'TODO 3b — UpdatePrompt (useRegisterSW)',      weight: 2, ...checkTodo3b() },
+  { id: 'todo4a', label: 'TODO 4 Passo 1 — aba Favoritos (lista)',      weight: 1, ...checkTodo4a() },
+  { id: 'todo4b', label: 'TODO 4 Passo 2 — estado vazio',               weight: 1, ...checkTodo4b() },
+  { id: 'todo5',  label: 'TODO 5 — useOfflineStatus + banner',          weight: 1, ...checkTodo5() },
 ];
+const manual = [
+  { id: 'evid',   label: 'ENTREGA.md — evidências (DevTools/offline/instalação) e comparação site × PWA', weight: 2, manual: true, pass: false, note: entregaNote() },
+  { id: 'refl',   label: "ENTREGA.md — reflexão: autoUpdate × prompt, por que?", weight: 1, manual: true, pass: false, note: '📝 avaliação manual (Canvas)' },
+];
+const results = [...auto, ...manual];
 
-let allPass = true;
-for (const r of results) {
-  const icon = r.pass ? '✅' : '❌';
-  console.log(`${icon} ${r.label} (${r.pass ? r.weight : 0}/${r.weight}): ${r.note}`);
-  if (!r.pass) allPass = false;
-}
+for (const r of auto) console.log(`${r.pass ? '✅' : '❌'} ${r.label} (${r.pass ? r.weight : 0}/${r.weight}): ${r.note}`);
+for (const r of manual) console.log(`📝 ${r.label} (/${r.weight}): ${r.note}`);
 
-const autoScore = results.reduce((sum, r) => sum + (r.pass ? r.weight : 0), 0);
-const maxScore = results.reduce((sum, r) => sum + r.weight, 0);
+const autoScore = auto.reduce((s, r) => s + (r.pass ? r.weight : 0), 0);
+const autoMax = auto.reduce((s, r) => s + r.weight, 0);
+const maxScore = results.reduce((s, r) => s + r.weight, 0);
+const allPass = auto.every((r) => r.pass);
 
-const grade = {
-  results,
-  allPass,
-  autoScore,
-  maxScore,
-  summary: allPass ? 'Todos os critérios estruturais passaram.' : 'Há critérios pendentes — ver detalhes acima.',
-};
-
-fs.writeFileSync('grade.json', JSON.stringify(grade, null, 2));
-console.log('\ngrade.json gerado.');
+fs.writeFileSync('grade.json', JSON.stringify({
+  results, allPass, autoScore, autoMax, maxScore,
+  summary: allPass ? 'Todos os critérios automáticos passaram (piso). Evidências e reflexão: nota manual no Canvas.' : 'Há critérios automáticos pendentes — ver detalhes.',
+}, null, 2));
+console.log(`\nPiso automático: ${autoScore}/${autoMax} (total do lab: ${maxScore})\ngrade.json gerado.`);
 process.exit(allPass ? 0 : 1);
