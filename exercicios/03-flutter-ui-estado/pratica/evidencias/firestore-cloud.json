@@ -1,0 +1,15 @@
+{
+  "project": "pos-puv",
+  "database": "(default)",
+  "document": "projects/pos-puv/databases/(default)/documents/favorites/meus-favoritos",
+  "ids": [
+    1
+  ],
+  "updateTime": "2026-10-21T00:19:56.280894Z",
+  "backend": "firestore.googleapis.com",
+  "refreshPreserved": true,
+  "independentContextRead": true,
+  "offlineWriteQueued": true,
+  "onlineWriteSynced": true,
+  "crossContextSynced": true
+}

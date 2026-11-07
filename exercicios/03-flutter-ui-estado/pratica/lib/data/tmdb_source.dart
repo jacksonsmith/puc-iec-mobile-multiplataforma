@@ -16,9 +16,24 @@ import 'remote_movie_source.dart';
 const kTmdbKey = String.fromEnvironment('TMDB_KEY');
 
 const _genres = <int, String>{
-  28: 'Ação', 12: 'Aventura', 16: 'Animação', 35: 'Comédia', 80: 'Crime', 99: 'Documentário',
-  18: 'Drama', 10751: 'Família', 14: 'Fantasia', 36: 'História', 27: 'Terror', 10402: 'Música',
-  9648: 'Mistério', 10749: 'Romance', 878: 'Ficção', 53: 'Suspense', 10752: 'Guerra', 37: 'Faroeste',
+  28: 'Ação',
+  12: 'Aventura',
+  16: 'Animação',
+  35: 'Comédia',
+  80: 'Crime',
+  99: 'Documentário',
+  18: 'Drama',
+  10751: 'Família',
+  14: 'Fantasia',
+  36: 'História',
+  27: 'Terror',
+  10402: 'Música',
+  9648: 'Mistério',
+  10749: 'Romance',
+  878: 'Ficção',
+  53: 'Suspense',
+  10752: 'Guerra',
+  37: 'Faroeste',
 };
 
 class TmdbSource implements MovieSource {
@@ -41,8 +56,11 @@ class TmdbSource implements MovieSource {
         if (res.statusCode == 401) {
           throw Exception('TMDB: chave inválida (401) — confira o TMDB_KEY');
         }
-        if (res.statusCode != 200) throw Exception('TMDB respondeu ${res.statusCode}');
-        final data = json.decode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
+        if (res.statusCode != 200) {
+          throw Exception('TMDB respondeu ${res.statusCode}');
+        }
+        final data =
+            json.decode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
         for (final m in data['results'] as List) {
           out.add(_toMovie(m as Map<String, dynamic>));
         }
@@ -59,12 +77,14 @@ class TmdbSource implements MovieSource {
     final date = (m['release_date'] as String?) ?? '';
     final year = date.length >= 4 ? date.substring(0, 4) : '—';
     final ids = (m['genre_ids'] as List?)?.cast<int>() ?? const <int>[];
-    final genre = ids.map((g) => _genres[g]).whereType<String>().firstOrNull ?? 'Filme';
+    final genre =
+        ids.map((g) => _genres[g]).whereType<String>().firstOrNull ?? 'Filme';
     return Movie(
       id: m['id'] as int,
       title: m['title'] as String,
       // 1 casa decimal (o TMDB manda 7.269): assim o card mostra 7.3 sem formatar na UI
-      rating: double.parse(((m['vote_average'] as num?) ?? 0).toStringAsFixed(1)),
+      rating:
+          double.parse(((m['vote_average'] as num?) ?? 0).toStringAsFixed(1)),
       year: '$year · $genre',
       posterPath: m['poster_path'] as String?,
     );

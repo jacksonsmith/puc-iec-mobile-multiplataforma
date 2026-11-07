@@ -19,7 +19,9 @@ abstract class MovieSource {
 class SimulatedRemote implements MovieSource {
   final bool Function() isOnline;
   final Duration latency;
-  SimulatedRemote({required this.isOnline, this.latency = const Duration(milliseconds: 600)});
+  SimulatedRemote(
+      {required this.isOnline,
+      this.latency = const Duration(milliseconds: 600)});
 
   @override
   Future<List<Movie>> fetchMovies() async {

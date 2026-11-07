@@ -18,7 +18,8 @@ class PosterArt extends StatelessWidget {
   final Movie movie;
   final double width;
   final double height;
-  const PosterArt({super.key, required this.movie, this.width = 64, this.height = 88});
+  const PosterArt(
+      {super.key, required this.movie, this.width = 64, this.height = 88});
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +51,16 @@ class PosterArt extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const Center(child: Icon(Icons.movie_rounded, size: 30, color: Colors.white)),
+            const Center(
+                child:
+                    Icon(Icons.movie_rounded, size: 30, color: Colors.white)),
             if (url != null)
               Image.network(
                 url,
                 fit: BoxFit.cover,
                 // sem rede / falha: some a imagem e o gradiente de fundo aparece
-                errorBuilder: (context, error, stack) => const SizedBox.shrink(),
+                errorBuilder: (context, error, stack) =>
+                    const SizedBox.shrink(),
                 frameBuilder: (context, child, frame, sync) => AnimatedOpacity(
                   opacity: frame == null && !sync ? 0 : 1,
                   duration: const Duration(milliseconds: 450),

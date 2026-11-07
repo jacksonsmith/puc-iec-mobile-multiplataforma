@@ -12,7 +12,8 @@ class OfflineToggle extends ConsumerWidget {
     final offline = ref.watch(simulatedOfflineProvider);
     return IconButton(
       tooltip: offline ? 'Voltar online' : 'Simular modo avião',
-      icon: Icon(offline ? Icons.airplanemode_active : Icons.airplanemode_inactive),
+      icon: Icon(
+          offline ? Icons.airplanemode_active : Icons.airplanemode_inactive),
       onPressed: () => ref.read(simulatedOfflineProvider.notifier).toggle(),
     );
   }

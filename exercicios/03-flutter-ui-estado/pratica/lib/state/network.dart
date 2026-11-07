@@ -24,7 +24,8 @@ final realConnectivityProvider = StreamProvider<bool>((ref) async* {
     yield true;
     return;
   }
-  yield* c.onConnectivityChanged.map((r) => !r.contains(ConnectivityResult.none));
+  yield* c.onConnectivityChanged
+      .map((r) => !r.contains(ConnectivityResult.none));
 });
 
 /// true = tem conexão (rede real E modo avião desligado).
