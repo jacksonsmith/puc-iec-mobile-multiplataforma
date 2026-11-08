@@ -1,7 +1,7 @@
 # Spec 003 — Busca por título
 
 - **Status:** rascunho
-- **Responsável:** _a definir_
+- **Responsável:** Amir
 - **Relacionados:** Spec 004 (combina com o filtro)
 
 ## História de usuário

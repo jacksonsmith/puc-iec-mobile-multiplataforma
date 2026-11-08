@@ -1,7 +1,7 @@
 # Spec 001 — Fileiras de filmes (tela inicial)
 
 - **Status:** rascunho
-- **Responsável:** _a definir_
+- **Responsável:** Amir
 - **Relacionados:** PDR 0001, PDR 0003, PDR 0004, ADR 0004, ADR 0006
 
 ## Problema

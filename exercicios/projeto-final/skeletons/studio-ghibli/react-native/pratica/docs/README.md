@@ -4,7 +4,7 @@ Nenhuma linha de código entra sem uma spec aprovada. O fluxo de cada feature é
 
 ```
 PDR (decisão de produto) ─┐
-                          ├─► spec.md ─► plan.md ─► tasks.md ─► issue ─► branch ─► PR
+                          ├─► spec.md ─► plan.md ─► tasks.md ─► branch ─► PR
 ADR (decisão técnica) ────┘     (o quê)   (como)    (quem/quando)
 ```
 
@@ -23,11 +23,11 @@ Templates em [`docs/templates/`](templates/).
 
 | # | Feature | Flow Maestro | Responsável |
 |---|---|---|---|
-| [001](specs/001-lista-filmes/spec.md) | Fileiras de filmes | `e2e/maestro/01-lista.yaml` | _a definir_ |
-| [002](specs/002-detalhe-filme/spec.md) | Detalhe do filme | `e2e/maestro/02-detalhe.yaml` | _a definir_ |
-| [003](specs/003-busca/spec.md) | Busca por título | `e2e/maestro/03-busca.yaml` | _a definir_ |
-| [004](specs/004-filtro-diretor/spec.md) | Filtro por diretor | `e2e/maestro/04-filtro.yaml` | _a definir_ |
-| [005](specs/005-favoritos/spec.md) | Favoritos persistentes | `e2e/maestro/05-favoritos.yaml` | _a definir_ |
+| [001](specs/001-lista-filmes/spec.md) | Fileiras de filmes | `e2e/maestro/01-lista.yaml` | Amir |
+| [002](specs/002-detalhe-filme/spec.md) | Detalhe do filme | `e2e/maestro/02-detalhe.yaml` | Amir |
+| [003](specs/003-busca/spec.md) | Busca por título | `e2e/maestro/03-busca.yaml` | Amir |
+| [004](specs/004-filtro-diretor/spec.md) | Filtro por diretor | `e2e/maestro/04-filtro.yaml` | Amir |
+| [005](specs/005-favoritos/spec.md) | Favoritos persistentes | `e2e/maestro/05-favoritos.yaml` | Amir |
 
 Cada spec gera exatamente 1 flow Maestro (15 pts da rubrica da Aula 6).
 

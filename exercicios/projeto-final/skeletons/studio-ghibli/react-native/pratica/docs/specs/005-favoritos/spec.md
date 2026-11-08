@@ -1,7 +1,7 @@
 # Spec 005 — Favoritos persistentes
 
 - **Status:** rascunho
-- **Responsável:** _a definir_
+- **Responsável:** Amir
 - **Relacionados:** PDR 0002, PDR 0004, ADR 0004
 
 ## História de usuário

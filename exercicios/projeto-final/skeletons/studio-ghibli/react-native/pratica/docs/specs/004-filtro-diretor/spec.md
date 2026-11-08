@@ -1,7 +1,7 @@
 # Spec 004 — Filtro por diretor
 
 - **Status:** rascunho
-- **Responsável:** _a definir_
+- **Responsável:** Amir
 - **Relacionados:** PDR 0001, Spec 003
 
 ## História de usuário

@@ -1,7 +1,7 @@
 # Spec 002 — Detalhe do filme
 
 - **Status:** rascunho
-- **Responsável:** _a definir_
+- **Responsável:** Amir
 - **Relacionados:** Spec 001, Spec 005
 
 ## História de usuário

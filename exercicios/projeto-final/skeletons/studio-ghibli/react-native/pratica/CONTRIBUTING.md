@@ -3,13 +3,13 @@
 Este projeto segue **Spec Driven Development** — veja [`docs/README.md`](docs/README.md).
 
 ## Fluxo de trabalho
-1. **Spec primeiro.** Toda feature começa em `docs/specs/NNN-*/spec.md`, revisada por pelo menos 1 colega.
-2. **Plan e tasks.** Preencha `plan.md` e `tasks.md`; cada task vira uma issue com responsável.
-3. **Branch por task**, a partir de `main`:
-   - `feat/001-lista-T4-film-card`
+1. **Spec primeiro.** Toda feature começa em `docs/specs/NNN-*/spec.md`.
+2. **Plan e tasks.** Preencha `plan.md` e `tasks.md`; cada task vira um commit.
+3. **Branch por spec**, a partir de `main`:
+   - `feat/001-lista-filmes`
    - `fix/005-favoritos-persistencia`
    - `docs/adr-0007-...`
-4. **PR pequeno** (uma task) usando o template, com pelo menos 1 aprovação. Nada de push direto em `main`.
+4. **Uma PR por spec**, usando o template. Nada de push direto em `main`.
 5. Decisão técnica nova → ADR. Decisão de produto nova → PDR.
 
 ## Commits — Conventional Commits
@@ -19,7 +19,7 @@ fix(favoritos): evita duplicar id ao favoritar duas vezes
 test(domain): cobre filterFilms com acentos
 docs(adr): registra escolha de NativeWind
 ```
-Cada pessoa commita **com a própria conta** — a contribuição individual é avaliada pelos commits.
+Commite **com a própria conta**: a contribuição individual é avaliada pelos commits.
 
 ## Definition of Done (checklist do PR)
 - [ ] Atende os critérios de aceite da spec (CA citados no PR)
