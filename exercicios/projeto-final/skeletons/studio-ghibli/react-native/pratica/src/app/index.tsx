@@ -1,98 +1,108 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { useMemo } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { HintRow } from '@/components/hint-row';
+import { FilmRail } from '@/components/film-rail';
 import { KodamaMark } from '@/components/kodama-mark';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { EmptyState } from '@/components/states/empty-state';
+import { ErrorState } from '@/components/states/error-state';
+import { LoadingState } from '@/components/states/loading-state';
+import { Text } from '@/components/text';
+import { useBrandTokens } from '@/components/use-brand-tokens';
+import { formatFilmCount } from '@/domain/format';
+import { buildRails } from '@/domain/rails';
+import { useFilms } from '@/state/use-films';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+const FAVORITES_SLUG = 'favorites';
+const GLOW_HEIGHT = 560;
+// A Spec 005 troca esta lista pelos favoritos salvos no aparelho.
+const FAVORITE_IDS: string[] = [];
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const tokens = useBrandTokens();
+  const { data: films, isError, isRefetching, refetch } = useFilms();
+  const rails = useMemo(() => buildRails(films ?? [], FAVORITE_IDS), [films]);
+
+  const glowImage = `radial-gradient(ellipse 120% 70% at 20% 0%, ${tokens.color('glow-sky')}, transparent 60%), radial-gradient(ellipse 80% 50% at 90% 40%, ${tokens.color('glow-lamp')}, transparent 70%)`;
+
+  function renderContent() {
+    if (!films) return isError ? <ErrorState onRetry={refetch} /> : <LoadingState />;
+
+    return (
+      <View className="gap-8">
+        {rails.map((rail) => {
+          const isFavoritesRail = rail.slug === FAVORITES_SLUG;
+
+          return (
+            <FilmRail
+              key={rail.slug}
+              slug={rail.slug}
+              title={rail.title}
+              films={rail.films}
+              variant={isFavoritesRail ? 'favorites' : undefined}
+              countLabel={
+                isFavoritesRail ? `★ ${rail.films.length}` : formatFilmCount(rail.films.length)
+              }
+              isFavorite={(filmId) => FAVORITE_IDS.includes(filmId)}
+              onPressFilm={(filmId) =>
+                router.push({ pathname: '/film/[id]', params: { id: filmId } })
+              }
+              emptyState={
+                <EmptyState
+                  testID="state-favorites-empty"
+                  icon={{ ios: 'star', android: 'star', web: 'star' }}
+                  iconColor="lamp"
+                  title="Nenhum favorito ainda"
+                  message="Toque na ★ de um filme para guardá-lo aqui."
+                  className="w-[264px]"
+                />
+              }
+            />
+          );
+        })}
+      </View>
+    );
+  }
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <KodamaMark size={96} />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+    <View className="flex-1 bg-canvas">
+      <View
+        pointerEvents="none"
+        style={[styles.glow, { experimental_backgroundImage: glowImage }]}
+      />
+      <ScrollView
+        contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            tintColor={tokens.color('sky')}
+            onRefresh={() => {
+              refetch();
+            }}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        }>
+        <View className="mb-6 flex-row items-center gap-2 px-4">
+          <KodamaMark size={40} />
+          <Text variant="display">Kodama</Text>
+          <Text variant="caption" tone="muted" className="ml-auto">
+            App de fã
+          </Text>
+        </View>
+        {renderContent()}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  glow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: GLOW_HEIGHT,
   },
 });

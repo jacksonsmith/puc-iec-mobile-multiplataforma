@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { useEffect } from 'react';
+import { useColorScheme } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -9,8 +10,6 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 const START_DELAY_MS = 150;
 const LOOK_TILT_DEG = 18;
