@@ -13,29 +13,53 @@ class PendingOp {
   final String id; // único por operação (ex.: timestamp + movieId)
   final int movieId;
   final bool add;
-  const PendingOp({required this.id, required this.movieId, required this.add});
 
-  Map<String, dynamic> toJson() => {'id': id, 'movieId': movieId, 'add': add};
-  factory PendingOp.fromJson(Map<String, dynamic> j) =>
-      PendingOp(id: j['id'] as String, movieId: j['movieId'] as int, add: j['add'] as bool);
+  const PendingOp({
+    required this.id,
+    required this.movieId,
+    required this.add,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'movieId': movieId,
+        'add': add,
+      };
+
+  factory PendingOp.fromJson(Map<String, dynamic> j) => PendingOp(
+        id: j['id'] as String,
+        movieId: j['movieId'] as int,
+        add: j['add'] as bool,
+      );
 }
 
 class SyncQueue {
   static const queueKey = 'sync_queue_v1';
   final KeyValueStore store;
+
   SyncQueue(this.store);
 
   // ── PRONTO: ler e gravar a fila no armário ───────────────────────────────────────────
   Future<List<PendingOp>> pending() async {
     final raw = await store.read(queueKey);
+
     if (raw == null) return [];
+
     return (json.decode(raw) as List)
-        .map((e) => PendingOp.fromJson(e as Map<String, dynamic>))
+        .map(
+          (e) => PendingOp.fromJson(
+            e as Map<String, dynamic>,
+          ),
+        )
         .toList();
   }
 
-  Future<void> _save(List<PendingOp> ops) =>
-      store.write(queueKey, json.encode(ops.map((o) => o.toJson()).toList()));
+  Future<void> _save(List<PendingOp> ops) => store.write(
+        queueKey,
+        json.encode(
+          ops.map((o) => o.toJson()).toList(),
+        ),
+      );
 
   // ── PRONTO: enfileirar + idempotência. VOCÊ completa as REGRAS DE CONFLITO (TASK 15a) ─────
   Future<void> enqueue(PendingOp op) async {
@@ -52,6 +76,26 @@ class SyncQueue {
     // Em qualquer desses casos: `await _save(...)` quando mudar a fila, e dê `return`.
     // 👇 escreva aqui
 
+    final index = ops.indexWhere(
+      (o) => o.movieId == op.movieId,
+    );
+
+    if (index != -1) {
+      final existing = ops[index];
+
+      // Mesma ação para o mesmo filme:
+      // já existe uma operação equivalente na fila.
+      if (existing.add == op.add) {
+        return;
+      }
+
+      // Ações opostas para o mesmo filme:
+      // uma anula a outra, então removemos a operação antiga.
+      ops.removeAt(index);
+      await _save(ops);
+      return;
+    }
+
     ops.add(op); // (pronto) sem conflito: vai pro fim da fila
     await _save(ops);
   }
@@ -62,7 +106,36 @@ class SyncQueue {
   //   - no PRIMEIRO erro: PARE (as restantes continuam na fila, na mesma ordem) e NÃO propague o erro;
   //   - devolva quantas operações foram enviadas com sucesso.
   // Dica: `final ops = await pending();` → percorra com for → try { await send(op); ... } catch (_) { break; }
-  Future<int> flush(Future<void> Function(PendingOp op) send) async {
-    return 0; // 👈 implemente
+  Future<int> flush(
+    Future<void> Function(PendingOp op) send,
+  ) async {
+    final ops = await pending();
+    var sent = 0;
+
+    while (ops.isNotEmpty) {
+      final op = ops.first;
+
+      try {
+        await send(op);
+
+        // A operação foi enviada com sucesso.
+        // Removemos da fila imediatamente...
+        ops.removeAt(0);
+
+        // ...e persistimos antes de tentar a próxima.
+        // Assim, se o app fechar no meio do processo,
+        // a operação já enviada não será reenviada.
+        await _save(ops);
+
+        sent++;
+      } catch (_) {
+        // No primeiro erro, interrompe a sincronização.
+        // A operação que falhou e todas as seguintes
+        // permanecem na fila na ordem original.
+        break;
+      }
+    }
+
+    return sent;
   }
 }
