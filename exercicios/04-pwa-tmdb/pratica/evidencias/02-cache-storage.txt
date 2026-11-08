@@ -1,0 +1,51 @@
+{
+  "url": "http://localhost:4173/",
+  "serviceWorker": {
+    "controller": true,
+    "registrations": [
+      {
+        "scope": "http://localhost:4173/",
+        "active": "activated",
+        "waiting": null
+      }
+    ]
+  },
+  "cacheStorage": [
+    {
+      "cache": "tmdb-api",
+      "entries": 1,
+      "sample": [
+        "api.themoviedb.org/3/movie/popular?language=pt-BR&page=1"
+      ]
+    },
+    {
+      "cache": "tmdb-images",
+      "entries": 18,
+      "sample": [
+        "image.tmdb.org/t/p/w342/2i8uru7rlbHKaoIbC2V4FZLT7uW.jpg",
+        "image.tmdb.org/t/p/w342/4lj1ikfsSmMZNyfdi8R8Tv5tsgb.jpg",
+        "image.tmdb.org/t/p/w342/bvBTdNaWVPrHKjyPFnsigZJsKdD.jpg"
+      ]
+    },
+    {
+      "cache": "workbox-precache-v2-http://localhost:4173/",
+      "entries": 8,
+      "sample": [
+        "localhost:4173/index.html?__WB_REVISION__=93c7eeb466dbc642350d21769adb89c4",
+        "localhost:4173/favicon.svg?__WB_REVISION__=9640df40600014068ee7413a3e769c60",
+        "localhost:4173/icons/pwa-512.png?__WB_REVISION__=eb7ef4c26274ca52bcc2f2684db07047"
+      ]
+    }
+  ],
+  "manifest": {
+    "name": "TMDB Popular Movies",
+    "short_name": "TMDB Movies",
+    "display": "standalone",
+    "start_url": "/",
+    "icons": [
+      "192x192 icons/pwa-192.png",
+      "512x512 icons/pwa-512.png"
+    ]
+  },
+  "dados": "IndexedDB tmdb-cache (idb) — fallback de dados quando a rede falha"
+}

@@ -17,14 +17,24 @@
 
 import { useState, useEffect } from 'react';
 
+// O browser dispara eventos `online`/`offline` na window quando a conexão
+// muda. Guardamos o estado inicial em navigator.onLine e mantemos sincronizado
+// pelos listeners — o cleanup remove os dois quando o componente desmonta.
 export function useOfflineStatus(): { isOnline: boolean } {
-  // TODO 5: substitua o useState e o useEffect abaixo pela implementação real
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
   useEffect(() => {
-    // implemente aqui
-    void isOnline; // remove esta linha quando implementar (evita warning de lint)
-  }, [isOnline]);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   return { isOnline };
 }
