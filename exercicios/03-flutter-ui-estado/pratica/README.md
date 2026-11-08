@@ -1,5 +1,7 @@
 # Filmes (Flutter) — pratica/ da Atividade 3
 
+**Aluno:** Diego Diogenes · **Matrícula:** 255123
+
 App de catálogo de filmes em **Flutter**. Já roda; você completa os scaffolds (UI, estado, Firebase e offline-first) até `flutter test` ficar **verde**.
 
 ## Rodar
@@ -18,6 +20,16 @@ flutter test test/offline_test.dart  # só offline-first — cada grupo = 1 TASK
 flutter analyze                      # precisa ficar limpo
 ```
 Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.dart` e `test/offline_test.dart` são a **spec** (não edite).
+
+## Estado local × cloud × offline-first (trade-offs)
+
+O estado **local** (o `favoritesProvider` do Riverpod em memória, apoiado pelo `SharedPreferences` — `localStorage` no navegador) é instantâneo e funciona sem internet, mas não sai daquele aparelho/navegador: trocar de device ou limpar os dados do site apaga tudo. O estado na **cloud** (o documento `favorites/meus-favoritos` no Firestore) sobrevive ao F5 e acompanha o usuário entre dispositivos, porém cada leitura/escrita depende de rede, paga latência e consome cota — por isso o `toggle` é **otimista**: a UI muda na hora e a gravação no Firestore corre em paralelo, com o erro apenas logado. O **offline-first** combina os dois: o Firestore com `persistenceEnabled: true` mantém um cache local das escritas pendentes, o `MovieRepository` entrega o cache do aparelho imediatamente e só chama a API quando o cache fica **stale** (TTL de 10 min), e a `SyncQueue` guarda as operações feitas sem rede para reenviá-las em ordem quando a conexão volta. O preço é complexidade e **consistência eventual**: o usuário pode ver uma lista de até 10 minutos atrás, a fila precisa sobreviver ao app fechar no meio do envio e conflitos exigem regra explícita — aqui, favoritar e desfavoritar o mesmo filme se cancelam antes de chegar ao servidor.
+
+## Evidência — favorito sobrevive ao F5 (Firestore)
+
+No GIF: dois filmes favoritados (**♥ 2**) → recarreguei a página com **⌘R** → os dois continuam favoritados (**♥ 2**), agora lidos do documento `favorites/meus-favoritos` no Firestore.
+
+![Favoritos continuam marcados depois de recarregar a página](docs/favorite-refresh.gif)
 
 ## O que completar (🧑‍🏫 aula · 🧑‍💻 casa)
 | TASK | Arquivo | O quê | |

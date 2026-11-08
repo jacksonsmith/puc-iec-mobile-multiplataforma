@@ -60,24 +60,30 @@ class MovieRepository {
       );
 
   // ── TASK 14 — validade do cache · médio ─────────────────────────────────────────────
-  // Devolva:
-  //   CacheStatus.none  → não há cache;
-  //   CacheStatus.fresh → o cache foi salvo há MENOS que `ttl`;
-  //   CacheStatus.stale → o cache é mais velho que `ttl`.
-  // Use `now()` (NÃO DateTime.now()) — é o que deixa o teste controlar o relógio.
   Future<CacheStatus> cacheStatus() async {
-    return CacheStatus.none; // 👈 apague e implemente (TASK 14)
+    final cached = await readCache();
+    if (cached == null) return CacheStatus.none;
+
+    final age = now().difference(cached.savedAt);
+    return age < ttl ? CacheStatus.fresh : CacheStatus.stale;
   }
 
   // ── TASK 13 — cache-first (stale-while-revalidate) · médio ──────────────────────────
-  // Hoje busca direto na API (e some offline). Faça assim:
-  //   1. leia o cache (readCache) e, se existir, `yield` os filmes dele NA HORA;
-  //   2. tente buscar na API (remote.fetchMovies()); se der certo: writeCache(...) e `yield` os frescos;
-  //   3. se der OfflineException E já emitiu cache → engula o erro (a tela segue com o cache);
-  //      se não havia cache → deixe o erro subir (a tela mostra "sem dados");
-  //
-  // Depois (TASK 14): se cacheStatus() == fresh, NÃO busque na API (já está atualizado).
   Stream<List<Movie>> watchMovies() async* {
-    yield await remote.fetchMovies(); // 👈 substitua pelo fluxo acima
+    final cached = await readCache();
+
+    if (cached != null) {
+      yield cached.movies; // 1. cache na hora
+      if (await cacheStatus() == CacheStatus.fresh) return; // TASK 14: fresco, não busca
+    }
+
+    try {
+      final fresh = await remote.fetchMovies(); // 2. revalida na API
+      await writeCache(fresh);
+      yield fresh;
+    } on OfflineException {
+      // 3. offline: com cache segue; sem cache deixa o erro subir
+      if (cached == null) rethrow;
+    }
   }
 }
