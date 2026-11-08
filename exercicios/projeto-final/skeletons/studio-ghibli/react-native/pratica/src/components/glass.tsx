@@ -1,7 +1,14 @@
 import { BlurView } from 'expo-blur';
 import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect';
 import { useEffect, useState } from 'react';
-import { AccessibilityInfo, StyleSheet, useColorScheme, View, type ViewProps } from 'react-native';
+import {
+  AccessibilityInfo,
+  Platform,
+  StyleSheet,
+  useColorScheme,
+  View,
+  type ViewProps,
+} from 'react-native';
 
 const FILL_CLASS = {
   default: 'bg-glass',
@@ -21,6 +28,9 @@ function useReducedTransparency() {
   const [isReduced, setIsReduced] = useState(false);
 
   useEffect(() => {
+    // Esta API não existe na web.
+    if (Platform.OS === 'web') return;
+
     AccessibilityInfo.isReduceTransparencyEnabled().then(setIsReduced);
     const subscription = AccessibilityInfo.addEventListener(
       'reduceTransparencyChanged',
