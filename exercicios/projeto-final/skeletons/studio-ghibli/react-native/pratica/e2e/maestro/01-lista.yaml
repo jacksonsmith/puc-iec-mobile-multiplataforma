@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: 'rail-acclaimed'
+    timeout: 30000
+- assertVisible:
+    id: 'rail-favorites'
+- swipe:
+    from:
+      id: 'rail-acclaimed'
+    direction: LEFT
+- assertVisible:
+    id: 'film-card-dc2e6bd1-8156-4886-adff-b39e6043af0c'
