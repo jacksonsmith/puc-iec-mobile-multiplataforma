@@ -40,7 +40,7 @@ export function FilmCard({ film, isFavorite, onPress, width = FILM_CARD_WIDTH }:
 
   return (
     <Pressable
-      testID={`film-card-${film.id}`}
+      testID={`item-card-${film.id}`}
       accessibilityRole="button"
       accessibilityLabel={isFavorite ? `${film.title}, favorito` : film.title}
       style={{ width }}
@@ -65,7 +65,7 @@ export function FilmCard({ film, isFavorite, onPress, width = FILM_CARD_WIDTH }:
             )}
             {isFavorite && (
               <Glass
-                testID={`film-card-fav-${film.id}`}
+                testID={`item-card-fav-${film.id}`}
                 variant="scrim"
                 blur="sm"
                 className="absolute right-2 top-2 h-8 w-8 items-center justify-center rounded-full">
@@ -80,7 +80,7 @@ export function FilmCard({ film, isFavorite, onPress, width = FILM_CARD_WIDTH }:
         </View>
       </Animated.View>
       <Text
-        testID={`film-card-title-${film.id}`}
+        testID={`item-card-title-${film.id}`}
         variant="card-title"
         numberOfLines={2}
         className="mt-2">

@@ -14,4 +14,4 @@ Spec: [spec.md](spec.md)
 Persistimos **apenas IDs**; os dados do filme vêm do cache da query `['films']`.
 
 ## testIDs
-`rail-favorites`, `rail-favorites-see-all`, `favorite-toggle-<id>`, `film-card-fav-<id>`, `state-favorites-empty`
+`rail-favorites`, `tab-favorites`, `favorite-item-<id>`, `detail-favorite-button`, `item-card-fav-<id>`, `state-favorites-empty`

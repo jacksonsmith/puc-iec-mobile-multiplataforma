@@ -68,7 +68,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <View className="flex-1 bg-canvas">
+    <View testID="item-list-screen" className="flex-1 bg-canvas">
       <View
         pointerEvents="none"
         style={[styles.glow, { experimental_backgroundImage: glowImage }]}
@@ -87,9 +87,6 @@ export default function HomeScreen() {
         <View className="mb-6 flex-row items-center gap-2 px-4">
           <KodamaMark size={40} />
           <Text variant="display">Kodama</Text>
-          <Text variant="caption" tone="muted" className="ml-auto">
-            App de fã
-          </Text>
         </View>
         {renderContent()}
       </ScrollView>

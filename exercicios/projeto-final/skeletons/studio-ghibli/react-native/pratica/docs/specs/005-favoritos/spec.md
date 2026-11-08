@@ -17,5 +17,5 @@ Como fã, quero marcar meus filmes preferidos e vê-los sempre no topo da tela i
 - [ ] CA7 — Botão com `accessibilityLabel` "Adicionar aos favoritos" / "Remover dos favoritos".
 
 ## Verificação
-- Flow Maestro: `e2e/maestro/05-favoritos.yaml` — abre um filme, toca `favorite-toggle-<id>`, volta, verifica o card dentro de `rail-favorites`; `stopApp` + `launchApp` e verifica de novo.
+- Flow Maestro: `e2e/maestro/05-favoritos.yaml` — abre um filme, toca `detail-favorite-button`, volta, verifica o card dentro de `rail-favorites`; `stopApp` + `launchApp` e verifica de novo.
 - Vitest: `toggleFavorite(ids, id)` adiciona/remove sem duplicar e mantém a ordem (mais recente primeiro).

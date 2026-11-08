@@ -43,17 +43,21 @@ Cada spec gera exatamente 1 flow Maestro (15 pts da rubrica da Aula 6).
 | Elemento | testID |
 |---|---|
 | Fileira | `rail-<slug>` (`rail-favorites`, `rail-acclaimed`, `rail-1980s`, `rail-1990s`, `rail-2000s`, `rail-2010s`) |
-| Ver todos os favoritos | `rail-favorites-see-all` |
-| Card de filme | `film-card-<filmId>` |
-| Nome no card | `film-card-title-<filmId>` |
-| ★ indicadora no card | `film-card-fav-<filmId>` |
+| Lista (tela inicial) | `item-list-screen` |
+| Ver todos os favoritos (papel da aba do flow do professor) | `tab-favorites` |
+| Item na grade de favoritos | `favorite-item-<filmId>` |
+| Card de filme | `item-card-<filmId>` |
+| Nome no card | `item-card-title-<filmId>` |
+| ★ indicadora no card | `item-card-fav-<filmId>` |
 | Grade de resultados da busca | `search-results` |
-| Tela de detalhe | `film-detail` |
+| Tela de detalhe | `detail-screen` |
+| Título no detalhe | `detail-title` |
+| Botão de voltar (detalhe) | `detail-back-button` |
 | Campo de busca | `search-input` |
-| Chip de diretor | `director-chip-<slug>` (ex.: `director-chip-hayao-miyazaki`, `director-chip-all`) |
-| Botão de favoritar (detalhe) | `favorite-toggle-<filmId>` |
+| Chip de diretor | `category-chip-<slug>` (ex.: `category-chip-hayao-miyazaki`, `category-chip-all`) |
+| Botão de favoritar (detalhe) | `detail-favorite-button` |
 | Estado carregando / busca vazia / erro | `state-loading` / `state-empty` / `state-error` |
 | Favoritos vazio (dentro da fileira) | `state-favorites-empty` |
 | Botão tentar novamente | `retry-button` |
 
-> ⚠️ Se o skeleton do professor (`skeletons/` no repo da disciplina) definir outra convenção, **a dele vence** — atualize esta tabela e os plans.
+> Esta tabela segue a convenção do professor em `exercicios/projeto-final/temas/05-studio-ghibli/README.md`, no repositório da disciplina. O `appId` dos flows é `com.puciec.ghiblifinal`.
