@@ -19,6 +19,12 @@ flutter analyze                      # precisa ficar limpo
 ```
 Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.dart` e `test/offline_test.dart` são a **spec** (não edite).
 
+## Firebase (Firestore + Remote Config)
+
+Rode `flutterfire configure` para gerar `lib/firebase_options.dart` para seu projeto (plataforma Web). Como alternativa, informe `FIREBASE_API_KEY`, `FIREBASE_APP_ID`, `FIREBASE_MESSAGING_SENDER_ID` e `FIREBASE_PROJECT_ID` com `--dart-define` ao executar o app; `FIREBASE_AUTH_DOMAIN`, `FIREBASE_STORAGE_BUCKET` e `FIREBASE_MEASUREMENT_ID` são opcionais. Sem essas opções, o app continua funcionando localmente e os testes não tentam acessar o Firebase.
+
+O estado **local** responde imediatamente e funciona sem rede, mas fica restrito ao aparelho e pode se perder se os dados locais forem apagados. O **Firestore** persiste os favoritos e permite sincronizá-los entre dispositivos, embora dependa de configuração, rede e latência; já o modo **offline-first** mantém o catálogo disponível pelo cache, aplica validade TTL e deixa operações pendentes na fila para sincronizar quando a conexão voltar, equilibrando disponibilidade com eventual consistência.
+
 ## O que completar (🧑‍🏫 aula · 🧑‍💻 casa)
 | TASK | Arquivo | O quê | |
 |---|---|---|---|
@@ -43,6 +49,7 @@ Comece com os testes **vermelhos**; deixe-os **verdes**. `test/checklist_test.da
 ## Entrega
 Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código (estrutural) e posta uma nota **mínima**; a final sai no Canvas.
 - ✏️ **Edite os arquivos dentro de `exercicios/03-flutter-ui-estado/pratica/` (no lugar)** — **não crie subpasta** `aluno-.../`.
+- Inclua no README do PR um print ou GIF curto mostrando o favorito sobrevivendo ao refresh (prova do Firestore); um print do app offline é opcional.
 
 > **CI no seu fork (opcional):** habilite o *Actions* do fork — o workflow *Flutter test — Atividade 3* roda `flutter analyze` + `flutter test` a cada push.
 > **Versões:** precisa de Flutter **3.27+** (o `pubspec` já avisa se for mais antigo).
