@@ -45,3 +45,20 @@ export function LoadingState() {
     </View>
   );
 }
+
+export function DetailLoadingState() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const tokens = useBrandTokens();
+  const raised = tokens.color('canvas-raised');
+  const colors = [raised, tokens.color('canvas'), raised];
+
+  return (
+    <View testID="state-loading" accessibilityLabel="Carregando filme" className="gap-6">
+      <Skeleton colorMode={colorScheme} colors={colors} width="100%" height={220} radius={0} />
+      <View className="gap-3 px-4">
+        <Skeleton colorMode={colorScheme} colors={colors} width="70%" height={40} radius={6} />
+        <Skeleton colorMode={colorScheme} colors={colors} width="100%" height={96} radius={6} />
+      </View>
+    </View>
+  );
+}
