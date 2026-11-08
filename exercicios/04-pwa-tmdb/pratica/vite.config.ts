@@ -16,7 +16,7 @@ export default defineConfig({
     VitePWA({
       // TODO 3 (parte 1): hoje o app se atualiza SOZINHO. Troque para o modo em que
       // o usuário decide quando atualizar (veja a tabela do slide "Nova versão").
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'TMDB Popular Movies',
@@ -50,7 +50,39 @@ export default defineConfig({
         //        só entra no cache se você liberar o status 0 em cacheableResponse
         //
         // Referências: slides "Cache strategies" e "vite-plugin-pwa" · web.dev/learn/pwa (módulo Caching)
-        runtimeCaching: [],
+        runtimeCaching: [
+          // API de filmes
+          {
+            urlPattern: /^https:\/\/api\.themoviedb\.org\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'tmdb-api',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 24 * 60 * 60, // 1 dia
+              },
+              networkTimeoutSeconds: 3,
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            }
+          },
+          // Pôsteres
+          {
+            urlPattern: /^https:\/\/image\.tmdb\.org\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tmdb-images',
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 dias
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            }
+          }
+        ],
       },
     }),
   ],
