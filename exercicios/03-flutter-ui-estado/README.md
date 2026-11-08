@@ -6,6 +6,16 @@ Catálogo de filmes em **Flutter**: você compõe a UI (`MovieCard`), gerencia *
 - 🪜 **[guia-passo-a-passo.md](guia-passo-a-passo.md)** — as TASKs passo a passo (mesma numeração do enunciado)
 - 📁 **[pratica/](pratica/)** — o projeto Flutter (já roda; complete os scaffolds)
 
+## Persistência demonstrada
+
+O app combina três camadas: o **estado local** do Riverpod atualiza a UI imediatamente; o **Firestore (cloud)** persiste os IDs dos favoritos; e o modo **offline-first** usa o cache local do Firestore e o repositório cache-first para continuar exibindo os dados sem internet. Para conferir a persistência cloud, favorite um filme, faça um refresh completo (`F5`) e confirme que o coração e o contador continuam ativos; o documento `favorites/meus-favoritos` também pode ser conferido no console do Firebase:
+
+![Documento de favoritos persistido no Cloud Firestore](firebase-screenshot.png)
+
+O modo offline pode ser conferido pelo botão de avião: o banner informa que os dados salvos estão sendo exibidos e a lista de filmes/favoritos continua disponível:
+
+![App exibindo favoritos e lista em modo offline](offline-screenshot.png)
+
 ## Em 1 minuto
 ```bash
 cd exercicios/03-flutter-ui-estado/pratica
