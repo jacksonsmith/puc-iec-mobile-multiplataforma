@@ -59,25 +59,36 @@ class MovieRepository {
         }),
       );
 
-  // ── TASK 14 — validade do cache · médio ─────────────────────────────────────────────
-  // Devolva:
-  //   CacheStatus.none  → não há cache;
-  //   CacheStatus.fresh → o cache foi salvo há MENOS que `ttl`;
-  //   CacheStatus.stale → o cache é mais velho que `ttl`.
-  // Use `now()` (NÃO DateTime.now()) — é o que deixa o teste controlar o relógio.
+  // ── TASK 14 — validade do cache (TTL) ───────────────────────────────────────────────
+  //   none  → não há cache;
+  //   fresh → salvo há MENOS que `ttl`;
+  //   stale → mais velho que `ttl` (ou exatamente `ttl`).
+  // Usa `now()` (relógio injetável) em vez de DateTime.now() — é o que deixa o teste controlar o tempo.
   Future<CacheStatus> cacheStatus() async {
-    return CacheStatus.none; // 👈 apague e implemente (TASK 14)
+    final entry = await readCache();
+    if (entry == null) return CacheStatus.none;
+    final age = now().difference(entry.savedAt);
+    return age < ttl ? CacheStatus.fresh : CacheStatus.stale;
   }
 
-  // ── TASK 13 — cache-first (stale-while-revalidate) · médio ──────────────────────────
-  // Hoje busca direto na API (e some offline). Faça assim:
-  //   1. leia o cache (readCache) e, se existir, `yield` os filmes dele NA HORA;
-  //   2. tente buscar na API (remote.fetchMovies()); se der certo: writeCache(...) e `yield` os frescos;
-  //   3. se der OfflineException E já emitiu cache → engula o erro (a tela segue com o cache);
-  //      se não havia cache → deixe o erro subir (a tela mostra "sem dados");
-  //
-  // Depois (TASK 14): se cacheStatus() == fresh, NÃO busque na API (já está atualizado).
+  // ── TASK 13 — cache-first (stale-while-revalidate) ──────────────────────────────────
+  //   1. emite o cache NA HORA (se existir);
+  //   2. cache fresco (TASK 14)? para por aqui — não gasta rede à toa;
+  //   3. senão busca na API: deu certo → grava e emite o fresco;
+  //      OfflineException com cache → engole (a tela segue com o cache);
+  //      sem cache → o erro sobe (a tela mostra "sem dados").
   Stream<List<Movie>> watchMovies() async* {
-    yield await remote.fetchMovies(); // 👈 substitua pelo fluxo acima
+    final cached = await readCache();
+    if (cached != null) yield cached.movies;
+
+    if (await cacheStatus() == CacheStatus.fresh) return;
+
+    try {
+      final fresh = await remote.fetchMovies();
+      await writeCache(fresh);
+      yield fresh;
+    } on OfflineException {
+      if (cached == null) rethrow;
+    }
   }
 }
