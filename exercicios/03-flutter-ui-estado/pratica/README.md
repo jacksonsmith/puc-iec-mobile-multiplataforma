@@ -54,3 +54,15 @@ Fork + PR no repo público; link no Canvas. O **J.A.R.V.I.S.** lê o seu código
 Sem chave, o app usa a lista simulada (5 filmes). Para filmes reais: copie `.env.local.example` → `.env.local`,
 cole sua chave do TMDB (`TMDB_KEY=...`) e rode `./rodar.sh` / `rodar.bat` (ou F5 → "dados reais TMDB").
 O `.env.local` não vai pro git. Os testes (`flutter test`) nunca usam a chave.
+
+## Local vs cloud vs offline-first (trade-offs)
+O estado **local** (Riverpod em memória, TASK 2) é o mais simples e rápido: a UI reage na hora e funciona sem rede, mas fica preso a um aparelho e a uma sessão — um F5 apaga os favoritos. O estado na **cloud** (Firestore, TASK 7) resolve isso: os dados persistem e sincronizam entre abas e dispositivos, mas passam a depender da rede, com latência na leitura inicial, possíveis falhas e regras de segurança a configurar. A abordagem **offline-first** (TASKs 10–15) combina as duas: a tela sempre lê primeiro o que está no aparelho (cache com TTL), revalida com o servidor quando há conexão e guarda as escritas feitas offline numa fila que é enviada quando a rede volta. O custo é complexidade: é preciso decidir quando o cache está velho, aceitar que o usuário veja dados momentaneamente desatualizados e resolver conflitos (por exemplo, favoritar e desfavoritar o mesmo filme offline se cancelam). Em troca, o app continua útil sem internet, que é o comportamento esperado de apps reais.
+
+## Evidências
+**Favorito sobrevivendo ao refresh (Firestore):**
+
+![Favorito sobrevive ao F5](docs/favorito-refresh.gif)
+
+**App offline (banner + lista vinda do cache):**
+
+![App offline](docs/offline.png)
