@@ -75,6 +75,6 @@ Ferramenta completa de estilos e componentes, com recursos avançados de tema e 
 ## Consequências
 - ✅ Para trocar de tema, mudam apenas os valores dos tokens; nenhum componente precisa ser alterado.
 - ⚠️ As listas de classes podem ficar longas em componentes com muitos estilos. Quando se repetirem, viram um componente reutilizável.
-- ⚠️ O Tailwind no celular não é idêntico ao da web. Por exemplo, o padrão de `flex` é diferente e `rem` vale 14 em vez de 16.
+- ⚠️ O Tailwind no celular não é idêntico ao da web. Por exemplo, o padrão de `flex` é diferente. Também definimos `inlineRem: 16` no `metro.config.js`, porque no celular o `rem` valeria 14 e `p-4` não daria os 16px do token `space-4`.
 - ⚠️ Três tokens usados por cima das imagens dos filmes (`glass-scrim`, `ink-on-image` e `lamp-on-image`) têm o mesmo valor nos dois temas, de propósito: a imagem não muda com o tema, então o que fica sobre ela também não deve mudar.
 - ⚠️ As versões do NativeWind, do Tailwind e do Expo precisam ser compatíveis entre si. Na instalação, devemos seguir a documentação oficial.
