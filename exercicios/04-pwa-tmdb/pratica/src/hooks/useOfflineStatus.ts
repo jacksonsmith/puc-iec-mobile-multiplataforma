@@ -1,5 +1,5 @@
 // src/hooks/useOfflineStatus.ts
-// ✅ AVALIATIVO — TODO 5
+// ✅ AVALIATIVO — TODO 3, Passo 3
 //
 // Implemente este hook pra rastrear o status de conexão do browser.
 //
@@ -18,13 +18,21 @@
 import { useState, useEffect } from 'react';
 
 export function useOfflineStatus(): { isOnline: boolean } {
-  // TODO 5: substitua o useState e o useEffect abaixo pela implementação real
-  const [isOnline, setIsOnline] = useState(true);
+  // TODO 3 — Passo 3: substitua o useState e o useEffect abaixo pela implementação real
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
-    // implemente aqui
-    void isOnline; // remove esta linha quando implementar (evita warning de lint)
-  }, [isOnline]);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   return { isOnline };
 }
