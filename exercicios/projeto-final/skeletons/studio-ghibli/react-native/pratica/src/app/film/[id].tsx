@@ -1,6 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FavoriteToggle } from '@/components/favorite-toggle';
@@ -14,7 +13,6 @@ import { formatRuntime, formatScore, isHighScore } from '@/domain/format';
 import { useFavoritesStore } from '@/state/favorites-store';
 import { useFilm } from '@/state/use-film';
 
-const ENTER_DURATION_MS = 240;
 const TITLE_OVERLAP = -40;
 
 export default function FilmDetailScreen() {
@@ -56,7 +54,7 @@ export default function FilmDetailScreen() {
         showsVerticalScrollIndicator={false}
         className="flex-1 bg-canvas"
         contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
-        <Animated.View entering={FadeIn.duration(ENTER_DURATION_MS)}>
+        <View>
           <FilmBanner
             film={film}
             onBack={closeDetail}
@@ -100,7 +98,7 @@ export default function FilmDetailScreen() {
               </Text>
             </View>
           </View>
-        </Animated.View>
+        </View>
       </ScrollView>
     </FilmDetailFrame>
   );

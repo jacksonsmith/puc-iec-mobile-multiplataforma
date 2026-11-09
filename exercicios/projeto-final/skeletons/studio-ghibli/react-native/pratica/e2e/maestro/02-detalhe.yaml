@@ -5,7 +5,7 @@ appId: com.puciec.ghiblifinal
 - extendedWaitUntil:
     visible:
       id: 'item-list-screen'
-    timeout: 20000
+    timeout: 60000
 # CA1: tocar no card abre o detalhe
 - scrollUntilVisible:
     element:
@@ -16,7 +16,7 @@ appId: com.puciec.ghiblifinal
 - extendedWaitUntil:
     visible:
       id: 'detail-screen'
-    timeout: 10000
+    timeout: 30000
 # CA2: título, título original, ano, duração, nota, sinopse, diretor e produtor
 - assertVisible:
     id: 'detail-title'

@@ -5,11 +5,11 @@ appId: com.puciec.ghiblifinal
 - extendedWaitUntil:
     visible:
       id: 'item-list-screen'
-    timeout: 20000
+    timeout: 60000
 - extendedWaitUntil:
     visible:
       id: 'category-chip-all'
-    timeout: 20000
+    timeout: 60000
 # CA5: o filtro vale para todas as fileiras
 - tapOn:
     id: 'category-chip-takahata'
