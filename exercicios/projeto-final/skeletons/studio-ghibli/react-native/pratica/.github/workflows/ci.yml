@@ -52,6 +52,16 @@ jobs:
       - run: npm ci
       - name: Gerar o projeto Android
         run: npx expo prebuild --platform android --no-install
+      # O download do Gradle às vezes estoura o limite padrão de 10 segundos.
+      - name: Baixar o Gradle
+        working-directory: android
+        run: |
+          sed -i 's/^networkTimeout=.*/networkTimeout=120000/' gradle/wrapper/gradle-wrapper.properties
+          for attempt in 1 2 3 4 5; do
+            ./gradlew --version && exit 0
+            sleep 20
+          done
+          exit 1
       - name: Compilar o APK de release
         working-directory: android
         run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64
