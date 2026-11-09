@@ -52,11 +52,13 @@ jobs:
       - run: npm ci
       - name: Gerar o projeto Android
         run: npx expo prebuild --platform android --no-install
-      # O download do Gradle às vezes estoura o limite padrão de 10 segundos.
+      # O services.gradle.org falha com frequência nos runners; o mirror oficial no GitHub não.
       - name: Baixar o Gradle
         working-directory: android
         run: |
           sed -i 's/^networkTimeout=.*/networkTimeout=120000/' gradle/wrapper/gradle-wrapper.properties
+          sed -i -E 's#^distributionUrl=.*/gradle-([0-9.]+)-bin.zip#distributionUrl=https\\://github.com/gradle/gradle-distributions/releases/download/v\1/gradle-\1-bin.zip#' gradle/wrapper/gradle-wrapper.properties
+          grep distributionUrl gradle/wrapper/gradle-wrapper.properties
           for attempt in 1 2 3 4 5; do
             ./gradlew --version && exit 0
             sleep 20
