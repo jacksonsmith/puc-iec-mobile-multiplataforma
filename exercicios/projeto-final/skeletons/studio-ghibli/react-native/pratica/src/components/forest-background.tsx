@@ -16,7 +16,7 @@ type ForestCircle = {
 
 const CIRCLES: ForestCircle[] = [
   { token: 'forest-sky', getCenter: (_w, _h, d) => ({ x: d * 0.2, y: d * 0.15 }) },
-  { token: 'forest-canopy', getCenter: (w, _h, d) => ({ x: w * 0.65, y: d * 0.6 }) },
+  { token: 'forest-canopy', getCenter: (w, _h, d) => ({ x: w, y: d * 0.42 }) },
   {
     token: 'forest-trunk',
     getCenter: (w, h, d) => ({ x: w + d * 0.1, y: h * 0.6 }),
