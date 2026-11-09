@@ -47,8 +47,14 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      # As versões exigidas pelo React Native 0.88 não vêm instaladas no runner.
+      - name: Instalar os componentes do Android SDK
+        run: |
+          sudo chown -R "$USER" "$ANDROID_HOME"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install \
+            "platforms;android-37.0" "build-tools;37.0.0" "ndk;27.1.12297006" "cmake;3.22.1" > /dev/null
       - run: npm ci
       - name: Gerar o projeto Android
         run: npx expo prebuild --platform android --no-install
@@ -66,7 +72,14 @@ jobs:
           exit 1
       - name: Compilar o APK de release
         working-directory: android
-        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64
+        # Em caso de falha, publica o motivo como anotação, visível sem abrir o log inteiro.
+        run: |
+          set -o pipefail
+          ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64 2>&1 | tee build.log || {
+            reason=$(grep -A 12 "What went wrong" build.log | head -c 3000 | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=Falha no Gradle::$reason"
+            exit 1
+          }
       - name: Instalar o Maestro
         run: |
           curl -fsSL "https://get.maestro.mobile.dev" | bash
