@@ -68,7 +68,9 @@ module.exports = {
     ({ addBase }) => {
       addBase({
         ':root': getThemeVariables(DAY_THEME),
-        '@media (prefers-color-scheme: dark)': { ':root': getThemeVariables(NIGHT_THEME) },
+        ...(IS_WEB
+          ? { '.dark': getThemeVariables(NIGHT_THEME) }
+          : { '@media (prefers-color-scheme: dark)': { ':root': getThemeVariables(NIGHT_THEME) } }),
       });
     },
   ],

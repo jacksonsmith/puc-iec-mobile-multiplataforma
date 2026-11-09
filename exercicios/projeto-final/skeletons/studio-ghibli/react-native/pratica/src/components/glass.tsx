@@ -1,14 +1,9 @@
 import { BlurView } from 'expo-blur';
 import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect';
 import { useEffect, useState } from 'react';
-import {
-  AccessibilityInfo,
-  Platform,
-  StyleSheet,
-  useColorScheme,
-  View,
-  type ViewProps,
-} from 'react-native';
+import { AccessibilityInfo, Platform, StyleSheet, View, type ViewProps } from 'react-native';
+
+import { useColorScheme } from './color-scheme';
 
 const FILL_CLASS = {
   default: 'bg-glass',

@@ -4,6 +4,7 @@ import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FilmRail } from '@/components/film-rail';
+import { HomeHeaderActions } from '@/components/home-header-actions';
 import { KodamaMark } from '@/components/kodama-mark';
 import { EmptyState } from '@/components/states/empty-state';
 import { ErrorState } from '@/components/states/error-state';
@@ -23,13 +24,19 @@ export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const tokens = useBrandTokens();
-  const { data: films, isError, isRefetching, refetch } = useFilms();
+  const { data: films, fetchStatus, isError, isRefetching, refetch } = useFilms();
   const rails = useMemo(() => buildRails(films ?? [], FAVORITE_IDS), [films]);
 
   const glowImage = `radial-gradient(ellipse 120% 70% at 20% 0%, ${tokens.color('glow-sky')}, transparent 60%), radial-gradient(ellipse 80% 50% at 90% 40%, ${tokens.color('glow-lamp')}, transparent 70%)`;
 
   function renderContent() {
-    if (!films) return isError ? <ErrorState onRetry={refetch} /> : <LoadingState />;
+    if (!films) {
+      return isError || fetchStatus === 'paused' ? (
+        <ErrorState onRetry={refetch} />
+      ) : (
+        <LoadingState />
+      );
+    }
 
     return (
       <View className="gap-8">
@@ -87,6 +94,7 @@ export default function HomeScreen() {
         <View className="mb-6 flex-row items-center gap-2 px-4">
           <KodamaMark size={40} />
           <Text variant="display">Kodama</Text>
+          <HomeHeaderActions />
         </View>
         {renderContent()}
       </ScrollView>

@@ -1,6 +1,7 @@
 import { Skeleton } from 'moti/skeleton';
-import { useColorScheme, View } from 'react-native';
+import { View } from 'react-native';
 
+import { useColorScheme } from '../color-scheme';
 import { FILM_CARD_WIDTH } from '../film-card';
 import { useBrandTokens } from '../use-brand-tokens';
 
