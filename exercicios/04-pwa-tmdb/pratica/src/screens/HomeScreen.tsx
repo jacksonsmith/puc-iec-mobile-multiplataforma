@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { usePopularMovies, isTokenMissing } from '../hooks/useTmdb';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
-import { useOfflineStatus } from '../hooks/useOfflineStatus'; // TODO 5
+import { useOfflineStatus } from '../hooks/useOfflineStatus';
 import { AppHeader } from '../components/AppHeader';
 import { InstallButton } from '../components/InstallButton';
 import { MovieCard } from '../components/MovieCard';
@@ -39,7 +39,7 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
   const { movies, loading, error, hasMore, loadMore } = usePopularMovies();
   const [search, setSearch] = useState('');
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const { isOnline } = useOfflineStatus(); // TODO 5
+  const { isOnline } = useOfflineStatus();
 
   useInfiniteScroll(sentinelRef, loadMore);
 
@@ -49,11 +49,6 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
   const isEmpty = !loading && movies.length === 0;
 
   // ─── tab: favorites ─────────────────────────────────────────────────────────
-  // TODO 5 — banner offline: use `isOnline` (já importado acima)
-  //   Se !isOnline, renderize ANTES da lista:
-  //   <div style={{ background:'#C2410C', color:'#fff', padding:'8px 16px', textAlign:'center', fontSize:14 }}>
-  //     📡 Offline — exibindo dados do cache
-  //   </div>
   if (activeTab === 'favorites') {
     // Derivado dos dados já carregados (rede ou IndexedDB) — não é um estado novo.
     const favMovies = movies.filter((m) => isFavorite(m.id));
@@ -61,6 +56,11 @@ export function HomeScreen({ activeTab, isFavorite, toggleFavorite }: Props) {
     return (
       <main style={styles.main} className="main-content">
         <AppHeader title="★ Favoritos" />
+        {!isOnline && (
+          <div role="status" style={styles.offlineBanner}>
+            📡 Offline — exibindo dados do cache
+          </div>
+        )}
         {favMovies.length === 0 ? (
           <p style={styles.emptyText}>
             {isEmpty

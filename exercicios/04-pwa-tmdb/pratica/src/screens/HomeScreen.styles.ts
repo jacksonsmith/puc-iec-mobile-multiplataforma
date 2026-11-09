@@ -2,6 +2,13 @@ import type React from 'react';
 
 export const styles: Record<string, React.CSSProperties> = {
   main: { maxWidth: 720, margin: '0 auto', padding: '0 16px 40px' },
+  offlineBanner: {
+    background: '#C2410C',
+    color: '#fff',
+    padding: '8px 16px',
+    textAlign: 'center',
+    fontSize: 14,
+  },
   emptyText: { color: '#90a4ae', textAlign: 'center', padding: '40px 0', fontSize: 15 },
   searchInput: {
     width: '100%',
