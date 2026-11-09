@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SymbolView } from 'expo-symbols';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -17,9 +17,10 @@ const TRANSPARENT_ALPHA = '00';
 type FilmBannerProps = {
   film: Film;
   onBack: () => void;
+  trailingAction?: ReactNode;
 };
 
-export function FilmBanner({ film, onBack }: FilmBannerProps) {
+export function FilmBanner({ film, onBack, trailingAction }: FilmBannerProps) {
   const tokens = useBrandTokens();
   const insets = useSafeAreaInsets();
   const [hasImageError, setHasImageError] = useState(false);
@@ -67,6 +68,9 @@ export function FilmBanner({ film, onBack }: FilmBannerProps) {
           />
         </Glass>
       </Pressable>
+      <View className="absolute right-4" style={{ top: insets.top + 8 }}>
+        {trailingAction}
+      </View>
     </View>
   );
 }

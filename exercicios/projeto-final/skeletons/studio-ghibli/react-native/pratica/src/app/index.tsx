@@ -1,13 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import {
-  Platform,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-  type ViewStyle,
-} from 'react-native';
+import { Platform, RefreshControl, ScrollView, StyleSheet, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DirectorChips } from '@/components/director-chips';
@@ -22,34 +15,36 @@ import { LoadingState } from '@/components/states/loading-state';
 import { Text } from '@/components/text';
 import { useBrandTokens } from '@/components/use-brand-tokens';
 import { getDirectors } from '@/domain/directors';
+import { isFavorite as isFavoriteFilm } from '@/domain/favorites';
 import { filterFilms } from '@/domain/filter';
 import { formatFilmCount } from '@/domain/format';
 import { buildRails } from '@/domain/rails';
+import { useFavoritesStore } from '@/state/favorites-store';
 import { useFilmFiltersStore } from '@/state/film-filters-store';
 import { useFilms } from '@/state/use-films';
 
 const FAVORITES_SLUG = 'favorites';
 const GLOW_HEIGHT = 560;
-// A Spec 005 troca esta lista pelos favoritos salvos no aparelho.
-const FAVORITE_IDS: string[] = [];
-
-// O react-native-web não entende experimental_backgroundImage.
 function getGlowStyle(image: string): ViewStyle {
   return Platform.OS === 'web'
     ? ({ backgroundImage: image } as ViewStyle)
     : { experimental_backgroundImage: image };
 }
-
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const tokens = useBrandTokens();
+  const glowImage = `radial-gradient(ellipse 120% 70% at 20% 0%, ${tokens.color('glow-sky')}, transparent 60%), radial-gradient(ellipse 80% 50% at 90% 40%, ${tokens.color('glow-lamp')}, transparent 70%)`;
   const { data: films, fetchStatus, isError, isRefetching, refetch } = useFilms();
   const query = useFilmFiltersStore((state) => state.query);
   const setQuery = useFilmFiltersStore((state) => state.setQuery);
   const director = useFilmFiltersStore((state) => state.director);
   const setDirector = useFilmFiltersStore((state) => state.setDirector);
-  const rails = useMemo(() => buildRails(films ?? [], FAVORITE_IDS, director), [films, director]);
+  const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
+  const rails = useMemo(
+    () => buildRails(films ?? [], favoriteIds, director),
+    [films, favoriteIds, director],
+  );
   const directors = useMemo(() => getDirectors(films ?? []), [films]);
   const searchResults = useMemo(
     () => filterFilms(films ?? [], { query, director }),
@@ -58,14 +53,12 @@ export default function HomeScreen() {
   const isSearching = query.trim().length > 0;
 
   function isFavorite(filmId: string) {
-    return FAVORITE_IDS.includes(filmId);
+    return isFavoriteFilm(favoriteIds, filmId);
   }
 
   function openFilm(filmId: string) {
     router.push({ pathname: '/film/[id]', params: { id: filmId } });
   }
-
-  const glowImage = `radial-gradient(ellipse 120% 70% at 20% 0%, ${tokens.color('glow-sky')}, transparent 60%), radial-gradient(ellipse 80% 50% at 90% 40%, ${tokens.color('glow-lamp')}, transparent 70%)`;
 
   function renderContent() {
     if (!films) {
@@ -94,7 +87,9 @@ export default function HomeScreen() {
 
       return (
         <FilmGrid
-          query={query}
+          testID="search-results"
+          title={`Resultados para “${query.trim()}”`}
+          countLabel={formatFilmCount(searchResults.length)}
           films={searchResults}
           isFavorite={isFavorite}
           onPressFilm={openFilm}
@@ -119,6 +114,7 @@ export default function HomeScreen() {
               }
               isFavorite={isFavorite}
               onPressFilm={openFilm}
+              onSeeAll={isFavoritesRail ? () => router.push('/favorites') : undefined}
               emptyState={
                 <EmptyState
                   testID="state-favorites-empty"

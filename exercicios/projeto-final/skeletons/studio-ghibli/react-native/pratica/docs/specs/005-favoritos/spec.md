@@ -8,7 +8,7 @@
 Como fã, quero marcar meus filmes preferidos e vê-los sempre no topo da tela inicial, mesmo depois de fechar o app.
 
 ## Critérios de aceite
-- [ ] CA1 — No detalhe (Spec 002), o botão **Favoritar / Nos favoritos** alterna o favorito, com animação (Moti) e háptico (`expo-haptics`).
+- [ ] CA1 — No detalhe (Spec 002), o botão **Favoritar / Nos favoritos** alterna o favorito, com animação (Reanimated) e háptico (`expo-haptics`).
 - [ ] CA2 — **Seus favoritos** é sempre a primeira fileira da tela inicial, com os favoritos mais recentes primeiro e a contagem "★ N" em `lamp`.
 - [ ] CA3 — Nos cards de qualquer fileira, filme favorito mostra a ★ de vidro no canto do pôster; não favorito não mostra nada.
 - [ ] CA4 — Favoritos **sobrevivem a fechar e reabrir o app** (persistidos localmente).

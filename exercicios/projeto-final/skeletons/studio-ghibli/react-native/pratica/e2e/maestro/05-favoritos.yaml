@@ -1,0 +1,49 @@
+appId: com.puciec.ghiblifinal
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: 'item-list-screen'
+    timeout: 20000
+- extendedWaitUntil:
+    visible:
+      id: 'state-favorites-empty'
+    timeout: 20000
+# CA1 e CA7: favorita no detalhe
+- scrollUntilVisible:
+    element:
+      id: 'item-card-2baf70d1-42bb-4437-b551-e5fed5a87abe'
+    direction: DOWN
+- tapOn:
+    id: 'item-card-2baf70d1-42bb-4437-b551-e5fed5a87abe'
+- extendedWaitUntil:
+    visible:
+      id: 'detail-screen'
+    timeout: 10000
+- assertVisible: 'Adicionar aos favoritos'
+- tapOn:
+    id: 'detail-favorite-button'
+- assertVisible: 'Remover dos favoritos'
+- tapOn:
+    id: 'detail-back-button'
+# CA2 e CA3: aparece na primeira fileira, com a ★ no pôster
+- scrollUntilVisible:
+    element:
+      id: 'rail-favorites'
+    direction: UP
+- assertVisible: '★ 1'
+- assertVisible: 'Castle in the Sky, favorito'
+# CA4: sobrevive a fechar e abrir o app
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: 'rail-favorites'
+    timeout: 20000
+- assertVisible: '★ 1'
+# CA6: Ver todos abre a grade de favoritos
+- tapOn:
+    id: 'tab-favorites'
+- assertVisible:
+    id: 'favorite-item-2baf70d1-42bb-4437-b551-e5fed5a87abe'

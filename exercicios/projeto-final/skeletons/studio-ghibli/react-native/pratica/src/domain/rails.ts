@@ -15,7 +15,7 @@ const DECADES = [
   { slug: '2010s', title: 'De 2010 em diante', from: 2010, to: Infinity },
 ];
 
-function getFavoriteFilms(films: Film[], favoriteIds: string[]): Film[] {
+export function getFavoriteFilms(films: Film[], favoriteIds: string[]): Film[] {
   return favoriteIds.flatMap((id) => films.filter((film) => film.id === id));
 }
 

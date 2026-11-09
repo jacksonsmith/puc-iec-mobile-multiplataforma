@@ -26,6 +26,7 @@ type FilmCardProps = {
   onPress: () => void;
   width?: number;
   subtitle?: string;
+  testID?: string;
 };
 
 export function FilmCard({
@@ -34,6 +35,7 @@ export function FilmCard({
   onPress,
   width = FILM_CARD_WIDTH,
   subtitle,
+  testID,
 }: FilmCardProps) {
   const tokens = useBrandTokens();
   const reduceMotion = useReducedMotion();
@@ -47,7 +49,7 @@ export function FilmCard({
 
   return (
     <Pressable
-      testID={`item-card-${film.id}`}
+      testID={testID ?? `item-card-${film.id}`}
       accessibilityRole="button"
       accessibilityLabel={isFavorite ? `${film.title}, favorito` : film.title}
       style={{ width }}
