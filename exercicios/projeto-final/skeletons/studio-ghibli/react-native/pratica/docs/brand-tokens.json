@@ -62,38 +62,6 @@
     "usage": "Véu escuro de 72% sob ícone ou texto em cima de imagem (★ no pôster, botões sobre o banner). Igual nos dois temas, porque a imagem é a mesma."
    },
    {
-    "name": "forest-sky",
-    "value": {
-     "night": "#2b4159",
-     "day": "#c4e3f7"
-    },
-    "usage": "Círculo no canto superior esquerdo, saindo da tela. Dia: céu azul limpo. Noite: azul do céu noturno misturado ao branco da lua."
-   },
-   {
-    "name": "forest-canopy",
-    "value": {
-     "night": "#163a2b",
-     "day": "#cce6c0"
-    },
-    "usage": "Círculo no limite direito da tela, um pouco abaixo da altura do primeiro: o verde das copas das árvores."
-   },
-   {
-    "name": "forest-trunk",
-    "value": {
-     "night": "#163a2b",
-     "day": "#e8dcc8"
-    },
-    "usage": "Círculo saindo pela direita, um pouco abaixo do meio da tela: o marrom dos caules. Só aparece de dia."
-   },
-   {
-    "name": "forest-ground",
-    "value": {
-     "night": "#06140e",
-     "day": "#d6ebb8"
-    },
-    "usage": "Círculo saindo pela esquerda, no fim da tela. Dia: verde da grama. Noite: verde quase preto."
-   },
-   {
     "name": "glow-sky",
     "value": {
      "night": "#8ec5ea33",

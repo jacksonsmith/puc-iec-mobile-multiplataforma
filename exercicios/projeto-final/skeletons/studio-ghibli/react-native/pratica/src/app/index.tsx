@@ -1,12 +1,11 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, StyleSheet, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DirectorChips } from '@/components/director-chips';
 import { FilmGrid } from '@/components/film-grid';
 import { FilmRail } from '@/components/film-rail';
-import { ForestBackground } from '@/components/forest-background';
 import { HomeHeaderActions } from '@/components/home-header-actions';
 import { KodamaMark } from '@/components/kodama-mark';
 import { SearchBar } from '@/components/search-bar';
@@ -25,11 +24,17 @@ import { useFilmFiltersStore } from '@/state/film-filters-store';
 import { useFilms } from '@/state/use-films';
 
 const FAVORITES_SLUG = 'favorites';
-
+const GLOW_HEIGHT = 560;
+function getGlowStyle(image: string): ViewStyle {
+  return Platform.OS === 'web'
+    ? ({ backgroundImage: image } as ViewStyle)
+    : { experimental_backgroundImage: image };
+}
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const tokens = useBrandTokens();
+  const glowImage = `radial-gradient(ellipse 120% 70% at 20% 0%, ${tokens.color('glow-sky')}, transparent 60%), radial-gradient(ellipse 80% 50% at 90% 40%, ${tokens.color('glow-lamp')}, transparent 70%)`;
   const { data: films, fetchStatus, isError, isRefetching, refetch } = useFilms();
   const query = useFilmFiltersStore((state) => state.query);
   const setQuery = useFilmFiltersStore((state) => state.setQuery);
@@ -129,7 +134,7 @@ export default function HomeScreen() {
 
   return (
     <View testID="item-list-screen" className="flex-1 bg-canvas">
-      <ForestBackground />
+      <View pointerEvents="none" style={[styles.glow, getGlowStyle(glowImage)]} />
       <ScrollView
         contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }}
         keyboardShouldPersistTaps="handled"
@@ -166,3 +171,13 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  glow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: GLOW_HEIGHT,
+  },
+});

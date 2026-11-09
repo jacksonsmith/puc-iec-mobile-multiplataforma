@@ -4,7 +4,6 @@ import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FilmGrid } from '@/components/film-grid';
-import { ForestBackground } from '@/components/forest-background';
 import { IconButton } from '@/components/icon-button';
 import { EmptyState } from '@/components/states/empty-state';
 import { ErrorState } from '@/components/states/error-state';
@@ -68,25 +67,22 @@ export default function FavoritesScreen() {
   }
 
   return (
-    <View className="flex-1 bg-canvas">
-      <ForestBackground />
-      <ScrollView
-        testID="favorites-screen"
-        className="flex-1"
-        contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }}>
-        <View className="mb-4 flex-row items-center gap-3 px-4">
-          <IconButton
-            testID="favorites-back-button"
-            accessibilityLabel="Voltar"
-            icon={{ ios: 'chevron.left', android: 'chevron_left', web: 'chevron_left' }}
-            onPress={closeScreen}
-          />
-          <Text variant="title-lg" accessibilityRole="header">
-            Seus favoritos
-          </Text>
-        </View>
-        {renderContent()}
-      </ScrollView>
-    </View>
+    <ScrollView
+      testID="favorites-screen"
+      className="flex-1 bg-canvas"
+      contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }}>
+      <View className="mb-4 flex-row items-center gap-3 px-4">
+        <IconButton
+          testID="favorites-back-button"
+          accessibilityLabel="Voltar"
+          icon={{ ios: 'chevron.left', android: 'chevron_left', web: 'chevron_left' }}
+          onPress={closeScreen}
+        />
+        <Text variant="title-lg" accessibilityRole="header">
+          Seus favoritos
+        </Text>
+      </View>
+      {renderContent()}
+    </ScrollView>
   );
 }
