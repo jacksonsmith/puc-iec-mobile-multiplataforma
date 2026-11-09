@@ -46,15 +46,19 @@ fun App(tmdbToken: String = "") {
         }
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            // Cada recomposição escolhe UMA tela a partir do estado atual.
-            // A ordem importa: sem token nem existe busca; erro só depois do loading.
-            when {
-                tmdbToken.isBlank() -> TokenMissingMessage()
-                isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+            // Android 15+ desenha edge-to-edge: safeDrawingPadding evita que o conteúdo
+            // fique por baixo da status bar e da barra de navegação.
+            Box(Modifier.fillMaxSize().safeDrawingPadding()) {
+                // Cada recomposição escolhe UMA tela a partir do estado atual.
+                // A ordem importa: sem token nem existe busca; erro só depois do loading.
+                when {
+                    tmdbToken.isBlank() -> TokenMissingMessage()
+                    isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    error != null -> ErrorMessage(error!!)
+                    else -> MovieList(movies)
                 }
-                error != null -> ErrorMessage(error!!)
-                else -> MovieList(movies)
             }
         }
     }
