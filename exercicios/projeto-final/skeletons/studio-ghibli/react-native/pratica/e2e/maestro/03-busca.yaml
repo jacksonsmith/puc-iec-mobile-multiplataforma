@@ -1,0 +1,46 @@
+appId: com.puciec.ghiblifinal
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: 'item-list-screen'
+    timeout: 60000
+- extendedWaitUntil:
+    visible:
+      id: 'rail-acclaimed'
+    timeout: 60000
+# CA1b e CA2: filtra enquanto digita e troca as fileiras pela grade
+- tapOn:
+    id: 'search-input'
+- inputText: 'kiki'
+- assertVisible:
+    id: 'search-results'
+- assertVisible:
+    id: 'item-card-ea660b10-85c4-4ae3-8a5f-41cea3648e3e'
+- assertVisible: '1 filme'
+- assertNotVisible:
+    id: 'rail-acclaimed'
+# CA6: o botão limpa o campo e CA4: campo vazio volta às fileiras
+- tapOn:
+    id: 'search-clear'
+- assertVisible:
+    id: 'rail-acclaimed'
+# CA3: ignora maiúsculas e acentos
+- tapOn:
+    id: 'search-input'
+- inputText: 'KÍKI'
+- assertVisible:
+    id: 'item-card-ea660b10-85c4-4ae3-8a5f-41cea3648e3e'
+- tapOn:
+    id: 'search-clear'
+# CA5: sem resultado mostra o estado vazio com opção de limpar
+- tapOn:
+    id: 'search-input'
+- inputText: 'xyz'
+- assertVisible:
+    id: 'state-empty'
+- assertVisible: 'Nenhum filme encontrado'
+- tapOn: 'Limpar busca'
+- assertVisible:
+    id: 'rail-acclaimed'

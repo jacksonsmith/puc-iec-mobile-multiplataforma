@@ -1,0 +1,402 @@
+{
+ "name": "Kodama",
+ "version": 3,
+ "color": {
+  "themes": [
+   {
+    "id": "night",
+    "name": "Noite"
+   },
+   {
+    "id": "day",
+    "name": "Dia"
+   }
+  ],
+  "tokens": [
+   {
+    "name": "canvas",
+    "value": {
+     "night": "#0a1214",
+     "day": "#f4f2ec"
+    },
+    "usage": "Fundo de todas as telas. Noite: céu verde-azulado quase preto, sala de cinema. Dia: papel washi claro e quente."
+   },
+   {
+    "name": "canvas-raised",
+    "value": {
+     "night": "#14201f",
+     "day": "#e7e9e3"
+    },
+    "usage": "Superfície opaca: skeleton, pôster carregando e fallback do vidro quando o blur não está disponível (Android antigo, reduzir transparência)."
+   },
+   {
+    "name": "glass",
+    "value": {
+     "night": "#ffffff14",
+     "day": "#ffffff99"
+    },
+    "usage": "Vidro padrão (Noite 8% de branco, Dia 60%) + blur-md: busca, chips inativos, botão secundário. Só sobre canvas com glow ou sobre imagem."
+   },
+   {
+    "name": "glass-strong",
+    "value": {
+     "night": "#ffffff24",
+     "day": "#ffffffcc"
+    },
+    "usage": "Vidro destacado (Noite 14%, Dia 80%): card de estado vazio, folhas e o chip pressionado."
+   },
+   {
+    "name": "glass-line",
+    "value": {
+     "night": "#ffffff38",
+     "day": "#0a12141f"
+    },
+    "usage": "Borda de 1px de todo vidro. Noite: luz branca na aresta. Dia: traço escuro de 12%. Decorativa: o controle se identifica pelo texto."
+   },
+   {
+    "name": "glass-scrim",
+    "value": {
+     "night": "#0a1214b8",
+     "day": "#0a1214b8"
+    },
+    "usage": "Véu escuro de 72% sob ícone ou texto em cima de imagem (★ no pôster, botões sobre o banner). Igual nos dois temas, porque a imagem é a mesma."
+   },
+   {
+    "name": "glow-sky",
+    "value": {
+     "night": "#8ec5ea33",
+     "day": "#5aa6d840"
+    },
+    "usage": "Brilho ambiente radial atrás do topo da tela e do conteúdo do detalhe (blur-lg). Dá ao vidro algo para desfocar."
+   },
+   {
+    "name": "glow-lamp",
+    "value": {
+     "night": "#f2b84b26",
+     "day": "#f2b84b40"
+    },
+    "usage": "Brilho ambiente atrás da fileira Seus favoritos."
+   },
+   {
+    "name": "ink",
+    "value": {
+     "night": "#eef3ef",
+     "day": "#14201f"
+    },
+    "usage": "Texto principal: títulos de fileira, nome do filme, sinopse. Sobre canvas, canvas-raised e qualquer vidro (≥ 12:1 nos dois temas)."
+   },
+   {
+    "name": "ink-muted",
+    "value": {
+     "night": "#a3b4ae",
+     "day": "#4c5c57"
+    },
+    "usage": "Metadados e apoio (ano, diretor, contagem, placeholder). Sobre canvas, canvas-raised e vidro (≥ 5.1:1 nos dois temas)."
+   },
+   {
+    "name": "ink-on-image",
+    "value": {
+     "night": "#eef3ef",
+     "day": "#eef3ef"
+    },
+    "usage": "Texto e ícone sobre imagem com glass-scrim (★ desmarcada no pôster, ícones sobre o banner). Igual nos dois temas."
+   },
+   {
+    "name": "sky",
+    "value": {
+     "night": "#8ec5ea",
+     "day": "#1c628e"
+    },
+    "usage": "Cor da marca: chip ativo, botão primário, links, 'Ver todos'. Como texto, sobre canvas e vidro. No Dia é mais escuro para passar em AA."
+   },
+   {
+    "name": "on-sky",
+    "value": {
+     "night": "#071722",
+     "day": "#ffffff"
+    },
+    "usage": "Texto e ícone sobre preenchimento sky."
+   },
+   {
+    "name": "lamp",
+    "value": {
+     "night": "#f2b84b",
+     "day": "#845600"
+    },
+    "usage": "Favoritos e só favoritos: ★ preenchida fora de imagem, contagem '★ 3', ícone de favoritos vazio. Sobre canvas e vidro."
+   },
+   {
+    "name": "lamp-on-image",
+    "value": {
+     "night": "#f2b84b",
+     "day": "#f2b84b"
+    },
+    "usage": "A ★ preenchida sobre imagem (disco glass-scrim no pôster e no banner). Igual nos dois temas."
+   },
+   {
+    "name": "on-lamp",
+    "value": {
+     "night": "#1d1504",
+     "day": "#ffffff"
+    },
+    "usage": "Texto sobre preenchimento lamp."
+   },
+   {
+    "name": "meadow",
+    "value": {
+     "night": "#9fd18f",
+     "day": "#2e6f37"
+    },
+    "usage": "Nota alta (Rotten Tomatoes ≥ 90) na tela de detalhe, sempre com o número."
+   },
+   {
+    "name": "danger",
+    "value": {
+     "night": "#f4a39c",
+     "day": "#b42318"
+    },
+    "usage": "Título do estado de erro e ícone de sem conexão, sempre com texto."
+   },
+   {
+    "name": "link",
+    "value": "{sky}",
+    "usage": "Links de texto: alias de sky."
+   }
+  ]
+ },
+ "type": {
+  "fonts": [],
+  "families": {
+   "title": "\"Shippori Mincho B1\", \"Hiragino Mincho ProN\", \"Yu Mincho\", Georgia, serif",
+   "text": "\"Zen Kaku Gothic New\", \"Hiragino Sans\", system-ui, -apple-system, \"Segoe UI\", sans-serif",
+   "mono": "ui-monospace, \"SF Mono\", Menlo, monospace"
+  },
+  "groups": [
+   {
+    "name": "Títulos",
+    "family": "title",
+    "note": "Shippori Mincho B1 (Google Fonts, 600/700/800). Serifa mincho de cartela de cinema, com kanji e kana para os títulos originais. Só em títulos.",
+    "styles": [
+     {
+      "name": "display",
+      "fontSize": "40px",
+      "lineHeight": "52px",
+      "fontWeight": 800,
+      "letterSpacing": "-0.01em",
+      "sample": "Kodama",
+      "usage": "A marca e o título do filme no topo do detalhe."
+     },
+     {
+      "name": "title-lg",
+      "fontSize": "28px",
+      "lineHeight": "34px",
+      "fontWeight": 700,
+      "sample": "Spirited Away",
+      "usage": "Título do filme no detalhe quando o banner já rolou; títulos de tela."
+     },
+     {
+      "name": "rail-title",
+      "fontSize": "21px",
+      "lineHeight": "28px",
+      "fontWeight": 700,
+      "sample": "Seus favoritos",
+      "usage": "Título de cada fileira horizontal."
+     },
+     {
+      "name": "card-title",
+      "fontSize": "15px",
+      "lineHeight": "20px",
+      "fontWeight": 700,
+      "sample": "My Neighbor Totoro",
+      "usage": "Nome do filme embaixo do pôster. Máximo 2 linhas."
+     },
+     {
+      "name": "original",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "fontWeight": 600,
+      "sample": "千と千尋の神隠し",
+      "usage": "Título original japonês no detalhe."
+     }
+    ]
+   },
+   {
+    "name": "Texto",
+    "family": "text",
+    "note": "Zen Kaku Gothic New (Google Fonts, 400/500/700). Grotesca limpa para tudo que não é título.",
+    "styles": [
+     {
+      "name": "body",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "fontWeight": 400,
+      "sample": "Chihiro e os pais atravessam um túnel e chegam a um mundo de espíritos.",
+      "usage": "Sinopse e textos corridos, até ~65 caracteres por linha."
+     },
+     {
+      "name": "body-strong",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "fontWeight": 700,
+      "sample": "Tentar novamente",
+      "usage": "Rótulos de botão e títulos de estado vazio/erro."
+     },
+     {
+      "name": "meta",
+      "fontSize": "14px",
+      "lineHeight": "20px",
+      "fontWeight": 500,
+      "sample": "2001 · Hayao Miyazaki · 2h 4min",
+      "usage": "Metadados no detalhe; contagem ao lado do título da fileira. Números tabulares."
+     },
+     {
+      "name": "label",
+      "fontSize": "13px",
+      "lineHeight": "18px",
+      "fontWeight": 700,
+      "letterSpacing": "0.02em",
+      "sample": "Isao Takahata",
+      "usage": "Chips de diretor e 'Ver todos'."
+     },
+     {
+      "name": "caption",
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "fontWeight": 700,
+      "letterSpacing": "0.08em",
+      "sample": "APP DE FÃ · NÃO OFICIAL",
+      "usage": "Aviso de app de fã e sobretítulos, sempre em maiúsculas."
+     }
+    ]
+   },
+   {
+    "name": "Código",
+    "family": "mono",
+    "styles": [
+     {
+      "name": "code",
+      "fontSize": "13px",
+      "lineHeight": "20px",
+      "fontWeight": 400,
+      "sample": "testID=\"rail-favorites\"",
+      "usage": "Só na documentação."
+     }
+    ]
+   }
+  ]
+ },
+ "spacing": {
+  "note": "Base de 4px, igual à escala do Tailwind.",
+  "tokens": [
+   {
+    "name": "space-1",
+    "value": "4px",
+    "usage": "Pôster ↔ nome do filme; ícone ↔ rótulo."
+   },
+   {
+    "name": "space-2",
+    "value": "8px",
+    "usage": "Gap entre chips; inset da ★ no canto do pôster."
+   },
+   {
+    "name": "space-3",
+    "value": "12px",
+    "usage": "Gap entre cards numa fileira; título da fileira ↔ cards."
+   },
+   {
+    "name": "space-4",
+    "value": "16px",
+    "usage": "Margem lateral das telas (a fileira começa nela e sangra na direita)."
+   },
+   {
+    "name": "space-6",
+    "value": "24px",
+    "usage": "Entre seções do detalhe."
+   },
+   {
+    "name": "space-8",
+    "value": "32px",
+    "usage": "Entre uma fileira e a próxima."
+   },
+   {
+    "name": "space-12",
+    "value": "48px",
+    "usage": "Altura mínima de alvo de toque."
+   }
+  ]
+ },
+ "radius": {
+  "note": "Pôster com canto suave; vidro mais arredondado que o pôster para separar os dois mundos.",
+  "tokens": [
+   {
+    "name": "radius-sm",
+    "value": "8px",
+    "usage": "Selos e pôster no estado de busca em grade pequena."
+   },
+   {
+    "name": "radius-md",
+    "value": "12px",
+    "usage": "Pôster do FilmCard e banner."
+   },
+   {
+    "name": "radius-lg",
+    "value": "20px",
+    "usage": "Painéis de vidro: busca, estados vazio/erro, folhas."
+   },
+   {
+    "name": "radius-full",
+    "value": "9999px",
+    "usage": "Chips, ★ e botões."
+   }
+  ]
+ },
+ "blur": {
+  "note": "Força do desfoque atrás do vidro (expo-blur intensity ≈ valor × 2; tint dark no Noite, light no Dia). Sem blur disponível, use canvas-raised.",
+  "tokens": [
+   {
+    "name": "blur-sm",
+    "value": "12px",
+    "usage": "★ sobre o pôster e chips."
+   },
+   {
+    "name": "blur-md",
+    "value": "24px",
+    "usage": "Busca, botões secundários e cabeçalho fixo."
+   },
+   {
+    "name": "blur-lg",
+    "value": "48px",
+    "usage": "Glows ambientes e folhas."
+   }
+  ]
+ },
+ "shadow": {
+  "note": "Sombra só para imagem e vidro flutuante. No Noite o vidro ganha luz na aresta pelo glass-line; no Dia, o traço escuro e uma sombra curta.",
+  "tokens": [
+   {
+    "name": "shadow-poster",
+    "value": {
+     "night": "0 10px 24px -8px #000000b3",
+     "day": "0 10px 24px -10px #0a121459"
+    },
+    "usage": "Pôster do FilmCard e banner. A imagem flutua acima do fundo nos dois temas."
+   },
+   {
+    "name": "shadow-float",
+    "value": {
+     "night": "0 16px 40px -12px #000000cc",
+     "day": "0 16px 40px -14px #0a121440"
+    },
+    "usage": "Cabeçalho fixo e folhas de vidro."
+   },
+   {
+    "name": "focus-ring",
+    "value": {
+     "night": "0 0 0 2px #0a1214, 0 0 0 4px #8ec5ea",
+     "day": "0 0 0 2px #f4f2ec, 0 0 0 4px #1c628e"
+    },
+    "usage": "Foco de teclado (web): 2px de canvas e 2px sólidos de sky."
+   }
+  ]
+ }
+}
