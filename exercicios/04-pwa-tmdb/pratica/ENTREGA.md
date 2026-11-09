@@ -2,7 +2,7 @@
 
 > Preencha e faça commit junto com o código. Esta parte vale 3 pts (avaliação manual no Canvas).
 
-**Nome:** José Ricardo Ciola Bricio · **GitHub:** zeciola
+**Nome:** José Ricardo Ciola Bricio · **Matrícula:** 1669938 · **GitHub:** zeciola
 
 ---
 
