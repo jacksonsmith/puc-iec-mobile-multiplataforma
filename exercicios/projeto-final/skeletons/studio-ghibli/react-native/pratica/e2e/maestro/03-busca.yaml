@@ -1,6 +1,7 @@
 appId: com.puciec.ghiblifinal
 ---
-- launchApp
+- launchApp:
+    clearState: true
 - extendedWaitUntil:
     visible:
       id: 'item-list-screen'
