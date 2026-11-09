@@ -4,6 +4,10 @@ Projeto Kotlin Multiplatform (Android · iOS · Web) gerado pelo wizard oficial.
 `shared/src/commonMain/kotlin/org/example/project/App.kt` — a chamada à API (TMDB) já está pronta.
 Enunciado, rubrica e entrega: [`../enunciado.md`](../enunciado.md).
 
+## Demonstração
+
+![App rodando no emulador Android: lista de filmes populares com placeholder de pôster, título, sinopse, nota e ano](docs/demo.gif)
+
 ## 1. Entre na pasta certa
 
 ```bash
