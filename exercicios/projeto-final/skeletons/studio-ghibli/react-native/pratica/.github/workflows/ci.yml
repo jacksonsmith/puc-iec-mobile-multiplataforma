@@ -118,3 +118,8 @@ jobs:
             maestro-report.xml
             maestro-debug
           if-no-files-found: ignore
+          # O Maestro guarda as capturas de tela em uma pasta oculta (.maestro).
+          include-hidden-files: true
+      - name: Publicar as falhas dos flows
+        if: failure()
+        run: python3 .github/scripts/maestro-annotations.py
