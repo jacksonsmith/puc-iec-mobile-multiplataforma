@@ -1,6 +1,6 @@
 # Kodama
 
-[![CI](https://github.com/roymas100/ghibli-studio-app/actions/workflows/ci.yml/badge.svg)](https://github.com/roymas100/ghibli-studio-app/actions/workflows/ci.yml)
+[![CI](https://github.com/roymas100/puc-iec-mobile-multiplataforma/actions/workflows/projeto-final-ghibli-rn.yml/badge.svg?branch=entrega/projeto-final-amir-andrade)](https://github.com/roymas100/puc-iec-mobile-multiplataforma/actions/workflows/projeto-final-ghibli-rn.yml)
 
 Catálogo dos filmes do **Studio Ghibli** para Android, iOS e web, feito com Expo e React Native. O nome vem dos kodamas, os espíritos da floresta de _Princesa Mononoke_.
 
@@ -34,8 +34,8 @@ Na web, o detalhe abre como uma janela sobre a lista e mantém o próprio endere
 ### Instalação
 
 ```bash
-git clone https://github.com/roymas100/ghibli-studio-app.git
-cd ghibli-studio-app
+git clone --branch entrega/projeto-final-amir-andrade https://github.com/roymas100/puc-iec-mobile-multiplataforma.git
+cd puc-iec-mobile-multiplataforma/exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica
 npm ci
 ```
 
@@ -63,10 +63,11 @@ Os testes de ponta a ponta usam o [Maestro](https://maestro.mobile.dev), com um 
 
 ```bash
 npx expo run:android --variant release
-maestro test e2e/maestro/
+maestro test e2e/maestro/    # flows do projeto
+maestro test flows/          # flows do skeleton da disciplina
 ```
 
-A cada pull request, o [GitHub Actions](.github/workflows/ci.yml) roda o lint, os tipos, os testes de unidade e os cinco flows em um emulador Android.
+A cada pull request, o [GitHub Actions](../../../../../../.github/workflows/projeto-final-ghibli-rn.yml) roda o lint, os tipos, os testes de unidade e os cinco flows em um emulador Android.
 
 ## Arquitetura
 

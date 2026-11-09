@@ -1,14 +1,25 @@
-name: CI
+name: Projeto Final - Studio Ghibli RN
 
 on:
   pull_request:
+    paths:
+      - 'exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica/**'
+      - '.github/workflows/projeto-final-ghibli-rn.yml'
   push:
-    branches: [main, 'ci/**']
+    branches: ['entrega/projeto-final-*']
+    paths:
+      - 'exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica/**'
+      - '.github/workflows/projeto-final-ghibli-rn.yml'
   workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: projeto-final-ghibli-${{ github.ref }}
   cancel-in-progress: true
+
+# O app fica nesta pasta do repositório da disciplina.
+defaults:
+  run:
+    working-directory: exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica
 
 jobs:
   quality:
@@ -21,6 +32,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica/package-lock.json
       - run: npm ci
       # O expo-env.d.ts é gerado localmente pelo Expo e fica fora do Git.
       - run: echo '/// <reference types="expo/types" />' > expo-env.d.ts
@@ -37,13 +49,14 @@ jobs:
       MAESTRO_VERSION: 2.12.1
       MAESTRO_CLI_NO_ANALYTICS: 1
     steps:
+      - uses: actions/checkout@v4
       - name: Liberar espaço em disco
         run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk/ndk/2* /opt/ghc /opt/hostedtoolcache/CodeQL
-      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica/package-lock.json
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -60,7 +73,7 @@ jobs:
         run: npx expo prebuild --platform android --no-install
       # O services.gradle.org falha com frequência nos runners; o mirror oficial no GitHub não.
       - name: Baixar o Gradle
-        working-directory: android
+        working-directory: exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica/android
         run: |
           sed -i 's/^networkTimeout=.*/networkTimeout=120000/' gradle/wrapper/gradle-wrapper.properties
           sed -i -E 's#^distributionUrl=.*/gradle-([0-9.]+)-bin.zip#distributionUrl=https\\://github.com/gradle/gradle-distributions/releases/download/v\1/gradle-\1-bin.zip#' gradle/wrapper/gradle-wrapper.properties
@@ -71,7 +84,7 @@ jobs:
           done
           exit 1
       - name: Compilar o APK de release
-        working-directory: android
+        working-directory: exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica/android
         # Em caso de falha, publica o motivo como anotação, visível sem abrir o log inteiro.
         run: |
           set -o pipefail
@@ -98,6 +111,7 @@ jobs:
       - name: Rodar os flows
         uses: reactivecircus/android-emulator-runner@v2
         with:
+          working-directory: exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica
           api-level: ${{ env.API_LEVEL }}
           arch: x86_64
           target: google_apis
@@ -115,11 +129,11 @@ jobs:
         with:
           name: maestro-results
           path: |
-            maestro-report.xml
-            maestro-debug
+            exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica/maestro-report.xml
+            exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica/maestro-debug
           if-no-files-found: ignore
           # O Maestro guarda as capturas de tela em uma pasta oculta (.maestro).
           include-hidden-files: true
       - name: Publicar as falhas dos flows
         if: failure()
-        run: python3 .github/scripts/maestro-annotations.py
+        run: python3 "$GITHUB_WORKSPACE/.github/scripts/maestro-annotations.py"
