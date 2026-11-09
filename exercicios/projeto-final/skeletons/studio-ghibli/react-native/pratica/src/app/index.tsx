@@ -10,16 +10,20 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { FilmGrid } from '@/components/film-grid';
 import { FilmRail } from '@/components/film-rail';
 import { HomeHeaderActions } from '@/components/home-header-actions';
 import { KodamaMark } from '@/components/kodama-mark';
+import { SearchBar } from '@/components/search-bar';
 import { EmptyState } from '@/components/states/empty-state';
 import { ErrorState } from '@/components/states/error-state';
 import { LoadingState } from '@/components/states/loading-state';
 import { Text } from '@/components/text';
 import { useBrandTokens } from '@/components/use-brand-tokens';
+import { filterFilms } from '@/domain/filter';
 import { formatFilmCount } from '@/domain/format';
 import { buildRails } from '@/domain/rails';
+import { useFilmFiltersStore } from '@/state/film-filters-store';
 import { useFilms } from '@/state/use-films';
 
 const FAVORITES_SLUG = 'favorites';
@@ -39,7 +43,19 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const tokens = useBrandTokens();
   const { data: films, fetchStatus, isError, isRefetching, refetch } = useFilms();
+  const query = useFilmFiltersStore((state) => state.query);
+  const setQuery = useFilmFiltersStore((state) => state.setQuery);
   const rails = useMemo(() => buildRails(films ?? [], FAVORITE_IDS), [films]);
+  const searchResults = useMemo(() => filterFilms(films ?? [], { query }), [films, query]);
+  const isSearching = query.trim().length > 0;
+
+  function isFavorite(filmId: string) {
+    return FAVORITE_IDS.includes(filmId);
+  }
+
+  function openFilm(filmId: string) {
+    router.push({ pathname: '/film/[id]', params: { id: filmId } });
+  }
 
   const glowImage = `radial-gradient(ellipse 120% 70% at 20% 0%, ${tokens.color('glow-sky')}, transparent 60%), radial-gradient(ellipse 80% 50% at 90% 40%, ${tokens.color('glow-lamp')}, transparent 70%)`;
 
@@ -49,6 +65,32 @@ export default function HomeScreen() {
         <ErrorState onRetry={refetch} />
       ) : (
         <LoadingState />
+      );
+    }
+
+    if (isSearching) {
+      if (searchResults.length === 0) {
+        return (
+          <View className="px-4">
+            <EmptyState
+              testID="state-empty"
+              icon={{ ios: 'magnifyingglass', android: 'search', web: 'search' }}
+              title="Nenhum filme encontrado"
+              message="Tente outro título ou escolha Todos."
+              actionLabel="Limpar busca"
+              onAction={() => setQuery('')}
+            />
+          </View>
+        );
+      }
+
+      return (
+        <FilmGrid
+          query={query}
+          films={searchResults}
+          isFavorite={isFavorite}
+          onPressFilm={openFilm}
+        />
       );
     }
 
@@ -67,10 +109,8 @@ export default function HomeScreen() {
               countLabel={
                 isFavoritesRail ? `★ ${rail.films.length}` : formatFilmCount(rail.films.length)
               }
-              isFavorite={(filmId) => FAVORITE_IDS.includes(filmId)}
-              onPressFilm={(filmId) =>
-                router.push({ pathname: '/film/[id]', params: { id: filmId } })
-              }
+              isFavorite={isFavorite}
+              onPressFilm={openFilm}
               emptyState={
                 <EmptyState
                   testID="state-favorites-empty"
@@ -93,6 +133,8 @@ export default function HomeScreen() {
       <View pointerEvents="none" style={[styles.glow, getGlowStyle(glowImage)]} />
       <ScrollView
         contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -102,10 +144,13 @@ export default function HomeScreen() {
             }}
           />
         }>
-        <View className="mb-6 flex-row items-center gap-2 px-4">
+        <View className="mb-4 flex-row items-center gap-2 px-4">
           <KodamaMark size={40} />
           <Text variant="display">Kodama</Text>
           <HomeHeaderActions />
+        </View>
+        <View className="mb-6 px-4">
+          <SearchBar value={query} onChangeText={setQuery} onClear={() => setQuery('')} />
         </View>
         {renderContent()}
       </ScrollView>
