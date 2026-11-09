@@ -1,61 +1,104 @@
-# Projeto Final — Studio Ghibli (filmes) em React Native (Expo)
+# Kodama
 
-Skeleton **opcional** de ponto de partida do **Projeto Final** (30 pts). A estrutura de telas e a lógica das
-5 features básicas vêm marcadas com `// TODO 1` a `// TODO 5`. **O visual é básico de propósito**: persistência,
-estados de loading/vazio/erro e todo o checklist de UI/UX (tema escuro, design tokens, responsividade,
-acessibilidade, ícone/splash) são **trabalho do grupo** — veja o [`enunciado.md`](../../../../enunciado.md).
+[![CI](https://github.com/roymas100/puc-iec-mobile-multiplataforma/actions/workflows/projeto-final-ghibli-rn.yml/badge.svg?branch=entrega/projeto-final-amir-andrade)](https://github.com/roymas100/puc-iec-mobile-multiplataforma/actions/workflows/projeto-final-ghibli-rn.yml)
 
-**API deste tema:** Studio Ghibli API — 22 filmes; filtro por `director`; id `String` (UUID).
-Endpoints exatos, fixtures dos testes e gotchas: [`temas/05-studio-ghibli/README.md`](../../../../temas/05-studio-ghibli/README.md).
-Regras completas e rubrica: [`enunciado.md`](../../../../enunciado.md).
+Catálogo dos filmes do **Studio Ghibli** para Android, iOS e web, feito com Expo e React Native. O nome vem dos kodamas, os espíritos da floresta de _Princesa Mononoke_.
 
-> ⚠️ Antes de codar: seu grupo **reservou** a combinação `studio-ghibli + react-native` abrindo issue no
-> repo da disciplina? Cada combinação tema+framework é de um grupo só.
+Trabalho final da disciplina **Arquitetura de Aplicações Móveis e Multiplataforma** (PUC Minas IEC, Prof. Jackson Smith), feito por Amir Andrade.
+
+| Lista e favoritos                                     | Detalhe do filme                                        | Busca                                                | Filtro no tema escuro                                                  |
+| ----------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| <img src="docs/screenshots/lista.png" width="200" alt="Tela inicial com a fileira de favoritos e a de filmes mais aclamados" /> | <img src="docs/screenshots/detalhe.png" width="200" alt="Detalhe de Castle in the Sky com banner, sinopse e botão de favorito" /> | <img src="docs/screenshots/busca.png" width="200" alt="Resultado da busca por kiki" /> | <img src="docs/screenshots/filtro-escuro.png" width="200" alt="Tela inicial no tema escuro filtrada por Isao Takahata" /> |
+
+## O que o app faz
+
+- **Lista de filmes** organizada em fileiras: favoritos, mais aclamados e décadas.
+- **Detalhe do filme** com banner, título original, ano, duração, nota, sinopse, direção e produção.
+- **Busca por título**, que ignora maiúsculas e acentos.
+- **Filtro por diretor**, que recalcula as fileiras para mostrar só os filmes daquele diretor.
+- **Favoritos** que continuam salvos depois de fechar o app.
+- **Tema claro e escuro**, com um botão no cabeçalho para trocar.
+- **Modo avião simulado**, também no cabeçalho, para testar o app usando só o que já foi carregado.
+
+Na web, o detalhe abre como uma janela sobre a lista e mantém o próprio endereço (`/film/<id>`).
 
 ## Como rodar
 
-```bash
-# a partir da raiz do SEU clone (do fork do grupo):
-cd exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica
-ls flows   # confere que está no lugar certo: 01-list.yaml … 05-favorites.yaml
+### Pré-requisitos
 
-npm install
-npx expo run:android   # primeira vez compila o projeto nativo — demora; precisa de emulador
-```
+- [Node.js](https://nodejs.org) 22
+- Para Android: [Android Studio](https://developer.android.com/studio) com um emulador criado e JDK 21
+- Para iOS: macOS com [Xcode](https://developer.apple.com/xcode/)
+- Para web: apenas um navegador
 
-## Onde estão os TODOs
-
-| Feature | TODO | Arquivo |
-|---|---|---|
-| 1 — Lista consumindo a API | `TODO 1` | `src/screens/ListScreen.tsx` |
-| 2 — Navegação lista → detalhe | `TODO 2` | `src/screens/DetailScreen.tsx` |
-| 3 — Busca por texto | `TODO 3` | `src/screens/ListScreen.tsx` |
-| 4 — Categoria/filtro (parâmetro real da API) | `TODO 4` | `src/screens/ListScreen.tsx` |
-| 5 — Favoritos persistidos | `TODO 5` | `src/screens/DetailScreen.tsx` + `src/screens/FavoritesScreen.tsx` |
-
-## Como se autoverificar (opcional)
-
-Os flows Maestro em `flows/` **não são mais avaliados pelo CI** — servem para vocês conferirem
-a mão que as 5 features funcionam. Para rodar localmente
-([instalar Maestro](https://docs.maestro.dev/getting-started/installing-maestro)):
+### Instalação
 
 ```bash
-# com o app instalado e aberto no emulador:
-maestro test flows/
+git clone --branch entrega/projeto-final-amir-andrade https://github.com/roymas100/puc-iec-mobile-multiplataforma.git
+cd puc-iec-mobile-multiplataforma/exercicios/projeto-final/skeletons/studio-ghibli/react-native/pratica
+npm ci
 ```
 
-Se mudarem a UI e um flow quebrar, tudo bem: ajustem o flow (ou ignorem) — o que vale é o app
-funcionar bem e o checklist do enunciado.
+### Execução
 
-
-## Antes de abrir/atualizar o PR
-
-O build precisa passar — **critério eliminatório** (app que não builda não pode ser demonstrado e zera a Funcionalidade):
+Escolha uma plataforma:
 
 ```bash
-npx expo prebuild --platform android
+npx expo run:android    # compila e abre no emulador Android
+npx expo run:ios        # compila e abre no simulador iOS
+npx expo start --web    # abre no navegador
 ```
 
-Entrega em grupo: **um repositório do grupo** (todos como *collaborators*), branches + PRs internos; a **URL do repo** vai no Canvas.
-Adicionem `README.md` (com ≥ 3 screenshots) e `ADR.md` nesta pasta. Sem autograder: o professor clona, builda e avalia. Detalhes no
-[`enunciado.md`](../../../../enunciado.md).
+A primeira compilação nativa demora alguns minutos. O app precisa de internet para carregar os filmes da primeira vez.
+
+## Testes
+
+```bash
+npm test            # testes de unidade das regras de negócio (Vitest)
+npx expo lint       # padrão de código
+npx tsc --noEmit    # checagem de tipos
+```
+
+Os testes de ponta a ponta usam o [Maestro](https://maestro.mobile.dev), com um flow para cada funcionalidade. Com o emulador ligado, instale a versão de release e rode os flows:
+
+```bash
+npx expo run:android --variant release
+maestro test e2e/maestro/    # flows do projeto
+maestro test flows/          # flows do skeleton da disciplina
+```
+
+A cada pull request, o [GitHub Actions](../../../../../../.github/workflows/projeto-final-ghibli-rn.yml) roda o lint, os tipos, os testes de unidade e os cinco flows em um emulador Android.
+
+## Arquitetura
+
+O código é dividido em camadas, e cada uma só conhece as que vêm depois dela:
+
+```text
+src/
+├── app/          telas e rotas (Expo Router)
+├── components/   componentes visuais reutilizáveis
+├── state/        estado e cache (TanStack Query e Zustand)
+├── data/         acesso à API e conversão dos dados
+└── domain/       regras de negócio, sem dependência de React Native
+```
+
+| Necessidade     | Tecnologia                                                       |
+| --------------- | ---------------------------------------------------------------- |
+| Base do app     | Expo SDK 58, React Native 0.88 e TypeScript                      |
+| Navegação       | Expo Router                                                      |
+| Estilo          | NativeWind, com os tokens da marca em `docs/brand-tokens.json`   |
+| Dados e cache   | TanStack Query                                                   |
+| Estado local    | Zustand com AsyncStorage                                         |
+| Testes          | Vitest e Maestro                                                 |
+
+Os motivos de cada escolha e as alternativas descartadas estão no **[ADR.md](ADR.md)**.
+
+## Documentação
+
+- [ADR.md](ADR.md): resumo de uma página das decisões de arquitetura
+- [docs/](docs/README.md): especificações de cada funcionalidade e registros completos de decisão
+- [CONTRIBUTING.md](CONTRIBUTING.md): padrões de nomes, branches e commits
+
+## Créditos
+
+Os dados vêm da [Studio Ghibli API](https://ghibliapi.vercel.app). Filmes, títulos e imagens pertencem ao Studio Ghibli e são usados aqui apenas para fins acadêmicos.

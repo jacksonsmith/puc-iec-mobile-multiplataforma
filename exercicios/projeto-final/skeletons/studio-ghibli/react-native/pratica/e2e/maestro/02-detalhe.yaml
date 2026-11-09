@@ -1,0 +1,58 @@
+appId: com.puciec.ghiblifinal
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: 'item-list-screen'
+    timeout: 60000
+# CA1: tocar no card abre o detalhe
+- scrollUntilVisible:
+    element:
+      id: 'item-card-2baf70d1-42bb-4437-b551-e5fed5a87abe'
+    direction: DOWN
+- tapOn:
+    id: 'item-card-2baf70d1-42bb-4437-b551-e5fed5a87abe'
+- extendedWaitUntil:
+    visible:
+      id: 'detail-screen'
+    timeout: 30000
+# CA2: título, título original, ano, duração, nota, sinopse, diretor e produtor
+- assertVisible:
+    id: 'detail-title'
+- assertVisible: 'Castle in the Sky'
+- assertVisible: '天空の城ラピュタ'
+- assertVisible: '1986 · 2h 4min · 95% no Rotten Tomatoes'
+- assertVisible: 'The orphan Sheeta.*'
+- scrollUntilVisible:
+    element:
+      id: 'detail-director'
+    direction: DOWN
+- assertVisible: 'Direção: Hayao Miyazaki'
+- assertVisible: 'Produção: Isao Takahata'
+# CA5: voltar mantém a posição de rolagem da lista
+- scrollUntilVisible:
+    element:
+      id: 'detail-back-button'
+    direction: UP
+- tapOn:
+    id: 'detail-back-button'
+- assertVisible:
+    id: 'item-list-screen'
+- assertVisible:
+    id: 'item-card-2baf70d1-42bb-4437-b551-e5fed5a87abe'
+# CA6: id inexistente mostra erro com opção de voltar
+- openLink: 'ghiblistudioapp://film/nao-existe'
+# O iOS pergunta se pode abrir o link no app.
+- tapOn:
+    text: 'Abrir|Open'
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: 'state-error'
+    timeout: 30000
+- assertVisible: 'Não foi possível carregar este filme'
+- tapOn:
+    id: 'retry-button'
+- assertVisible:
+    id: 'item-list-screen'

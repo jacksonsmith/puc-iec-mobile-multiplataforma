@@ -1,0 +1,48 @@
+appId: com.puciec.ghiblifinal
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: 'item-list-screen'
+    timeout: 60000
+- extendedWaitUntil:
+    visible:
+      id: 'category-chip-all'
+    timeout: 60000
+# CA5: o filtro vale para todas as fileiras
+- tapOn:
+    id: 'category-chip-takahata'
+- assertVisible:
+    id: 'item-card-12cfb892-aac0-4c5b-94af-521852e46d6a'
+- assertNotVisible:
+    id: 'item-card-2baf70d1-42bb-4437-b551-e5fed5a87abe'
+- assertVisible:
+    id: 'rail-favorites'
+- scrollUntilVisible:
+    element:
+      id: 'rail-1980s'
+    direction: DOWN
+- assertNotVisible:
+    id: 'item-card-58611129-2dbc-4a81-a72f-77ddfc1b1b49'
+- assertNotVisible:
+    id: 'rail-2000s'
+- scrollUntilVisible:
+    element:
+      id: 'category-chip-takahata'
+    direction: UP
+# CA5b: combina com a busca
+- tapOn:
+    id: 'search-input'
+- inputText: 'castle'
+- assertVisible:
+    id: 'state-empty'
+- tapOn:
+    id: 'search-clear'
+# CA4: tocar no chip ativo volta para Todos
+- tapOn:
+    id: 'category-chip-takahata'
+- scrollUntilVisible:
+    element:
+      id: 'item-card-2baf70d1-42bb-4437-b551-e5fed5a87abe'
+    direction: DOWN

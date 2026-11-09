@@ -1,0 +1,8 @@
+# Tasks 004 — Filtro por diretor
+
+| # | Task | Responsável | Issue | PR | Feito |
+|---|---|---|---|---|---|
+| T1 | `getDirectors` + `slugify` + testes Vitest | | # | # | [x] |
+| T2 | `filterFilms` com diretor + testes combinados | | # | # | [x] |
+| T3 | Componente `DirectorChips` + acessibilidade | | # | # | [x] |
+| T4 | Flow Maestro `04-filtro.yaml` | | # | # | [x] |
