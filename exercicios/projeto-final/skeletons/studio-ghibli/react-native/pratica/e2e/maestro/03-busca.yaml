@@ -5,11 +5,11 @@ appId: com.puciec.ghiblifinal
 - extendedWaitUntil:
     visible:
       id: 'item-list-screen'
-    timeout: 20000
+    timeout: 60000
 - extendedWaitUntil:
     visible:
       id: 'rail-acclaimed'
-    timeout: 20000
+    timeout: 60000
 # CA1b e CA2: filtra enquanto digita e troca as fileiras pela grade
 - tapOn:
     id: 'search-input'

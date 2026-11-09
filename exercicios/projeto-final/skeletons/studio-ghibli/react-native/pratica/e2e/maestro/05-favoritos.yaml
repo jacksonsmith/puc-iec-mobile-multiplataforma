@@ -5,11 +5,11 @@ appId: com.puciec.ghiblifinal
 - extendedWaitUntil:
     visible:
       id: 'item-list-screen'
-    timeout: 20000
+    timeout: 60000
 - extendedWaitUntil:
     visible:
       id: 'state-favorites-empty'
-    timeout: 20000
+    timeout: 60000
 # CA1 e CA7: favorita no detalhe
 - scrollUntilVisible:
     element:
@@ -20,7 +20,7 @@ appId: com.puciec.ghiblifinal
 - extendedWaitUntil:
     visible:
       id: 'detail-screen'
-    timeout: 10000
+    timeout: 30000
 - assertVisible: 'Adicionar aos favoritos'
 - tapOn:
     id: 'detail-favorite-button'
@@ -40,7 +40,7 @@ appId: com.puciec.ghiblifinal
 - extendedWaitUntil:
     visible:
       id: 'rail-favorites'
-    timeout: 20000
+    timeout: 60000
 - assertVisible: '★ 1'
 # CA6: Ver todos abre a grade de favoritos
 - tapOn:

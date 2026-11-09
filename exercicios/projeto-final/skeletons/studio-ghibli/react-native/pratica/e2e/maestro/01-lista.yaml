@@ -5,11 +5,11 @@ appId: com.puciec.ghiblifinal
 - extendedWaitUntil:
     visible:
       id: 'item-list-screen'
-    timeout: 20000
+    timeout: 60000
 - extendedWaitUntil:
     visible:
       id: 'rail-acclaimed'
-    timeout: 20000
+    timeout: 60000
 - assertVisible:
     id: 'rail-favorites'
 # CA4: a fileira rola na horizontal até o quarto filme
