@@ -27,9 +27,7 @@ export function FilmBanner({ film, onBack, trailingAction }: FilmBannerProps) {
   const canvas = tokens.color('canvas');
 
   return (
-    <View
-      className="aspect-video w-full items-center justify-center bg-canvas-raised"
-      style={{ boxShadow: tokens.shadow('shadow-poster') }}>
+    <View className="aspect-video w-full items-center justify-center bg-canvas-raised">
       {hasImageError ? (
         <Text variant="display" tone="sky">
           {film.originalTitle.charAt(0)}
