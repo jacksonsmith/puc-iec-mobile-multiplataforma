@@ -22,16 +22,16 @@ import { LoadingState } from '@/components/states/loading-state';
 import { Text } from '@/components/text';
 import { useBrandTokens } from '@/components/use-brand-tokens';
 import { getDirectors } from '@/domain/directors';
+import { isFavorite as isFavoriteFilm } from '@/domain/favorites';
 import { filterFilms } from '@/domain/filter';
 import { formatFilmCount } from '@/domain/format';
 import { buildRails } from '@/domain/rails';
+import { useFavoritesStore } from '@/state/favorites-store';
 import { useFilmFiltersStore } from '@/state/film-filters-store';
 import { useFilms } from '@/state/use-films';
 
 const FAVORITES_SLUG = 'favorites';
 const GLOW_HEIGHT = 560;
-// A Spec 005 troca esta lista pelos favoritos salvos no aparelho.
-const FAVORITE_IDS: string[] = [];
 
 // O react-native-web não entende experimental_backgroundImage.
 function getGlowStyle(image: string): ViewStyle {
@@ -49,7 +49,11 @@ export default function HomeScreen() {
   const setQuery = useFilmFiltersStore((state) => state.setQuery);
   const director = useFilmFiltersStore((state) => state.director);
   const setDirector = useFilmFiltersStore((state) => state.setDirector);
-  const rails = useMemo(() => buildRails(films ?? [], FAVORITE_IDS, director), [films, director]);
+  const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
+  const rails = useMemo(
+    () => buildRails(films ?? [], favoriteIds, director),
+    [films, favoriteIds, director],
+  );
   const directors = useMemo(() => getDirectors(films ?? []), [films]);
   const searchResults = useMemo(
     () => filterFilms(films ?? [], { query, director }),
@@ -58,7 +62,7 @@ export default function HomeScreen() {
   const isSearching = query.trim().length > 0;
 
   function isFavorite(filmId: string) {
-    return FAVORITE_IDS.includes(filmId);
+    return isFavoriteFilm(favoriteIds, filmId);
   }
 
   function openFilm(filmId: string) {
@@ -94,7 +98,9 @@ export default function HomeScreen() {
 
       return (
         <FilmGrid
-          query={query}
+          testID="search-results"
+          title={`Resultados para “${query.trim()}”`}
+          countLabel={formatFilmCount(searchResults.length)}
           films={searchResults}
           isFavorite={isFavorite}
           onPressFilm={openFilm}
@@ -119,6 +125,7 @@ export default function HomeScreen() {
               }
               isFavorite={isFavorite}
               onPressFilm={openFilm}
+              onSeeAll={isFavoritesRail ? () => router.push('/favorites') : undefined}
               emptyState={
                 <EmptyState
                   testID="state-favorites-empty"

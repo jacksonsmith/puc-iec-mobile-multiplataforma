@@ -1,7 +1,6 @@
 import { useWindowDimensions, View } from 'react-native';
 
 import type { Film } from '@/domain/film';
-import { formatFilmCount } from '@/domain/format';
 
 import { FILM_CARD_WIDTH, FilmCard } from './film-card';
 import { Text } from './text';
@@ -11,8 +10,11 @@ const COLUMN_GAP = 12;
 const MIN_COLUMNS = 3;
 
 type FilmGridProps = {
-  query: string;
+  testID: string;
+  title: string;
+  countLabel: string;
   films: Film[];
+  getCardTestID?: (filmId: string) => string;
   isFavorite: (filmId: string) => boolean;
   onPressFilm: (filmId: string) => void;
 };
@@ -27,18 +29,26 @@ function getCardWidth(screenWidth: number) {
   return Math.floor((availableWidth - COLUMN_GAP * (columns - 1)) / columns);
 }
 
-export function FilmGrid({ query, films, isFavorite, onPressFilm }: FilmGridProps) {
+export function FilmGrid({
+  testID,
+  title,
+  countLabel,
+  films,
+  getCardTestID,
+  isFavorite,
+  onPressFilm,
+}: FilmGridProps) {
   const { width } = useWindowDimensions();
   const cardWidth = getCardWidth(width);
 
   return (
-    <View testID="search-results" className="gap-3 px-4">
+    <View testID={testID} className="gap-3 px-4">
       <View className="flex-row flex-wrap items-baseline gap-x-2">
         <Text variant="rail-title" accessibilityRole="header">
-          Resultados para “{query.trim()}”
+          {title}
         </Text>
         <Text variant="meta" tone="muted">
-          {formatFilmCount(films.length)}
+          {countLabel}
         </Text>
       </View>
       <View className="flex-row flex-wrap gap-x-3 gap-y-4">
@@ -46,6 +56,7 @@ export function FilmGrid({ query, films, isFavorite, onPressFilm }: FilmGridProp
           <FilmCard
             key={film.id}
             film={film}
+            testID={getCardTestID?.(film.id)}
             width={cardWidth}
             subtitle={String(film.releaseYear)}
             isFavorite={isFavorite(film.id)}

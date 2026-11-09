@@ -16,6 +16,7 @@ import { Platform } from 'react-native';
 
 import { useColorScheme } from '@/components/color-scheme';
 import { useBrandTokens } from '@/components/use-brand-tokens';
+import { useFavoritesHydrated } from '@/state/favorites-store';
 import { queryClient } from '@/state/query-client';
 
 SplashScreen.preventAutoHideAsync();
@@ -36,7 +37,8 @@ export default function RootLayout() {
     ZenKakuGothicNew_500Medium,
     ZenKakuGothicNew_700Bold,
   });
-  const isReady = fontsLoaded || fontError !== null;
+  const isFavoritesHydrated = useFavoritesHydrated();
+  const isReady = (fontsLoaded || fontError !== null) && isFavoritesHydrated;
 
   useEffect(() => {
     if (isReady) SplashScreen.hideAsync();
@@ -54,6 +56,7 @@ export default function RootLayout() {
             contentStyle: { backgroundColor: tokens.color('canvas') },
           }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="favorites" />
           <Stack.Screen
             name="film/[id]"
             options={
