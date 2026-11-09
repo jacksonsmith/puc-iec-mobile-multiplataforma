@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DirectorChips } from '@/components/director-chips';
 import { FilmGrid } from '@/components/film-grid';
 import { FilmRail } from '@/components/film-rail';
 import { HomeHeaderActions } from '@/components/home-header-actions';
@@ -20,6 +21,7 @@ import { ErrorState } from '@/components/states/error-state';
 import { LoadingState } from '@/components/states/loading-state';
 import { Text } from '@/components/text';
 import { useBrandTokens } from '@/components/use-brand-tokens';
+import { getDirectors } from '@/domain/directors';
 import { filterFilms } from '@/domain/filter';
 import { formatFilmCount } from '@/domain/format';
 import { buildRails } from '@/domain/rails';
@@ -45,8 +47,14 @@ export default function HomeScreen() {
   const { data: films, fetchStatus, isError, isRefetching, refetch } = useFilms();
   const query = useFilmFiltersStore((state) => state.query);
   const setQuery = useFilmFiltersStore((state) => state.setQuery);
-  const rails = useMemo(() => buildRails(films ?? [], FAVORITE_IDS), [films]);
-  const searchResults = useMemo(() => filterFilms(films ?? [], { query }), [films, query]);
+  const director = useFilmFiltersStore((state) => state.director);
+  const setDirector = useFilmFiltersStore((state) => state.setDirector);
+  const rails = useMemo(() => buildRails(films ?? [], FAVORITE_IDS, director), [films, director]);
+  const directors = useMemo(() => getDirectors(films ?? []), [films]);
+  const searchResults = useMemo(
+    () => filterFilms(films ?? [], { query, director }),
+    [films, query, director],
+  );
   const isSearching = query.trim().length > 0;
 
   function isFavorite(filmId: string) {
@@ -149,8 +157,18 @@ export default function HomeScreen() {
           <Text variant="display">Kodama</Text>
           <HomeHeaderActions />
         </View>
-        <View className="mb-6 px-4">
+        <View className="mb-4 px-4">
           <SearchBar value={query} onChangeText={setQuery} onClear={() => setQuery('')} />
+        </View>
+        <View className="mb-6">
+          {films && (
+            <DirectorChips
+              directors={directors}
+              totalCount={films.length}
+              selected={director}
+              onSelect={setDirector}
+            />
+          )}
         </View>
         {renderContent()}
       </ScrollView>

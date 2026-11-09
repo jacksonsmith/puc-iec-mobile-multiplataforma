@@ -56,6 +56,10 @@ describe('filterFilms', () => {
     expect(filterFilms(films, { query: 'xyz' })).toEqual([]);
   });
 
+  it('filtra só pelo diretor', () => {
+    expect(filterFilms(films, { director: 'Isao Takahata' })).toEqual([grave]);
+  });
+
   it('combina busca e diretor', () => {
     expect(filterFilms(films, { query: 'f', director: 'Isao Takahata' })).toEqual([grave]);
     expect(filterFilms(films, { query: 'spirited', director: 'Isao Takahata' })).toEqual([]);
