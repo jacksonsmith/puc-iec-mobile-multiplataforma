@@ -11,4 +11,4 @@ Spec: [spec.md](spec.md)
 | ui | `src/components/director-chips.tsx` | `ScrollView` horizontal de chips |
 
 ## testIDs
-`director-chip-all`, `director-chip-<slug>`
+`category-chip-all`, `category-chip-<slug>`

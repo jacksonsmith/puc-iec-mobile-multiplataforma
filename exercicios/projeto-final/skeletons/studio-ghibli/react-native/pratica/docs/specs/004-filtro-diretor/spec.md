@@ -17,5 +17,5 @@ Como fã, quero ver só os filmes de um diretor (ex.: Isao Takahata) para explor
 - [ ] CA6 — Chip ativo tem destaque visual claro e `accessibilityState={{ selected: true }}`.
 
 ## Verificação
-- Flow Maestro: `e2e/maestro/04-filtro.yaml` — toca `director-chip-isao-takahata`, verifica "Grave of the Fireflies" visível em `rail-1980s` e "My Neighbor Totoro" ausente.
+- Flow Maestro: `e2e/maestro/04-filtro.yaml` — toca `category-chip-takahata`, verifica "Grave of the Fireflies" visível em `rail-1980s` e "My Neighbor Totoro" ausente.
 - Vitest: `getDirectors(films)` e `filterFilms` com diretor + texto.

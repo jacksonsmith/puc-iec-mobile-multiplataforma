@@ -8,9 +8,17 @@ import { useBrandTokens } from '../use-brand-tokens';
 
 type ErrorStateProps = {
   onRetry: () => void;
+  title?: string;
+  message?: string;
+  actionLabel?: string;
 };
 
-export function ErrorState({ onRetry }: ErrorStateProps) {
+export function ErrorState({
+  onRetry,
+  title = 'Não foi possível carregar os filmes',
+  message = 'Verifique sua conexão e tente de novo.',
+  actionLabel = 'Tentar novamente',
+}: ErrorStateProps) {
   const tokens = useBrandTokens();
 
   return (
@@ -26,12 +34,12 @@ export function ErrorState({ onRetry }: ErrorStateProps) {
           tintColor={tokens.color('danger')}
         />
         <Text variant="body-strong" tone="danger" className="text-center">
-          Não foi possível carregar os filmes
+          {title}
         </Text>
         <Text variant="meta" tone="muted" className="mb-3 text-center">
-          Verifique sua conexão e tente de novo.
+          {message}
         </Text>
-        <Button testID="retry-button" label="Tentar novamente" onPress={onRetry} />
+        <Button testID="retry-button" label={actionLabel} onPress={onRetry} />
       </Glass>
     </View>
   );

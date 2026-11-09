@@ -20,6 +20,7 @@ const TONE_CLASS = {
   onSky: 'text-on-sky',
   lamp: 'text-lamp',
   danger: 'text-danger',
+  meadow: 'text-meadow',
 };
 
 export type TextProps = NativeTextProps & {

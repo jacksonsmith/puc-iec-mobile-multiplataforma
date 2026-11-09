@@ -26,7 +26,7 @@ type Film = {
 ```
 
 ## testIDs
-`rail-<slug>`, `film-card-<id>`, `film-card-title-<id>`, `film-card-fav-<id>`, `state-loading`, `state-error`, `retry-button`
+`rail-<slug>`, `item-card-<id>`, `item-card-title-<id>`, `item-card-fav-<id>`, `state-loading`, `state-error`, `retry-button`
 
 ## Riscos
 - API gratuita pode cair no dia da apresentação → TanStack Query com `staleTime` alto + cache persistido (ver ADR 0004).

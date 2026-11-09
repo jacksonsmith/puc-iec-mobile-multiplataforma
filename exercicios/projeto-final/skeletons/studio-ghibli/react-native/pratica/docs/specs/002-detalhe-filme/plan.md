@@ -12,4 +12,4 @@ Spec: [spec.md](spec.md)
 | ui | `src/components/favorite-toggle.tsx` | botão ★ compartilhado com o card |
 
 ## testIDs
-`film-detail`, `film-detail-title`, `film-detail-director`, `favorite-toggle-<id>`
+`detail-screen`, `detail-title`, `detail-director`, `detail-favorite-button`

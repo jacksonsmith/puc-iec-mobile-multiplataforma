@@ -1,6 +1,5 @@
-import { useColorScheme } from 'react-native';
-
 import brandTokens from '../../docs/brand-tokens.json';
+import { useColorScheme } from './color-scheme';
 
 type ThemeId = 'night' | 'day';
 type ThemedValue = string | Record<ThemeId, string>;

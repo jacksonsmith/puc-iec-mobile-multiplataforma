@@ -1,9 +1,17 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Platform,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FilmRail } from '@/components/film-rail';
+import { HomeHeaderActions } from '@/components/home-header-actions';
 import { KodamaMark } from '@/components/kodama-mark';
 import { EmptyState } from '@/components/states/empty-state';
 import { ErrorState } from '@/components/states/error-state';
@@ -19,17 +27,30 @@ const GLOW_HEIGHT = 560;
 // A Spec 005 troca esta lista pelos favoritos salvos no aparelho.
 const FAVORITE_IDS: string[] = [];
 
+// O react-native-web não entende experimental_backgroundImage.
+function getGlowStyle(image: string): ViewStyle {
+  return Platform.OS === 'web'
+    ? ({ backgroundImage: image } as ViewStyle)
+    : { experimental_backgroundImage: image };
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const tokens = useBrandTokens();
-  const { data: films, isError, isRefetching, refetch } = useFilms();
+  const { data: films, fetchStatus, isError, isRefetching, refetch } = useFilms();
   const rails = useMemo(() => buildRails(films ?? [], FAVORITE_IDS), [films]);
 
   const glowImage = `radial-gradient(ellipse 120% 70% at 20% 0%, ${tokens.color('glow-sky')}, transparent 60%), radial-gradient(ellipse 80% 50% at 90% 40%, ${tokens.color('glow-lamp')}, transparent 70%)`;
 
   function renderContent() {
-    if (!films) return isError ? <ErrorState onRetry={refetch} /> : <LoadingState />;
+    if (!films) {
+      return isError || fetchStatus === 'paused' ? (
+        <ErrorState onRetry={refetch} />
+      ) : (
+        <LoadingState />
+      );
+    }
 
     return (
       <View className="gap-8">
@@ -68,11 +89,8 @@ export default function HomeScreen() {
   }
 
   return (
-    <View className="flex-1 bg-canvas">
-      <View
-        pointerEvents="none"
-        style={[styles.glow, { experimental_backgroundImage: glowImage }]}
-      />
+    <View testID="item-list-screen" className="flex-1 bg-canvas">
+      <View pointerEvents="none" style={[styles.glow, getGlowStyle(glowImage)]} />
       <ScrollView
         contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }}
         refreshControl={
@@ -87,9 +105,7 @@ export default function HomeScreen() {
         <View className="mb-6 flex-row items-center gap-2 px-4">
           <KodamaMark size={40} />
           <Text variant="display">Kodama</Text>
-          <Text variant="caption" tone="muted" className="ml-auto">
-            App de fã
-          </Text>
+          <HomeHeaderActions />
         </View>
         {renderContent()}
       </ScrollView>

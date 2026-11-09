@@ -1,6 +1,7 @@
 import { Skeleton } from 'moti/skeleton';
-import { useColorScheme, View } from 'react-native';
+import { View } from 'react-native';
 
+import { useColorScheme } from '../color-scheme';
 import { FILM_CARD_WIDTH } from '../film-card';
 import { useBrandTokens } from '../use-brand-tokens';
 
@@ -42,6 +43,23 @@ export function LoadingState() {
       {Array.from({ length: RAIL_COUNT }, (_, index) => (
         <RailSkeleton key={index} />
       ))}
+    </View>
+  );
+}
+
+export function DetailLoadingState() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const tokens = useBrandTokens();
+  const raised = tokens.color('canvas-raised');
+  const colors = [raised, tokens.color('canvas'), raised];
+
+  return (
+    <View testID="state-loading" accessibilityLabel="Carregando filme" className="gap-6">
+      <Skeleton colorMode={colorScheme} colors={colors} width="100%" height={220} radius={0} />
+      <View className="gap-3 px-4">
+        <Skeleton colorMode={colorScheme} colors={colors} width="70%" height={40} radius={6} />
+        <Skeleton colorMode={colorScheme} colors={colors} width="100%" height={96} radius={6} />
+      </View>
     </View>
   );
 }

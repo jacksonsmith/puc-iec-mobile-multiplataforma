@@ -47,7 +47,7 @@ export function FilmRail({
         </Text>
         {onSeeAll && films.length > 0 && (
           <Pressable
-            testID={`rail-${slug}-see-all`}
+            testID={isFavoritesRail ? 'tab-favorites' : `rail-${slug}-see-all`}
             accessibilityRole="button"
             hitSlop={12}
             className="ml-auto flex-row items-center gap-1"

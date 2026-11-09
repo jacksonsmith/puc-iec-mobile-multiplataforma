@@ -43,3 +43,9 @@ export async function fetchFilms(signal?: AbortSignal): Promise<Film[]> {
 
   return films.map(mapFilm);
 }
+
+export async function fetchFilm(id: string, signal?: AbortSignal): Promise<Film> {
+  const film = await requestJson<FilmDto>(`/films/${encodeURIComponent(id)}`, signal);
+
+  return mapFilm(film);
+}

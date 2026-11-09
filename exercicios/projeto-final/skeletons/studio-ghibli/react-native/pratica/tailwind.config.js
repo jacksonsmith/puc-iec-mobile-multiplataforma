@@ -1,5 +1,9 @@
 const brandTokens = require('./docs/brand-tokens.json');
 
+// Na web, 'media' faz o NativeWind lançar um erro; o tema segue o sistema pelo @media do addBase.
+// No celular, 'class' desliga os valores escuros das variáveis.
+const IS_WEB = process.env.NATIVEWIND_OS === 'web';
+
 const NIGHT_THEME = 'night';
 const DAY_THEME = 'day';
 
@@ -56,7 +60,7 @@ const fontFamily = {
 module.exports = {
   content: ['./src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
-  darkMode: 'media',
+  darkMode: IS_WEB ? 'class' : 'media',
   theme: {
     extend: { colors, borderRadius, fontSize, fontFamily },
   },
@@ -64,7 +68,9 @@ module.exports = {
     ({ addBase }) => {
       addBase({
         ':root': getThemeVariables(DAY_THEME),
-        '@media (prefers-color-scheme: dark)': { ':root': getThemeVariables(NIGHT_THEME) },
+        ...(IS_WEB
+          ? { '.dark': getThemeVariables(NIGHT_THEME) }
+          : { '@media (prefers-color-scheme: dark)': { ':root': getThemeVariables(NIGHT_THEME) } }),
       });
     },
   ],
