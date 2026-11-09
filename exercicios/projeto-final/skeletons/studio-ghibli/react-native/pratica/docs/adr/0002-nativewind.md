@@ -68,7 +68,7 @@ Ferramenta completa de estilos e componentes, com recursos avançados de tema e 
 - Reúne estilo, tema e componentes, e funciona bem em celular e web.
 
 **Desvantagens**
-- A instalação é mais complexa e o grupo teria que aprender um sistema próprio.
+- A instalação é mais complexa e exigiria aprender um sistema próprio.
 
 **Por que não:** oferece muito mais do que usaríamos. O NativeWind resolve o que precisamos com um modelo mais simples.
 

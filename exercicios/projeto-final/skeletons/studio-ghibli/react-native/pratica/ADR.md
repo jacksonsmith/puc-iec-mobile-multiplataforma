@@ -6,11 +6,11 @@
 Catálogo dos filmes do **Studio Ghibli** (dados de `ghibliapi.vercel.app`) com lista, detalhe, busca, filtro por diretor e favoritos que continuam salvos depois de fechar o app.
 
 ## Framework: Expo + React Native ([ADR 0001](docs/adr/0001-expo-react-native.md))
-**Por quê:** o grupo já sabe TypeScript e React, o React Native usa os componentes reais de cada sistema (incluindo o vidro nativo do iOS) e os testes no app real encontram os elementos da tela por etiquetas que o React Native já oferece. O Expo cuida da parte mais difícil de preparar e gerar o app.
+**Por quê:** já trabalho com TypeScript e React, o React Native usa os componentes reais de cada sistema (incluindo o vidro nativo do iOS) e os testes no app real encontram os elementos da tela por etiquetas que o React Native já oferece. O Expo cuida da parte mais difícil de preparar e gerar o app.
 **Descartados:**
 - **Flutter:** usa a linguagem Dart e desenha a própria tela, o que afasta o app do visual real do sistema.
 - **KMP:** é forte para compartilhar regras complexas, que não temos, e tem ambiente pesado e web experimental.
-- **React Native sem Expo:** obrigaria o grupo a manter e ajustar à mão os projetos de Android e iOS.
+- **React Native sem Expo:** exigiria manter e ajustar à mão os projetos de Android e iOS.
 
 ## Estado: TanStack Query + Zustand ([ADR 0004](docs/adr/0004-estado-tanstack-zustand.md))
 **Por quê:** dados que vêm da internet e dados que nascem no app têm necessidades diferentes. O **TanStack Query** cuida dos filmes: guarda uma cópia, mostra carregando e erro, e tenta de novo se falhar. O **Zustand** guarda busca, filtro e favoritos, sendo que os favoritos ficam gravados no aparelho.

@@ -18,7 +18,7 @@ Usar **React Native** com **Expo**.
 Versões: Expo SDK 58 e React Native 0.88, com a New Architecture, que é a forma atual de o código TypeScript se comunicar com o celular.
 
 ### Por que essa combinação
-1. **Conhecimento do grupo.** O grupo já trabalha com TypeScript e React, então o raciocínio de montar telas com componentes e estado é o mesmo.
+1. **Conhecimento prévio.** Já trabalho com TypeScript e React, então o raciocínio de montar telas com componentes e estado é o mesmo.
 2. **Componentes reais do sistema.** Como o React Native usa os componentes de cada plataforma, o app pode usar o efeito de vidro nativo do iOS 26 (`expo-glass-effect`), que é central na nossa identidade visual (PDR 0003).
 3. **Testes no app real e web de brinde.** O Maestro encontra os elementos da tela pelas etiquetas `testID` que o React Native já oferece (ADR 0005). Além disso, o mesmo código gera uma versão web, sem trabalho extra.
 4. **Bibliotecas do ecossistema React.** Ferramentas como TanStack Query e Zustand (ADR 0004) funcionam aqui do mesmo jeito que em um site React.
@@ -35,12 +35,12 @@ Framework do Google em que o app é escrito na linguagem Dart e o próprio Flutt
 - Tem bom desempenho em animações e uma coleção grande de componentes prontos.
 
 **Desvantagens**
-- Usa Dart, uma linguagem que o grupo não conhece e que não aproveita o que já sabemos de React.
+- Usa Dart, uma linguagem que não aproveita o que já sei de TypeScript e React.
 - Como desenha tudo sozinho, imita os componentes do sistema. Um visual novo, como o vidro do iOS 26, precisa ser recriado.
 - Na web, a tela também é desenhada como uma imagem única (*canvas*), o que torna mais difícil dar suporte a leitores de tela.
 - Não tem um serviço oficial para enviar correções sem passar pela loja.
 
-**Por que não:** a principal vantagem, o visual idêntico em todo aparelho, importa menos para nós do que usar o vidro real do sistema e aproveitar o conhecimento do grupo.
+**Por que não:** a principal vantagem, o visual idêntico em todo aparelho, importa menos neste app do que usar o vidro real do sistema e aproveitar o conhecimento que já tenho.
 
 ### Kotlin Multiplatform (KMP) com Compose
 Permite escrever a lógica do app, e também as telas, em Kotlin, e usar esse código no Android e no iOS.

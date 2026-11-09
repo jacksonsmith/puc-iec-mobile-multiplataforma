@@ -37,4 +37,4 @@ Teríamos uma biblioteca a menos para aprender e instalar.
 ## Consequências
 - ✅ Os estados de carregando e erro ficam prontos com pouco código, e o app lida melhor com falhas da API.
 - ✅ As regras de favoritar ficam separadas em `src/domain/favorites.ts`, o que permite testá-las sem abrir o app.
-- ⚠️ Passamos a ter duas bibliotecas, então o grupo precisa seguir uma regra simples: **o que vem da internet fica no TanStack Query; o que nasce no app fica no Zustand.**
+- ⚠️ Passamos a ter duas bibliotecas, então é preciso seguir uma regra simples: **o que vem da internet fica no TanStack Query; o que nasce no app fica no Zustand.**

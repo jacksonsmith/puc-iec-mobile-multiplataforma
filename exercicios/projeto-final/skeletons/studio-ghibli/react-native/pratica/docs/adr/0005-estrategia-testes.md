@@ -9,7 +9,7 @@ Testes automáticos são programas que verificam se o app se comporta como esper
 - A Aula 5 pede pelo menos 3 testes próprios.
 - A Aula 6 dá 15 pontos para 5 fluxos completos no Maestro, rodando no CI (o processo automático que executa os testes a cada envio de código), e 5 pontos para a convenção de `testID`, as etiquetas invisíveis que permitem aos testes achar cada elemento da tela. Essas notas são automáticas.
 
-O grupo também já tem preferência pelo Vitest.
+Também já tenho preferência pelo Vitest.
 
 ## Decisão
 Usar uma ferramenta para cada nível de teste:
@@ -27,7 +27,7 @@ Ferramenta que controla um navegador para testar sites de ponta a ponta. Poderia
 **Vantagens**
 - Os testes são rápidos, estáveis e não precisam de emulador.
 - Tem ótimas ferramentas para investigar falhas, como gravação da execução passo a passo.
-- O grupo já tem familiaridade com ele.
+- Já tenho familiaridade com ele.
 
 **Desvantagens**
 - Testa apenas a versão web, então não vê o app instalado no celular, com seus gestos, efeito de vidro e armazenamento nativo.
