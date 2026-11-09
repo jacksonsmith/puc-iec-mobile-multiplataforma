@@ -71,7 +71,7 @@ export function FilmRail({
         snapToInterval={FILM_CARD_WIDTH + RAIL_GAP}
         decelerationRate="fast"
         contentContainerClassName="gap-3 px-4 pb-2"
-        ListEmptyComponent={<>{emptyState}</>}
+        ListEmptyComponent={<View>{emptyState}</View>}
         renderItem={({ item }) => (
           <FilmCard
             film={item}
