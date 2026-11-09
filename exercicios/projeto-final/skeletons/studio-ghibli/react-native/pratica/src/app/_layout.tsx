@@ -12,12 +12,18 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { Platform } from 'react-native';
 
+import { useColorScheme } from '@/components/color-scheme';
 import { useBrandTokens } from '@/components/use-brand-tokens';
 import { queryClient } from '@/state/query-client';
 
 SplashScreen.preventAutoHideAsync();
+
+export const unstable_settings = {
+  // Mantém a tela inicial por baixo quando o detalhe abre direto por link.
+  anchor: 'index',
+};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -46,8 +52,21 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: false,
             contentStyle: { backgroundColor: tokens.color('canvas') },
-          }}
-        />
+          }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen
+            name="film/[id]"
+            options={
+              Platform.OS === 'web'
+                ? {
+                    presentation: 'transparentModal',
+                    animation: 'fade',
+                    contentStyle: { backgroundColor: 'transparent' },
+                  }
+                : undefined
+            }
+          />
+        </Stack>
       </ThemeProvider>
     </QueryClientProvider>
   );
