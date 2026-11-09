@@ -18,13 +18,20 @@
 import { useState, useEffect } from 'react';
 
 export function useOfflineStatus(): { isOnline: boolean } {
-  // TODO 5: substitua o useState e o useEffect abaixo pela implementação real
-  const [isOnline, setIsOnline] = useState(true);
+  // estado inicial = o que o navegador sabe AGORA (abriu o app já sem rede → começa offline)
+  const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
   useEffect(() => {
-    // implemente aqui
-    void isOnline; // remove esta linha quando implementar (evita warning de lint)
-  }, [isOnline]);
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
+    window.addEventListener('online', goOnline);
+    window.addEventListener('offline', goOffline);
+    // cleanup: remove os MESMOS handlers ao desmontar (sem isso, vazam listeners a cada montagem)
+    return () => {
+      window.removeEventListener('online', goOnline);
+      window.removeEventListener('offline', goOffline);
+    };
+  }, []);
 
   return { isOnline };
 }
