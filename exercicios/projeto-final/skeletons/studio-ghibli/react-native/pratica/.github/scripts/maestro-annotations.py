@@ -1,8 +1,8 @@
 """Publica no GitHub Actions os flows que falharam e o que havia na tela no momento da falha."""
 
-import glob
 import json
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 MAX_CHARS = 1500
 
@@ -31,7 +31,8 @@ for testcase in ET.parse("maestro-report.xml").iter("testcase"):
         continue
     print(f"::error title=Flow {testcase.get('name')}::{annotation_text(failure.text or '')}")
 
-for path in glob.glob("maestro-debug/**/screen-hierarchy/*.json", recursive=True):
-    with open(path, encoding="utf-8") as file:
+# O rglob também percorre a pasta oculta (.maestro) onde o Maestro guarda os arquivos.
+for path in Path("maestro-debug").rglob("screen-hierarchy/*.json"):
+    with path.open(encoding="utf-8") as file:
         labels = screen_labels(json.load(file))
-    print(f"::error title={path.split('/')[-1]}::{annotation_text(' | '.join(labels))}")
+    print(f"::error title={path.name}::{annotation_text(' | '.join(labels))}")
