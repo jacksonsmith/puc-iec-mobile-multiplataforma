@@ -1,6 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Platform,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FilmRail } from '@/components/film-rail';
@@ -19,6 +26,13 @@ const FAVORITES_SLUG = 'favorites';
 const GLOW_HEIGHT = 560;
 // A Spec 005 troca esta lista pelos favoritos salvos no aparelho.
 const FAVORITE_IDS: string[] = [];
+
+// O react-native-web não entende experimental_backgroundImage.
+function getGlowStyle(image: string): ViewStyle {
+  return Platform.OS === 'web'
+    ? ({ backgroundImage: image } as ViewStyle)
+    : { experimental_backgroundImage: image };
+}
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -76,10 +90,7 @@ export default function HomeScreen() {
 
   return (
     <View testID="item-list-screen" className="flex-1 bg-canvas">
-      <View
-        pointerEvents="none"
-        style={[styles.glow, { experimental_backgroundImage: glowImage }]}
-      />
+      <View pointerEvents="none" style={[styles.glow, getGlowStyle(glowImage)]} />
       <ScrollView
         contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }}
         refreshControl={
