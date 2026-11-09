@@ -11,7 +11,10 @@ appId: com.puciec.ghiblifinal
     timeout: 20000
 - assertVisible:
     id: 'rail-favorites'
-- scrollUntilVisible:
-    element:
-      id: 'item-card-dc2e6bd1-8156-4886-adff-b39e6043af0c'
-    direction: RIGHT
+# CA4: a fileira rola na horizontal até o quarto filme
+- swipe:
+    from:
+      id: 'item-card-578ae244-7750-4d9f-867b-f3cd3d6fecf4'
+    direction: LEFT
+- assertVisible:
+    id: 'item-card-dc2e6bd1-8156-4886-adff-b39e6043af0c'
