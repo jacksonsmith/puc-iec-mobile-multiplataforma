@@ -1,56 +1,103 @@
-# Welcome to your Expo app 👋
+# Kodama
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+[![CI](https://github.com/roymas100/ghibli-studio-app/actions/workflows/ci.yml/badge.svg)](https://github.com/roymas100/ghibli-studio-app/actions/workflows/ci.yml)
 
-## Get started
+Catálogo dos filmes do **Studio Ghibli** para Android, iOS e web, feito com Expo e React Native. O nome vem dos kodamas, os espíritos da floresta de _Princesa Mononoke_.
 
-1. Install dependencies
+Trabalho final da disciplina **Arquitetura de Aplicações Móveis e Multiplataforma** (PUC Minas IEC, Prof. Jackson Smith), feito por Amir Andrade.
 
-   ```bash
-   npm install
-   ```
+| Lista e favoritos                                     | Detalhe do filme                                        | Busca                                                | Filtro no tema escuro                                                  |
+| ----------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| <img src="docs/screenshots/lista.png" width="200" alt="Tela inicial com a fileira de favoritos e a de filmes mais aclamados" /> | <img src="docs/screenshots/detalhe.png" width="200" alt="Detalhe de Castle in the Sky com banner, sinopse e botão de favorito" /> | <img src="docs/screenshots/busca.png" width="200" alt="Resultado da busca por kiki" /> | <img src="docs/screenshots/filtro-escuro.png" width="200" alt="Tela inicial no tema escuro filtrada por Isao Takahata" /> |
 
-2. Start the app
+## O que o app faz
 
-   ```bash
-   npx expo start
-   ```
+- **Lista de filmes** organizada em fileiras: favoritos, mais aclamados e décadas.
+- **Detalhe do filme** com banner, título original, ano, duração, nota, sinopse, direção e produção.
+- **Busca por título**, que ignora maiúsculas e acentos.
+- **Filtro por diretor**, que recalcula as fileiras para mostrar só os filmes daquele diretor.
+- **Favoritos** que continuam salvos depois de fechar o app.
+- **Tema claro e escuro**, com um botão no cabeçalho para trocar.
+- **Modo avião simulado**, também no cabeçalho, para testar o app usando só o que já foi carregado.
 
-In the output, you'll find options to open the app in a
+Na web, o detalhe abre como uma janela sobre a lista e mantém o próprio endereço (`/film/<id>`).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Como rodar
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Pré-requisitos
 
-## Get a fresh project
+- [Node.js](https://nodejs.org) 22
+- Para Android: [Android Studio](https://developer.android.com/studio) com um emulador criado e JDK 21
+- Para iOS: macOS com [Xcode](https://developer.apple.com/xcode/)
+- Para web: apenas um navegador
 
-When you're ready, run:
+### Instalação
 
 ```bash
-npm run reset-project
+git clone https://github.com/roymas100/ghibli-studio-app.git
+cd ghibli-studio-app
+npm ci
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+### Execução
 
-### Other setup steps
+Escolha uma plataforma:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+npx expo run:android    # compila e abre no emulador Android
+npx expo run:ios        # compila e abre no simulador iOS
+npx expo start --web    # abre no navegador
+```
 
-## Learn more
+A primeira compilação nativa demora alguns minutos. O app precisa de internet para carregar os filmes da primeira vez.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Testes
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm test            # testes de unidade das regras de negócio (Vitest)
+npx expo lint       # padrão de código
+npx tsc --noEmit    # checagem de tipos
+```
 
-## Join the community
+Os testes de ponta a ponta usam o [Maestro](https://maestro.mobile.dev), com um flow para cada funcionalidade. Com o emulador ligado, instale a versão de release e rode os flows:
 
-Join our community of developers creating universal apps.
+```bash
+npx expo run:android --variant release
+maestro test e2e/maestro/
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+A cada pull request, o [GitHub Actions](.github/workflows/ci.yml) roda o lint, os tipos, os testes de unidade e os cinco flows em um emulador Android.
+
+## Arquitetura
+
+O código é dividido em camadas, e cada uma só conhece as que vêm depois dela:
+
+```text
+src/
+├── app/          telas e rotas (Expo Router)
+├── components/   componentes visuais reutilizáveis
+├── state/        estado e cache (TanStack Query e Zustand)
+├── data/         acesso à API e conversão dos dados
+└── domain/       regras de negócio, sem dependência de React Native
+```
+
+| Necessidade     | Tecnologia                                                       |
+| --------------- | ---------------------------------------------------------------- |
+| Base do app     | Expo SDK 58, React Native 0.88 e TypeScript                      |
+| Navegação       | Expo Router                                                      |
+| Estilo          | NativeWind, com os tokens da marca em `docs/brand-tokens.json`   |
+| Dados e cache   | TanStack Query                                                   |
+| Estado local    | Zustand com AsyncStorage                                         |
+| Testes          | Vitest e Maestro                                                 |
+
+Os motivos de cada escolha e as alternativas descartadas estão no **[ADR.md](ADR.md)**.
+
+## Documentação
+
+- [ADR.md](ADR.md): resumo de uma página das decisões de arquitetura
+- [docs/](docs/README.md): especificações de cada funcionalidade e registros completos de decisão
+- [CONTRIBUTING.md](CONTRIBUTING.md): padrões de nomes, branches e commits
+
+## Créditos
+
+Os dados vêm da [Studio Ghibli API](https://ghibliapi.vercel.app). Filmes, títulos e imagens pertencem ao Studio Ghibli e são usados aqui apenas para fins acadêmicos.
