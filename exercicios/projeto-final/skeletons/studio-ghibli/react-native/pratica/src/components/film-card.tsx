@@ -25,9 +25,16 @@ type FilmCardProps = {
   isFavorite: boolean;
   onPress: () => void;
   width?: number;
+  subtitle?: string;
 };
 
-export function FilmCard({ film, isFavorite, onPress, width = FILM_CARD_WIDTH }: FilmCardProps) {
+export function FilmCard({
+  film,
+  isFavorite,
+  onPress,
+  width = FILM_CARD_WIDTH,
+  subtitle,
+}: FilmCardProps) {
   const tokens = useBrandTokens();
   const reduceMotion = useReducedMotion();
   const scale = useSharedValue(1);
@@ -86,6 +93,11 @@ export function FilmCard({ film, isFavorite, onPress, width = FILM_CARD_WIDTH }:
         className="mt-2">
         {film.title}
       </Text>
+      {subtitle && (
+        <Text variant="meta" tone="muted">
+          {subtitle}
+        </Text>
+      )}
     </Pressable>
   );
 }

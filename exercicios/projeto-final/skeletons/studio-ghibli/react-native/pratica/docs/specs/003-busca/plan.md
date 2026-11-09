@@ -6,7 +6,7 @@ Spec: [spec.md](spec.md)
 | Camada | Arquivo | O que faz |
 |---|---|---|
 | domain | `src/domain/filter.ts` | `normalize(text)` e `filterFilms(films, { query, director })` — **compartilhado com a Spec 004** |
-| state | `src/state/use-film-filters.ts` | estado `query` + `director` (Zustand, sem persistência) |
+| state | `src/state/film-filters-store.ts` | estado `query` + `director` (Zustand, sem persistência) |
 | ui | `src/components/search-bar.tsx` | `TextInput` com botão limpar |
 
 `filterFilms` é a única fonte de verdade da filtragem; a tela só aplica `useMemo(() => filterFilms(...))`.
