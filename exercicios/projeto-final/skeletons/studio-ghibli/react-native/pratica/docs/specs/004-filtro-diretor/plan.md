@@ -7,7 +7,7 @@ Spec: [spec.md](spec.md)
 |---|---|---|
 | domain | `src/domain/directors.ts` | `getDirectors(films) → { name, slug, count }[]`, `slugify(name)` |
 | domain | `src/domain/filter.ts` | parte `director` de `filterFilms` (ver Plan 003) |
-| state | `src/state/use-film-filters.ts` | `director: string \| null` |
+| state | `src/state/film-filters-store.ts` | `director: string \| null` |
 | ui | `src/components/director-chips.tsx` | `ScrollView` horizontal de chips |
 
 ## testIDs
