@@ -48,6 +48,7 @@ export default function FilmDetailScreen() {
     <FilmDetailFrame onClose={closeDetail}>
       <ScrollView
         testID="detail-screen"
+        showsVerticalScrollIndicator={false}
         className="flex-1 bg-canvas"
         contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
         <Animated.View entering={FadeIn.duration(ENTER_DURATION_MS)}>

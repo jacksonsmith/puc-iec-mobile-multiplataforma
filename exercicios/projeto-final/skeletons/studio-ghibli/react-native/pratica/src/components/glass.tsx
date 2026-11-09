@@ -1,7 +1,14 @@
 import { BlurView } from 'expo-blur';
 import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect';
 import { useEffect, useState } from 'react';
-import { AccessibilityInfo, Platform, StyleSheet, View, type ViewProps } from 'react-native';
+import {
+  AccessibilityInfo,
+  Platform,
+  StyleSheet,
+  View,
+  type ViewProps,
+  type ViewStyle,
+} from 'react-native';
 
 import { useColorScheme } from './color-scheme';
 
@@ -13,6 +20,11 @@ const FILL_CLASS = {
 
 // A intensidade do expo-blur equivale a cerca de 2× o token de blur (12, 24 e 48).
 const BLUR_INTENSITY = { sm: 24, md: 48, lg: 96 };
+
+// Na web, as camadas absolutas pintam sobre filhos sem position e bloqueiam o clique.
+const WEB_ROOT_STYLE: ViewStyle | undefined =
+  Platform.OS === 'web' ? { isolation: 'isolate' } : undefined;
+const LAYER_STYLE = [StyleSheet.absoluteFill, Platform.OS === 'web' && { zIndex: -1 }];
 
 type GlassProps = ViewProps & {
   variant?: keyof typeof FILL_CLASS;
@@ -42,6 +54,7 @@ export function Glass({
   variant = 'default',
   blur = 'md',
   className = '',
+  style,
   children,
   ...props
 }: GlassProps) {
@@ -61,18 +74,17 @@ export function Glass({
   const isLiquidGlass = isLiquidGlassAvailable();
 
   return (
-    <View className={`overflow-hidden border border-glass-line ${className}`} {...props}>
+    <View
+      className={`overflow-hidden border border-glass-line ${className}`}
+      style={[WEB_ROOT_STYLE, style]}
+      {...props}>
       {isLiquidGlass ? (
-        <GlassView style={StyleSheet.absoluteFill} colorScheme={tint} />
+        <GlassView style={LAYER_STYLE} colorScheme={tint} />
       ) : (
-        <BlurView style={StyleSheet.absoluteFill} tint={tint} intensity={BLUR_INTENSITY[blur]} />
+        <BlurView style={LAYER_STYLE} tint={tint} intensity={BLUR_INTENSITY[blur]} />
       )}
       {(!isLiquidGlass || variant === 'scrim') && (
-        <View
-          pointerEvents="none"
-          style={StyleSheet.absoluteFill}
-          className={FILL_CLASS[variant]}
-        />
+        <View pointerEvents="none" style={LAYER_STYLE} className={FILL_CLASS[variant]} />
       )}
       {children}
     </View>
