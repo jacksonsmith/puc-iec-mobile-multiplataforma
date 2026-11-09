@@ -67,7 +67,7 @@
      "night": "#2b4159",
      "day": "#c4e3f7"
     },
-    "usage": "Topo do fundo de floresta. Dia: céu azul limpo. Noite: azul do céu noturno misturado ao branco da lua."
+    "usage": "Círculo no canto superior esquerdo, saindo da tela. Dia: céu azul limpo. Noite: azul do céu noturno misturado ao branco da lua."
    },
    {
     "name": "forest-canopy",
@@ -75,7 +75,7 @@
      "night": "#163a2b",
      "day": "#cce6c0"
     },
-    "usage": "Segunda faixa do fundo de floresta: o verde das copas das árvores."
+    "usage": "Círculo um pouco abaixo e à direita do primeiro: o verde das copas das árvores."
    },
    {
     "name": "forest-trunk",
@@ -83,7 +83,7 @@
      "night": "#163a2b",
      "day": "#e8dcc8"
     },
-    "usage": "Terceira faixa do fundo de floresta. Dia: o marrom dos caules. Noite: repete as copas, porque o caule ficaria escuro demais."
+    "usage": "Círculo saindo pela direita, um pouco abaixo do meio da tela: o marrom dos caules. Só aparece de dia."
    },
    {
     "name": "forest-ground",
@@ -91,7 +91,7 @@
      "night": "#06140e",
      "day": "#d6ebb8"
     },
-    "usage": "Base do fundo de floresta. Dia: verde da grama. Noite: verde quase preto."
+    "usage": "Círculo saindo pela esquerda, no fim da tela. Dia: verde da grama. Noite: verde quase preto."
    },
    {
     "name": "glow-sky",
