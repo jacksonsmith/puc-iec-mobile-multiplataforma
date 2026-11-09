@@ -91,19 +91,54 @@ private fun MovieList(movies: List<Movie>) {
 
 @Composable
 private fun MovieCard(movie: Movie) {
-    // ── TODO 3 ──────────────────────────────────────────────────────────────
-    // Construa o card do filme. Sugestão de layout (Card > Row):
-    //   - Box à esquerda (56x84dp, cantos arredondados 6dp, background
-    //     MaterialTheme.colorScheme.primaryContainer) com a inicial do
-    //     título centralizada (placeholder de poster, sem imagem real)
-    //   - Column à direita (weight 1f) com: título (bold, 2 linhas max),
-    //     overview (2 linhas max), e uma Row com nota "⭐ X.X" + ano
-    // ────────────────────────────────────────────────────────────────────────
+    // Nota com 1 casa decimal sem String.format (que só existe na JVM, não no commonMain).
+    val rating = (kotlin.math.round(movie.voteAverage * 10) / 10).toString()
+    val year = movie.releaseDate.take(4)
+
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "TODO 3: card de ${movie.title}",
-            modifier = Modifier.padding(16.dp),
-        )
+        Row(
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            // Placeholder de poster: inicial do título num box colorido.
+            Box(
+                modifier = Modifier
+                    .size(width = 56.dp, height = 84.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = movie.title.firstOrNull()?.uppercase() ?: "?",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = movie.title,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = movie.overview,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("⭐ $rating", style = MaterialTheme.typography.labelMedium)
+                    if (year.isNotEmpty()) {
+                        Text(year, style = MaterialTheme.typography.labelMedium)
+                    }
+                }
+            }
+        }
     }
 }
 
